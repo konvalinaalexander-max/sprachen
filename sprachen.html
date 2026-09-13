@@ -589,6 +589,110 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
 }
 @media print{ .topbar,.footbar,.rail{ display:none } body{ background:#fff } }
 
+/* ---------- Folgen-Spieler ---------- */
+.player{ padding:0 22px 20px; display:flex; flex-direction:column; gap:12px; }
+.player-status{ display:flex; align-items:center; gap:10px; color:var(--ink-3); font-size:13.5px; padding:14px 0; }
+.spinner{
+  width:15px; height:15px; border-radius:50%; flex:none;
+  border:2px solid rgba(255,255,255,.15); border-top-color:var(--a1);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{ to{ transform:rotate(360deg) } }
+
+.ep-head{ display:flex; flex-direction:column; gap:7px; }
+.ep-live{
+  font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; font-weight:700;
+  color:var(--ok); display:flex; align-items:center; gap:7px;
+}
+.ep-live::before{
+  content:""; width:7px; height:7px; border-radius:50%; background:var(--ok);
+  box-shadow:0 0 0 0 rgba(61,220,151,.55); animation:ping 2s ease-out infinite;
+}
+@keyframes ping{ 70%{ box-shadow:0 0 0 8px rgba(61,220,151,0) } 100%{ box-shadow:0 0 0 0 rgba(61,220,151,0) } }
+.ep-title{ font-size:16.5px; font-weight:620; line-height:1.4; color:var(--ink); letter-spacing:-.01em; }
+.ep-meta{ display:flex; gap:7px; flex-wrap:wrap; align-items:center; }
+.tag.link{ text-decoration:none; color:var(--a1); border-color:rgba(255,255,255,.16); }
+.tag.link:hover{ background:rgba(255,255,255,.11); }
+
+.player-audio{
+  width:100%; height:42px; border-radius:12px;
+  background:rgba(255,255,255,.06); border:1px solid var(--line);
+  color-scheme:dark;                 /* sonst rendert der Browser weisse Regler */
+}
+.player-audio::-webkit-media-controls-panel{ background:rgba(255,255,255,.04); }
+
+.ep-more{ border-top:1px solid var(--line); padding-top:12px; }
+.ep-more summary{
+  cursor:pointer; font-size:13px; color:var(--ink-2); list-style:none;
+  display:flex; align-items:center; gap:7px; padding:4px 0;
+}
+.ep-more summary::-webkit-details-marker{ display:none; }
+.ep-more summary::before{ content:"▸"; color:var(--a1); transition:transform .2s var(--ease); display:inline-block; }
+.ep-more[open] summary::before{ transform:rotate(90deg); }
+.ep-more summary:hover{ color:var(--ink); }
+.ep-list{ display:flex; flex-direction:column; gap:4px; margin-top:10px; max-height:260px; overflow-y:auto; }
+.ep-item{
+  display:flex; flex-direction:column; gap:3px; text-align:left; width:100%;
+  padding:10px 13px; border-radius:11px; cursor:pointer;
+  background:transparent; border:1px solid transparent; color:var(--ink-2);
+  font-family:var(--sans); transition:.18s var(--ease);
+}
+.ep-item:hover{ background:var(--surface); border-color:var(--line); color:var(--ink); }
+.ep-item.on{ background:var(--surface-2); border-color:var(--line-strong); color:var(--ink); }
+.ep-item-t{ font-size:13.5px; line-height:1.4; font-weight:550; }
+.ep-item-m{ font-size:11.5px; color:var(--ink-3); }
+
+.player-fail{ padding:16px 0; }
+.pf-head{ display:flex; gap:9px; align-items:center; font-size:14.5px; font-weight:600; color:var(--warn); margin-bottom:6px; }
+.player-fail p{ font-size:13.5px; }
+
+/* ---------- Quellen-Umschalter ---------- */
+.src-switch{ display:flex; gap:8px; flex-wrap:wrap; }
+.src-chip{
+  display:flex; align-items:center; gap:9px; padding:9px 14px 9px 11px;
+  border-radius:13px; cursor:pointer; text-align:left;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink-2);
+  font-family:var(--sans); transition:.2s var(--ease);
+}
+.src-chip:hover{ background:var(--surface-2); color:var(--ink); border-color:var(--line-strong); }
+.src-chip[aria-pressed="true"]{
+  background:linear-gradient(135deg,var(--a1),var(--a2)); color:#0b0d12;
+  border-color:transparent; box-shadow:0 8px 22px -10px var(--glow);
+}
+.src-chip .sc-n{ font-size:13px; font-weight:620; line-height:1.25; }
+.src-chip .sc-l{ font-size:11px; opacity:.72; }
+
+/* ---------- Niveau-Diagnose ---------- */
+.diag-rows{ display:flex; flex-direction:column; gap:11px; margin-top:16px; }
+.diag-row{ display:grid; grid-template-columns:minmax(96px,1.1fr) 2.4fr auto; gap:12px; align-items:center; }
+@media(max-width:520px){ .diag-row{ grid-template-columns:1fr auto; } .diag-row .dr-bar{ grid-column:1/-1; order:3; } }
+.dr-name{ font-size:13.5px; color:var(--ink-2); }
+.dr-bar{ height:7px; border-radius:5px; background:rgba(255,255,255,.07); overflow:hidden; }
+.dr-bar i{ display:block; height:100%; border-radius:5px; transition:width .8s var(--ease); }
+.diag-row.ok  .dr-bar i{ background:linear-gradient(90deg,#2fbf80,var(--ok)); }
+.diag-row.mid .dr-bar i{ background:linear-gradient(90deg,#d9a13a,var(--warn)); }
+.diag-row.no  .dr-bar i{ background:linear-gradient(90deg,#c4494e,var(--no)); }
+.diag-row.na  .dr-bar i{ background:rgba(255,255,255,.12); }
+.dr-v{ font-size:12.5px; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.diag-row.ok  .dr-v{ color:var(--ok); }
+.diag-row.mid .dr-v{ color:var(--warn); }
+.diag-row.no  .dr-v{ color:var(--no); }
+.diag-row.na  .dr-v{ color:var(--ink-3); }
+
+.diag-item{
+  display:flex; align-items:center; gap:10px; padding:11px 14px; border-radius:var(--r-m);
+  background:rgba(255,255,255,.035); border-left:2px solid var(--line-strong); font-size:13.5px;
+}
+.diag-item.ok{ border-left-color:var(--ok); }
+.diag-item.mid{ border-left-color:var(--warn); }
+.diag-item.no{ border-left-color:var(--no); }
+.diag-item .di-n{ flex:1; color:var(--ink); font-weight:550; }
+.diag-item .di-v{ font-size:12.5px; }
+.diag-item.ok .di-v{ color:var(--ok); }
+.diag-item.mid .di-v{ color:var(--warn); }
+.diag-item.no .di-v{ color:var(--no); }
+.diag-item .di-q{ font-size:12px; color:var(--ink-3); font-variant-numeric:tabular-nums; }
+
 </style>
 </head>
 <body data-lang="es" data-view="home">
@@ -878,14 +982,618 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
     return out;
   };
 
-  LEKTION.fmtDate = function (iso) {
+  LEKTION.fmtDate = function (iso, lang) {
+    var loc = { es: 'es-ES', fr: 'fr-FR' }[lang] || 'de-CH';
     try {
-      return new Date(iso + 'T12:00:00').toLocaleDateString('de-CH',
+      return new Date(iso + 'T12:00:00').toLocaleDateString(loc,
         { weekday: 'long', day: 'numeric', month: 'long' });
     } catch (e) { return iso; }
   };
 
 })(window);
+</script>
+<script>/* assets/js/i18n.js */
+/* Sprachen - Oberflächentexte.
+   Sobald man in einem Sprachblock ist, steht hier alles in dieser Sprache.
+   Deutsch gibt es nur noch auf der Startseite, wo man erst auswählt. */
+(function (L) {
+  'use strict';
+
+  var S = {
+    de: {
+      'st.intro': 'Einstieg', 'st.vocab': 'Wörter', 'st.read': 'Lesen',
+      'st.train': 'Training', 'st.listen': 'Hören', 'st.wrap': 'Feedback',
+
+      'foot.intro': 'Wörter ansehen', 'foot.vocab': 'Text lesen', 'foot.read': 'Los, testen',
+      'foot.train': 'Weiter zum Hören', 'foot.listen': 'Abschliessen', 'foot.next': 'Weiter',
+      'hint.intro': 'Erst verstehen, dann üben.',
+      'hint.vocab': 'Nicht auswendig lernen – einmal kurz begegnen reicht.',
+      'hint.read': 'Zweimal lesen ist besser als einmal nachschlagen.',
+      'hint.train': 'Fehler sind hier gratis.',
+      'hint.listen': 'Echtes Material. Unverstandenes ist normal.',
+
+      'intro.hook': 'Worum es heute geht',
+
+      'vocab.eyebrow': 'Station 2 · {n} Wörter',
+      'vocab.title': 'Die Wörter, die gleich im Text auf dich warten',
+      'vocab.lead': 'Erst raten, dann aufdecken. Was du selbst errätst, bleibt hängen – was du nur liest, nicht.',
+      'vocab.tap': 'tippen', 'vocab.all': 'Alle aufgedeckt',
+
+      'read.eyebrow': 'Station 3 · ca. {n} Min Lesezeit',
+      'read.title': 'Jetzt lesen – ohne Wörterbuch',
+      'read.lead': 'Unterstrichene Wörter kannst du antippen. Alles andere: erraten. Du musst nicht jedes Wort verstehen, um den Text zu verstehen.',
+      'read.simple': 'Einfachere Fassung', 'read.source': 'Originalquelle ansehen ↗',
+
+      'train.lookup': '📄 Text nachschlagen', 'train.lookupClose': '📄 Text zuklappen',
+      'train.next': 'Weiter', 'train.finish': 'Training abschliessen',
+      'sum.great': 'Das sass.', 'sum.good': 'Solide Runde.', 'sum.ok': 'Alles Material zum Lernen.',
+      'sum.count': '{r} von {t} auf Anhieb richtig.',
+      'sum.review': 'Das schauen wir uns nochmal an',
+      'sum.perfect': 'Kein einziger Fehler. Beim nächsten Mal drehe ich auf.',
+      'm.you': 'Du', 'm.right': 'Richtig',
+
+      'k.choice': 'Blitzrunde', 'k.evidence': 'Textdetektiv', 'k.forge': 'Satzschmiede',
+      'k.transform': 'Verwandler', 'k.pairs': 'Paarjagd', 'k.write': 'Freischreiben', 'k.task': 'Aufgabe',
+
+      'v.yes': 'Stimmt', 'v.no': 'Stimmt nicht', 'v.unclear': 'Steht nicht im Text',
+      'v.hit': 'Sitzt.', 'v.miss': 'Knapp daneben', 'v.shouldBe': 'Richtig wäre:',
+      'v.sharpEye': 'Gutes Auge.', 'v.notQuite': 'Nicht ganz',
+      'v.proveIt': 'Und jetzt der Beweis: Tippe den Satz an, der das belegt.',
+      'v.bothRight': 'Urteil und Beleg – beides sauber.', 'v.halfRight': 'Urteil ja, Beleg nein.',
+      'f.hint': 'Tippe die Wörter in der richtigen Reihenfolge an. Ein paar passen nicht.',
+      'f.check': 'Prüfen', 'f.built': 'Perfekt gebaut.', 'f.order': 'Fast – schau die Reihenfolge an',
+      'f.correct': 'Richtig:',
+      't.placeholder': 'Deine Lösung …', 't.nudge': 'Kleiner Schubs',
+      't.exact': 'Genau so.', 't.almost': 'Richtig – fast perfekt', 't.look': 'Schau mal genau hin',
+      't.accents': 'Inhaltlich richtig – nur die Akzente fehlen:', 't.also': 'Auch möglich:',
+      'p.hint': 'Immer zwei antippen, die zusammengehören.',
+      'p.clean': 'Alles auf Anhieb.', 'p.done': 'Geschafft.',
+      'p.tries': 'Du hast {n} Fehlversuch(e) gebraucht.',
+      'w.placeholder': 'Schreib los – Fehler sind hier ausdrücklich erlaubt.',
+      'w.use': 'Bau ein:', 'w.go': 'Fertig – Musterlösung zeigen',
+      'w.model': 'So könnte es klingen', 'w.compare': 'Vergleich deinen Text damit:',
+      'w.words': '{n} Wörter geschrieben', 'w.hit': '{a}/{b} Zielwörter benutzt',
+
+      'a.searching': 'Suche die neueste Folge …',
+      'a.found': 'Gefundene Folge',
+      'a.file': 'Audiodatei ↗',
+      'a.other': 'Andere Folge wählen ({n} weitere)',
+      'a.failTitle': 'Die Folgenliste lädt gerade nicht',
+      'a.failText': 'Vermutlich bist du offline. Die Folge lässt sich auch direkt auf der Seite des Senders hören.',
+      'a.website': 'Zur Sendung',
+      'a.hearNow': 'Direkt hier hören – kein Abo, kein Konto, keine Suche.',
+      'l.eyebrow': 'Station 5 · echtes Material',
+      'l.head': 'Jetzt ohne Stützräder',
+      'l.intro': 'Das hier ist nicht für Lernende gemacht. Genau darum ist es wertvoll.',
+      'l.pre': 'Diese Wörter kommen mit ziemlicher Sicherheit vor',
+      'l.preLead': 'Kurz anschauen – dann hakt dein Ohr später nicht daran fest.',
+      'l.proto': 'Drei Durchgänge – mehr braucht es nicht',
+      'l.passDone': 'Durchgang erledigt',
+      'l.self': 'Wie viel ist hängen geblieben?',
+      'l.selfLead': 'Ehrlich sein lohnt sich – danach richte ich das nächste Hörmaterial aus.',
+      'l.low': 'kaum was verstanden', 'l.high': 'fast alles',
+      'l.alts': 'Falls das nicht passt', 'l.open': 'Folge öffnen', 'l.transcript': 'Transkript',
+      'l.p1t': 'Einmal ganz durch, ohne Pause', 'l.p1h': 'Nichts nachschlagen, nichts zurückspulen',
+      'l.p1x': 'Worum geht es? Ein, zwei Sätze genügen. Wenn du nur das Thema erwischst: völlig in Ordnung.',
+      'l.p1p': 'Es geht um …',
+      'l.p2t': 'Nochmal – diesmal mit Bleistift', 'l.p2h': 'Pausieren erlaubt',
+      'l.p2x': 'Sammle Zahlen, Namen, Orte und fünf Wörter, die du wiedererkannt hast.',
+      'l.p2p': 'Zahlen / Namen / Wörter …',
+      'l.p3t': 'Eine Minute laut nachsprechen', 'l.p3h': 'Irgendeine Stelle, die du magst',
+      'l.p3x': 'Wähl eine Passage und sprich parallel mit. Rhythmus vor Perfektion.',
+      'l.p3p': 'Welche Stelle? Was war schwierig auszusprechen?',
+
+      'd.title': 'Wo du gerade stehst',
+      'd.lead': 'Nicht die Punktzahl – was du wirklich kannst und was noch nicht. Aus deinen Antworten von heute.',
+      'd.verstehen': 'Text verstehen', 'd.erkennen': 'Formen erkennen',
+      'd.produzieren': 'Selbst produzieren', 'd.wortschatz': 'Wortschatz',
+      'd.solid': 'Sitzt.', 'd.mixed': 'Wackelig.', 'd.weak': 'Noch nicht da.', 'd.none': 'heute nicht geprüft',
+      'd.next': 'Was daraus folgt',
+      'g.save': '📤 In GitHub ablegen',
+      'g.saved': 'GitHub öffnet sich – nur noch auf «Create» drücken.',
+      'g.no': 'Kein GitHub hinterlegt. Nimm «Bericht kopieren».',
+      'e.done': 'Geschafft',
+      'e.p90': 'Das war stark.', 'e.p70': 'Gut gemacht.', 'e.p45': 'Durchgezogen – zählt.',
+      'e.p0': 'Angefangen ist die halbe Miete.',
+      'e.outro': 'Noch ein paar Fragen – damit die nächste Einheit besser auf dich passt.',
+      'e.sRight': 'richtig', 'e.sXp': 'XP gesamt', 'e.sPass': 'Hördurchgänge', 'e.sMin': 'Minuten',
+      'e.mistakes': 'Dein Fehlerprotokoll – das nimmst du mit',
+      'e.reportT': 'Und jetzt das Wichtigste',
+      'e.reportX': 'Kopier den Bericht und wirf ihn Claude in den Chat. Damit weiss er beim nächsten Mal, was sitzt und was wackelt.',
+      'e.copy': '📋 Bericht kopieren', 'e.dl': '⬇ Als Datei', 'e.home': 'Zurück zur Übersicht',
+      'e.copied': 'Kopiert. Ab damit in den Chat.',
+      'e.copyFail': 'Kopieren klappt hier nicht – nimm den Knopf «Als Datei».',
+
+      'q.diff': 'War die Einheit vom Niveau her passend?',
+      'q.diffLow': 'viel zu leicht', 'q.diffHigh': 'viel zu schwer',
+      'q.fun': 'Und – hat es Spass gemacht?', 'q.funLow': 'zäh', 'q.funHigh': 'mehr davon',
+      'q.more': 'Willst du beim nächsten Mal am gleichen Thema dranbleiben?',
+      'q.more.deepen': 'Ja, gleiches Grammatikthema vertiefen',
+      'q.more.same': 'Gleiches Thema, anderer Inhalt', 'q.more.new': 'Nein, etwas Neues',
+      'q.weak': 'Was hat sich am wackligsten angefühlt?',
+      'q.weak.grammar': 'Die Grammatik', 'q.weak.vocab': 'Der Wortschatz',
+      'q.weak.reading': 'Der Lesetext', 'q.weak.listening': 'Das Hörverstehen', 'q.weak.none': 'Nichts davon',
+      'q.len': 'Zur Länge:',
+      'q.len.short': 'Zu kurz, ich hätte weitergemacht', 'q.len.ok': 'Genau richtig', 'q.len.long': 'Zu lang',
+      'q.wish': 'Wunsch an die nächste Einheit?',
+      'q.wishP': 'z.B. mehr Subjuntivo, Thema Reisen, längerer Hörtext …',
+
+      'menu.title': 'Menü', 'menu.leave': 'Einheit verlassen (Stand bleibt gespeichert)',
+      'menu.restart': 'Diese Einheit neu starten',
+      'menu.soundOff': 'Töne ausschalten', 'menu.soundOn': 'Töne einschalten',
+      'menu.docs': 'Quellen & Methode', 'menu.reset': 'Allen Fortschritt löschen',
+      'menu.close': 'Schliessen',
+      'menu.confirm': 'Wirklich alles zurücksetzen? XP, Serie und alle Zwischenstände sind dann weg.',
+      'toast.soundOn': 'Töne an', 'toast.soundOff': 'Töne aus', 'toast.reset': 'Alles zurückgesetzt.',
+      'err.title': 'Diese Einheit finde ich nicht', 'err.home': 'Zur Übersicht'
+    },
+
+    es: {
+      'st.intro': 'Para empezar', 'st.vocab': 'Palabras', 'st.read': 'Leer',
+      'st.train': 'Practicar', 'st.listen': 'Escuchar', 'st.wrap': 'Balance',
+
+      'foot.intro': 'Ver las palabras', 'foot.vocab': 'Leer el texto', 'foot.read': 'A practicar',
+      'foot.train': 'Ahora, a escuchar', 'foot.listen': 'Terminar', 'foot.next': 'Seguir',
+      'hint.intro': 'Primero entender, después practicar.',
+      'hint.vocab': 'No hace falta memorizar: basta con verlas una vez.',
+      'hint.read': 'Leer dos veces vale más que buscar una palabra en el diccionario.',
+      'hint.train': 'Aquí los errores no cuestan nada.',
+      'hint.listen': 'Material auténtico. Es normal no entenderlo todo.',
+
+      'intro.hook': 'De qué va lo de hoy',
+
+      'vocab.eyebrow': 'Etapa 2 · {n} palabras',
+      'vocab.title': 'Las palabras que te esperan en el texto',
+      'vocab.lead': 'Primero adivina, después descubre. Lo que adivinas solo se queda; lo que solo lees, se va.',
+      'vocab.tap': 'tocar', 'vocab.all': 'Todas descubiertas',
+
+      'read.eyebrow': 'Etapa 3 · unos {n} min de lectura',
+      'read.title': 'Ahora a leer, sin diccionario',
+      'read.lead': 'Puedes tocar las palabras subrayadas. Las demás, adivínalas. No hace falta entender cada palabra para entender el texto.',
+      'read.simple': 'Versión más fácil', 'read.source': 'Ver la fuente original ↗',
+
+      'train.lookup': '📄 Consultar el texto', 'train.lookupClose': '📄 Cerrar el texto',
+      'train.next': 'Seguir', 'train.finish': 'Terminar la práctica',
+      'sum.great': 'Eso ha salido muy bien.', 'sum.good': 'Una ronda sólida.',
+      'sum.ok': 'Todo esto es material para aprender.',
+      'sum.count': '{r} de {t} a la primera.',
+      'sum.review': 'Vamos a mirar esto otra vez',
+      'sum.perfect': 'Ni un solo error. La próxima vez subo el nivel.',
+      'm.you': 'Tú', 'm.right': 'Correcto',
+
+      'k.choice': 'Relámpago', 'k.evidence': 'Detective', 'k.forge': 'Taller de frases',
+      'k.transform': 'Transformador', 'k.pairs': 'Parejas', 'k.write': 'Escritura libre', 'k.task': 'Ejercicio',
+
+      'v.yes': 'Es cierto', 'v.no': 'Es falso', 'v.unclear': 'El texto no lo dice',
+      'v.hit': 'Exacto.', 'v.miss': 'Casi', 'v.shouldBe': 'Lo correcto sería:',
+      'v.sharpEye': 'Buen ojo.', 'v.notQuite': 'No del todo',
+      'v.proveIt': 'Y ahora la prueba: toca la frase que lo demuestra.',
+      'v.bothRight': 'Juicio y prueba, las dos cosas bien.', 'v.halfRight': 'El juicio sí, la prueba no.',
+      'f.hint': 'Toca las palabras en el orden correcto. Algunas sobran.',
+      'f.check': 'Comprobar', 'f.built': 'Perfectamente construida.', 'f.order': 'Casi: fíjate en el orden',
+      'f.correct': 'Correcto:',
+      't.placeholder': 'Tu respuesta …', 't.nudge': 'Una pista pequeña',
+      't.exact': 'Justo así.', 't.almost': 'Correcto, casi perfecto', 't.look': 'Míralo otra vez con calma',
+      't.accents': 'El contenido está bien; solo faltan las tildes:', 't.also': 'También vale:',
+      'p.hint': 'Toca dos que vayan juntas.',
+      'p.clean': 'Todas a la primera.', 'p.done': 'Hecho.',
+      'p.tries': 'Has necesitado {n} intento(s) fallido(s).',
+      'w.placeholder': 'Escribe sin miedo: aquí los errores están permitidos.',
+      'w.use': 'Incluye:', 'w.go': 'Listo, ver un modelo',
+      'w.model': 'Así podría sonar', 'w.compare': 'Compara tu texto con este:',
+      'w.words': '{n} palabras escritas', 'w.hit': '{a}/{b} palabras clave usadas',
+
+      'a.searching': 'Buscando el episodio más reciente …',
+      'a.found': 'Episodio encontrado',
+      'a.file': 'Archivo de audio ↗',
+      'a.other': 'Elegir otro episodio ({n} más)',
+      'a.failTitle': 'Ahora mismo no carga la lista de episodios',
+      'a.failText': 'Seguramente estás sin conexión. También puedes escucharlo directamente en la página de la emisora.',
+      'a.website': 'Ir al programa',
+      'a.hearNow': 'Se escucha aquí mismo: sin suscripción, sin cuenta, sin buscar nada.',
+      'l.eyebrow': 'Etapa 5 · material auténtico',
+      'l.head': 'Ahora sin ruedines',
+      'l.intro': 'Esto no está hecho para estudiantes. Justo por eso vale la pena.',
+      'l.pre': 'Estas palabras van a aparecer casi seguro',
+      'l.preLead': 'Míralas un momento y tu oído no se quedará atascado en ellas.',
+      'l.proto': 'Tres escuchas, no hacen falta más',
+      'l.passDone': 'Escucha terminada',
+      'l.self': '¿Cuánto se te ha quedado?',
+      'l.selfLead': 'Sé sincero: con esto ajusto el material de la próxima vez.',
+      'l.low': 'casi nada', 'l.high': 'casi todo',
+      'l.alts': 'Si hoy no te encaja', 'l.open': 'Abrir el episodio', 'l.transcript': 'Transcripción',
+      'l.p1t': 'Una vez entero, sin parar', 'l.p1h': 'No busques nada, no rebobines',
+      'l.p1x': '¿De qué va? Con una o dos frases basta. Si solo pillas el tema, perfecto.',
+      'l.p1p': 'Va sobre …',
+      'l.p2t': 'Otra vez, ahora con lápiz', 'l.p2h': 'Aquí sí puedes parar',
+      'l.p2x': 'Apunta números, nombres, lugares y cinco palabras que hayas reconocido.',
+      'l.p2p': 'Números / nombres / palabras …',
+      'l.p3t': 'Un minuto repitiendo en voz alta', 'l.p3h': 'El trozo que más te guste',
+      'l.p3x': 'Elige un fragmento y habla a la vez. Primero el ritmo, después la perfección.',
+      'l.p3p': '¿Qué fragmento? ¿Qué te ha costado pronunciar?',
+
+      'd.title': 'Dónde estás ahora mismo',
+      'd.lead': 'No la nota: lo que de verdad sabes hacer y lo que todavía no. Sale de tus respuestas de hoy.',
+      'd.verstehen': 'Entender el texto', 'd.erkennen': 'Reconocer las formas',
+      'd.produzieren': 'Producir tú mismo', 'd.wortschatz': 'Vocabulario',
+      'd.solid': 'Lo tienes.', 'd.mixed': 'Todavía baila.', 'd.weak': 'Aún no está.', 'd.none': 'hoy no se ha medido',
+      'd.next': 'Qué sale de aquí',
+      'g.save': '📤 Guardar en GitHub',
+      'g.saved': 'Se abre GitHub: solo tienes que pulsar «Create».',
+      'g.no': 'No hay GitHub configurado. Usa «Copiar el informe».',
+      'e.done': 'Terminado',
+      'e.p90': 'Eso ha sido fuerte.', 'e.p70': 'Bien hecho.', 'e.p45': 'Lo has terminado, y eso cuenta.',
+      'e.p0': 'Empezar ya es la mitad del camino.',
+      'e.outro': 'Unas preguntas más, para que la próxima unidad te venga mejor.',
+      'e.sRight': 'aciertos', 'e.sXp': 'XP en total', 'e.sPass': 'escuchas', 'e.sMin': 'minutos',
+      'e.mistakes': 'Tus errores de hoy: esto es lo que te llevas',
+      'e.reportT': 'Y ahora lo más importante',
+      'e.reportX': 'Copia el informe y pégaselo a Claude en el chat. Así sabrá la próxima vez qué dominas y qué no.',
+      'e.copy': '📋 Copiar el informe', 'e.dl': '⬇ Guardar archivo', 'e.home': 'Volver al inicio',
+      'e.copied': 'Copiado. Pégaselo en el chat.',
+      'e.copyFail': 'Aquí no funciona copiar: usa «Guardar archivo».',
+
+      'q.diff': '¿El nivel de hoy te ha parecido adecuado?',
+      'q.diffLow': 'demasiado fácil', 'q.diffHigh': 'demasiado difícil',
+      'q.fun': 'Y dime, ¿te lo has pasado bien?', 'q.funLow': 'pesado', 'q.funHigh': 'más de esto',
+      'q.more': '¿Quieres seguir con el mismo tema la próxima vez?',
+      'q.more.deepen': 'Sí, profundizar en la misma gramática',
+      'q.more.same': 'Mismo tema, otro contenido', 'q.more.new': 'No, algo nuevo',
+      'q.weak': '¿Qué es lo que peor te has visto?',
+      'q.weak.grammar': 'La gramática', 'q.weak.vocab': 'El vocabulario',
+      'q.weak.reading': 'El texto', 'q.weak.listening': 'La escucha', 'q.weak.none': 'Nada en concreto',
+      'q.len': 'Sobre la duración:',
+      'q.len.short': 'Corta, habría seguido', 'q.len.ok': 'Justo bien', 'q.len.long': 'Demasiado larga',
+      'q.wish': '¿Qué te gustaría para la próxima?',
+      'q.wishP': 'p. ej. más subjuntivo, un tema de viajes, una escucha más larga …',
+
+      'menu.title': 'Menú', 'menu.leave': 'Salir de la unidad (se guarda dónde estás)',
+      'menu.restart': 'Empezar esta unidad de nuevo',
+      'menu.soundOff': 'Quitar los sonidos', 'menu.soundOn': 'Poner los sonidos',
+      'menu.docs': 'Fuentes y método', 'menu.reset': 'Borrar todo el progreso',
+      'menu.close': 'Cerrar',
+      'menu.confirm': '¿Seguro que quieres borrarlo todo? Se pierden los XP, la racha y todo lo guardado.',
+      'toast.soundOn': 'Sonidos activados', 'toast.soundOff': 'Sonidos desactivados',
+      'toast.reset': 'Todo borrado.',
+      'err.title': 'No encuentro esta unidad', 'err.home': 'Volver al inicio'
+    },
+
+    fr: {
+      'st.intro': 'Pour commencer', 'st.vocab': 'Mots', 'st.read': 'Lire',
+      'st.train': 'Pratiquer', 'st.listen': 'Écouter', 'st.wrap': 'Bilan',
+
+      'foot.intro': 'Voir les mots', 'foot.vocab': 'Lire le texte', 'foot.read': 'On pratique',
+      'foot.train': 'Maintenant, écouter', 'foot.listen': 'Terminer', 'foot.next': 'Continuer',
+      'hint.intro': "D'abord comprendre, ensuite pratiquer.",
+      'hint.vocab': 'Pas besoin de tout retenir : les voir une fois suffit.',
+      'hint.read': 'Lire deux fois vaut mieux que chercher un mot dans le dictionnaire.',
+      'hint.train': 'Ici, les erreurs ne coûtent rien.',
+      'hint.listen': "Document authentique. C'est normal de ne pas tout comprendre.",
+
+      'intro.hook': "De quoi il s'agit aujourd'hui",
+
+      'vocab.eyebrow': 'Étape 2 · {n} mots',
+      'vocab.title': "Les mots qui t'attendent dans le texte",
+      'vocab.lead': 'Devine d’abord, découvre ensuite. Ce que tu devines reste ; ce que tu lis seulement s’en va.',
+      'vocab.tap': 'toucher', 'vocab.all': 'Tous découverts',
+
+      'read.eyebrow': 'Étape 3 · environ {n} min de lecture',
+      'read.title': 'Maintenant, lire – sans dictionnaire',
+      'read.lead': "Tu peux toucher les mots soulignés. Pour les autres : devine. Il n'est pas nécessaire de comprendre chaque mot pour comprendre le texte.",
+      'read.simple': 'Version plus simple', 'read.source': 'Voir la source originale ↗',
+
+      'train.lookup': '📄 Revoir le texte', 'train.lookupClose': '📄 Fermer le texte',
+      'train.next': 'Continuer', 'train.finish': 'Terminer la pratique',
+      'sum.great': "Ça, c'était bien joué.", 'sum.good': 'Une bonne série.',
+      'sum.ok': "Tout ça, c'est de la matière pour apprendre.",
+      'sum.count': '{r} sur {t} du premier coup.',
+      'sum.review': 'On regarde ça encore une fois',
+      'sum.perfect': 'Pas une seule erreur. La prochaine fois, je monte le niveau.',
+      'm.you': 'Toi', 'm.right': 'Correct',
+
+      'k.choice': 'Éclair', 'k.evidence': 'Détective', 'k.forge': 'Atelier de phrases',
+      'k.transform': 'Transformateur', 'k.pairs': 'Paires', 'k.write': 'Écriture libre', 'k.task': 'Exercice',
+
+      'v.yes': "C'est vrai", 'v.no': "C'est faux", 'v.unclear': 'Le texte ne le dit pas',
+      'v.hit': 'Exactement.', 'v.miss': 'Presque', 'v.shouldBe': 'La bonne réponse :',
+      'v.sharpEye': "Bien vu.", 'v.notQuite': 'Pas tout à fait',
+      'v.proveIt': 'Et maintenant la preuve : touche la phrase qui le montre.',
+      'v.bothRight': 'Le jugement et la preuve, les deux sont bons.', 'v.halfRight': 'Le jugement oui, la preuve non.',
+      'f.hint': "Touche les mots dans le bon ordre. Quelques-uns sont en trop.",
+      'f.check': 'Vérifier', 'f.built': 'Parfaitement construit.', 'f.order': "Presque : regarde l'ordre",
+      'f.correct': 'Correct :',
+      't.placeholder': 'Ta réponse …', 't.nudge': 'Un petit coup de pouce',
+      't.exact': 'Exactement ça.', 't.almost': 'Correct, presque parfait', 't.look': 'Regarde encore une fois',
+      't.accents': "Le contenu est bon ; il ne manque que les accents :", 't.also': 'Possible aussi :',
+      'p.hint': 'Touche deux éléments qui vont ensemble.',
+      'p.clean': 'Tout du premier coup.', 'p.done': 'Terminé.',
+      'p.tries': 'Il t’a fallu {n} essai(s) raté(s).',
+      'w.placeholder': 'Écris sans peur : ici, les erreurs sont permises.',
+      'w.use': 'Utilise :', 'w.go': 'Fini, voir un modèle',
+      'w.model': 'Ça pourrait ressembler à ça', 'w.compare': 'Compare ton texte avec celui-ci :',
+      'w.words': '{n} mots écrits', 'w.hit': '{a}/{b} mots-clés utilisés',
+
+      'a.searching': "Recherche du dernier épisode …",
+      'a.found': 'Épisode trouvé',
+      'a.file': 'Fichier audio ↗',
+      'a.other': 'Choisir un autre épisode ({n} autres)',
+      'a.failTitle': "La liste des épisodes ne se charge pas",
+      'a.failText': "Tu es sans doute hors ligne. Tu peux aussi l'écouter directement sur le site de la radio.",
+      'a.website': "Aller à l'émission",
+      'a.hearNow': "On écoute ici même : sans abonnement, sans compte, sans rien chercher.",
+      'l.eyebrow': 'Étape 5 · document authentique',
+      'l.head': 'Maintenant, sans roulettes',
+      'l.intro': "Ce n'est pas fait pour des apprenants. C'est justement pour ça que ça vaut le coup.",
+      'l.pre': 'Ces mots vont presque sûrement apparaître',
+      'l.preLead': "Regarde-les un instant : ton oreille ne restera pas bloquée dessus.",
+      'l.proto': 'Trois écoutes, pas besoin de plus',
+      'l.passDone': 'Écoute terminée',
+      'l.self': 'Tu en as retenu combien ?',
+      'l.selfLead': "Sois honnête : c'est comme ça que j'ajuste le document de la prochaine fois.",
+      'l.low': 'presque rien', 'l.high': 'presque tout',
+      'l.alts': "Si ça ne te va pas aujourd'hui", 'l.open': "Ouvrir l'émission", 'l.transcript': 'Transcription',
+      'l.p1t': "Une fois en entier, sans t'arrêter", 'l.p1h': 'Ne cherche rien, ne reviens pas en arrière',
+      'l.p1x': "De quoi ça parle ? Une ou deux phrases suffisent. Si tu n'attrapes que le sujet, c'est parfait.",
+      'l.p1p': "Ça parle de …",
+      'l.p2t': 'Encore une fois, avec un crayon', 'l.p2h': 'Là, tu peux mettre en pause',
+      'l.p2x': 'Note les chiffres, les noms, les lieux et cinq mots que tu as reconnus.',
+      'l.p2p': 'Chiffres / noms / mots …',
+      'l.p3t': 'Une minute à répéter à voix haute', 'l.p3h': 'Le passage que tu préfères',
+      'l.p3x': "Choisis un passage et parle en même temps. Le rythme d'abord, la perfection ensuite.",
+      'l.p3p': 'Quel passage ? Qu’est-ce qui était difficile à prononcer ?',
+
+      'd.title': 'Où tu en es vraiment',
+      'd.lead': "Pas la note : ce que tu sais faire et ce que tu ne sais pas encore. Ça vient de tes réponses d'aujourd'hui.",
+      'd.verstehen': 'Comprendre le texte', 'd.erkennen': 'Reconnaître les formes',
+      'd.produzieren': 'Produire toi-même', 'd.wortschatz': 'Vocabulaire',
+      'd.solid': "C'est acquis.", 'd.mixed': 'Ça bouge encore.', 'd.weak': 'Pas encore.', 'd.none': "pas mesuré aujourd'hui",
+      'd.next': 'Ce qui en découle',
+      'g.save': '📤 Enregistrer sur GitHub',
+      'g.saved': "GitHub s'ouvre : il ne reste qu'à cliquer sur « Create ».",
+      'g.no': "Pas de GitHub configuré. Utilise « Copier le rapport ».",
+      'e.done': 'Terminé',
+      'e.p90': "C'était fort.", 'e.p70': 'Bien joué.', 'e.p45': "Tu es allé au bout, ça compte.",
+      'e.p0': 'Commencer, c’est déjà la moitié du chemin.',
+      'e.outro': 'Encore quelques questions, pour que la prochaine unité te convienne mieux.',
+      'e.sRight': 'corrects', 'e.sXp': 'XP au total', 'e.sPass': 'écoutes', 'e.sMin': 'minutes',
+      'e.mistakes': "Tes erreurs d'aujourd'hui : voilà ce que tu emportes",
+      'e.reportT': 'Et maintenant le plus important',
+      'e.reportX': "Copie le rapport et colle-le à Claude dans le chat. Il saura la prochaine fois ce qui est acquis et ce qui ne l'est pas.",
+      'e.copy': '📋 Copier le rapport', 'e.dl': '⬇ Enregistrer', 'e.home': 'Retour au début',
+      'e.copied': 'Copié. Colle-le dans le chat.',
+      'e.copyFail': "Copier ne marche pas ici : utilise « Enregistrer ».",
+
+      'q.diff': "Le niveau d'aujourd'hui te semblait adapté ?",
+      'q.diffLow': 'beaucoup trop facile', 'q.diffHigh': 'beaucoup trop difficile',
+      'q.fun': 'Et dis-moi, tu as aimé ?', 'q.funLow': 'pénible', 'q.funHigh': 'encore',
+      'q.more': 'Tu veux rester sur le même sujet la prochaine fois ?',
+      'q.more.deepen': 'Oui, approfondir la même grammaire',
+      'q.more.same': 'Même sujet, autre contenu', 'q.more.new': 'Non, quelque chose de nouveau',
+      'q.weak': "Qu'est-ce qui t'a semblé le moins solide ?",
+      'q.weak.grammar': 'La grammaire', 'q.weak.vocab': 'Le vocabulaire',
+      'q.weak.reading': 'Le texte', 'q.weak.listening': "L'écoute", 'q.weak.none': 'Rien de particulier',
+      'q.len': 'Sur la durée :',
+      'q.len.short': "Court, j'aurais continué", 'q.len.ok': 'Juste bien', 'q.len.long': 'Trop long',
+      'q.wish': 'Tu veux quoi pour la prochaine fois ?',
+      'q.wishP': "p. ex. plus de passé composé, un sujet sur le sport, une écoute plus longue …",
+
+      'menu.title': 'Menu', 'menu.leave': "Quitter l'unité (ta place est gardée)",
+      'menu.restart': 'Recommencer cette unité',
+      'menu.soundOff': 'Couper les sons', 'menu.soundOn': 'Activer les sons',
+      'menu.docs': 'Sources et méthode', 'menu.reset': 'Effacer toute la progression',
+      'menu.close': 'Fermer',
+      'menu.confirm': 'Tout effacer, vraiment ? Les XP, la série et tout ce qui est enregistré seront perdus.',
+      'toast.soundOn': 'Sons activés', 'toast.soundOff': 'Sons coupés', 'toast.reset': 'Tout a été effacé.',
+      'err.title': 'Je ne trouve pas cette unité', 'err.home': 'Retour au début'
+    }
+  };
+
+  L.uiLang = 'de';
+  L.strings = S;
+  L.t = function (key, vars) {
+    var table = S[L.uiLang] || S.de;
+    var s = table[key];
+    if (s === undefined) s = S.de[key];
+    if (s === undefined) return key;
+    if (vars) for (var k in vars) s = s.split('{' + k + '}').join(vars[k]);
+    return s;
+  };
+
+})(window.LEKTION);
+</script>
+<script>/* assets/js/audio.js */
+/* Sprachen - Folgen finden und abspielen.
+   Statt auf eine Website zu verlinken, holt die App über die öffentliche
+   iTunes-Lookup-Schnittstelle die Folgenliste eines Podcasts und spielt die
+   Audiodatei direkt ab. Kein Abo, kein Login, keine Suche nach der Folge.
+
+   Zwei Wege, weil einer immer klemmt:
+     1. fetch()  - itunes.apple.com liefert CORS-Freigabe
+     2. JSONP    - <script>-Tag, funktioniert auch über file:// ohne CORS
+   Klappt beides nicht, gibt es einen ehrlichen Hinweis plus Direktlink. */
+(function (L) {
+  'use strict';
+  var h = L.h;
+
+  var cache = {};
+
+  function endpoint(id, country) {
+    return 'https://itunes.apple.com/lookup?id=' + encodeURIComponent(id) +
+      '&country=' + encodeURIComponent(country || 'us') +
+      '&media=podcast&entity=podcastEpisode&limit=40';
+  }
+
+  function viaFetch(url) {
+    if (typeof fetch !== 'function') return Promise.reject(new Error('kein fetch'));
+    return fetch(url, { mode: 'cors', credentials: 'omit' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  }
+
+  function viaJsonp(url) {
+    return new Promise(function (resolve, reject) {
+      var name = '__lek_cb_' + Math.random().toString(36).slice(2);
+      var s = document.createElement('script');
+      var timer = setTimeout(function () { cleanup(); reject(new Error('Zeitüberschreitung')); }, 12000);
+      function cleanup() {
+        clearTimeout(timer);
+        try { delete window[name]; } catch (e) { window[name] = undefined; }
+        if (s.parentNode) s.parentNode.removeChild(s);
+      }
+      window[name] = function (data) { cleanup(); resolve(data); };
+      s.onerror = function () { cleanup(); reject(new Error('Skript blockiert')); };
+      s.src = url + '&callback=' + name;
+      document.head.appendChild(s);
+    });
+  }
+
+  /* Liefert { show, episodes:[{title, date, ms, url, page, desc}] } */
+  L.podcast = function (id, country) {
+    var key = id + '|' + (country || 'us');
+    if (cache[key]) return cache[key];
+    var url = endpoint(id, country);
+    var pr = viaFetch(url)
+      .catch(function () { return viaJsonp(url); })
+      .then(function (data) {
+        var res = (data && data.results) || [];
+        var show = res.filter(function (r) { return r.wrapperType !== 'podcastEpisode'; })[0] || {};
+        var eps = res.filter(function (r) { return r.wrapperType === 'podcastEpisode' && r.episodeUrl; })
+          .map(function (r) {
+            return {
+              title: r.trackName || '',
+              date: (r.releaseDate || '').slice(0, 10),
+              ms: r.trackTimeMillis || 0,
+              url: r.episodeUrl,
+              page: r.trackViewUrl || '',
+              desc: (r.shortDescription || r.description || '').replace(/<[^>]*>/g, '').trim()
+            };
+          })
+          .sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+        if (!eps.length) throw new Error('keine Folgen gefunden');
+        return { show: { name: show.collectionName || '', art: show.artworkUrl100 || '', page: show.collectionViewUrl || '' }, episodes: eps };
+      });
+    cache[key] = pr;
+    pr.catch(function () { delete cache[key]; });
+    return pr;
+  };
+
+  L.fmtLen = function (ms) {
+    if (!ms) return '';
+    var m = Math.round(ms / 60000);
+    return m + ' min';
+  };
+  L.fmtDay = function (iso, lang) {
+    if (!iso) return '';
+    var loc = { es: 'es-ES', fr: 'fr-FR' }[lang] || 'de-CH';
+    try {
+      return new Date(iso + 'T12:00:00').toLocaleDateString(loc, { day: 'numeric', month: 'long' });
+    } catch (e) { return iso; }
+  };
+
+  /* ---------------------------------------------------------------
+     Spieler: sucht die passende Folge, zeigt Titel und Datum an,
+     spielt direkt ab. Mit Umschalter auf ältere Folgen.
+     --------------------------------------------------------------- */
+  L.player = function (src, lang, onEpisode) {
+    var box = h('div', { class: 'player' });
+    var status = h('div', { class: 'player-status' }, [
+      h('span', { class: 'spinner', 'aria-hidden': 'true' }),
+      h('span', { text: L.t('a.searching') })
+    ]);
+    box.appendChild(status);
+
+    var minM = src.minMinutes || 0;
+    var maxM = src.maxMinutes || 9999;
+
+    L.podcast(src.itunesId, src.country).then(function (data) {
+      var fit = data.episodes.filter(function (e) {
+        var m = e.ms / 60000;
+        return !e.ms || (m >= minM && m <= maxM);
+      });
+      var list = (fit.length ? fit : data.episodes).slice(0, 12);
+      render(list, data);
+    }).catch(function (err) {
+      status.remove();
+      box.appendChild(fallback(src, err));
+    });
+
+    function render(list, data) {
+      status.remove();
+      var idx = 0;
+      var audio = h('audio', { controls: 'controls', preload: 'none', class: 'player-audio' });
+      var title = h('div', { class: 'ep-title' });
+      var meta = h('div', { class: 'ep-meta' });
+
+      function pick(i) {
+        idx = i;
+        var e = list[i];
+        audio.src = e.url;
+        title.textContent = e.title;
+        meta.innerHTML = '';
+        meta.appendChild(h('span', { class: 'tag', text: L.fmtDay(e.date, lang) }));
+        if (e.ms) meta.appendChild(h('span', { class: 'tag', text: L.fmtLen(e.ms) }));
+        meta.appendChild(h('a', { class: 'tag link', href: e.url, target: '_blank', rel: 'noopener',
+          text: L.t('a.file') }));
+        if (onEpisode) onEpisode(e);
+      }
+
+      box.appendChild(h('div', { class: 'ep-head' }, [
+        h('div', { class: 'ep-live', text: L.t('a.found') }),
+        title, meta
+      ]));
+      box.appendChild(audio);
+
+      if (list.length > 1) {
+        var more = h('details', { class: 'ep-more' });
+        more.appendChild(h('summary', { text: L.t('a.other', { n: list.length - 1 }) }));
+        var ul = h('div', { class: 'ep-list' });
+        list.forEach(function (e, i) {
+          var b = h('button', { class: 'ep-item', type: 'button' }, [
+            h('span', { class: 'ep-item-t', text: e.title }),
+            h('span', { class: 'ep-item-m', text: L.fmtDay(e.date, lang) + (e.ms ? ' · ' + L.fmtLen(e.ms) : '') })
+          ]);
+          b.addEventListener('click', function () {
+            ul.querySelectorAll('.ep-item').forEach(function (o) { o.classList.remove('on'); });
+            b.classList.add('on');
+            pick(i);
+            audio.play().catch(function () {});
+            L.fx.tap();
+          });
+          ul.appendChild(b);
+        });
+        more.appendChild(ul);
+        box.appendChild(more);
+        ul.querySelectorAll('.ep-item')[0].classList.add('on');
+      }
+      pick(0);
+    }
+
+    function fallback(src, err) {
+      var wrap = h('div', { class: 'player-fail' });
+      wrap.appendChild(h('div', { class: 'pf-head' }, [
+        h('span', { text: '⚠' }),
+        h('span', { text: L.t('a.failTitle') })
+      ]));
+      wrap.appendChild(h('p', { class: 'muted', text: L.t('a.failText') }));
+      var row = h('div', { class: 'row', style: 'margin-top:10px' });
+      if (src.homepage) {
+        row.appendChild(h('a', { class: 'btn btn-sm', href: src.homepage, target: '_blank', rel: 'noopener',
+          text: L.t('a.website') + ' ↗' }));
+      }
+      row.appendChild(h('a', {
+        class: 'btn btn-sm', target: '_blank', rel: 'noopener',
+        href: 'https://podcasts.apple.com/podcast/id' + src.itunesId,
+        text: 'Apple Podcasts ↗'
+      }));
+      wrap.appendChild(row);
+      wrap.appendChild(h('p', { class: 'muted', style: 'margin-top:8px;font-size:11.5px',
+        text: '(' + (err && err.message ? err.message : 'unbekannter Fehler') + ')' }));
+      return wrap;
+    }
+
+    return box;
+  };
+
+})(window.LEKTION);
 </script>
 <script>/* assets/js/tasks.js */
 /* Sprachen - Aufgabentypen.
@@ -893,7 +1601,9 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
    ctx.answered({correct, yours, right, explain, skipped}) meldet das Ergebnis zurück. */
 (function (L) {
   'use strict';
-  var h = L.h, esc = L.esc, markup = function (s) { return L.markup(s); };
+  var h = L.h, esc = L.esc;
+  var markup = function (s) { return L.markup(s); };
+  var T = function (k, v) { return L.t(k, v); };
   L.engines = {};
 
   function verdict(good, title, bodyHtml) {
@@ -960,10 +1670,10 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
         });
         var chosen = task.options[idx];
         var why = (typeof chosen === 'object' && chosen.why) ? chosen.why : '';
-        var body = (right ? '' : '<b>Richtig wäre:</b> ' + esc(labelOf(task.options[task.answer])) + '<br>')
+        var body = (right ? '' : '<b>' + T('v.shouldBe') + '</b> ' + esc(labelOf(task.options[task.answer])) + '<br>')
           + markup(why || task.explain || '');
         if (why && task.explain) body += '<br><span class="muted">' + markup(task.explain) + '</span>';
-        root.appendChild(verdict(right, right ? (task.praise || 'Sitzt.') : 'Knapp daneben', body));
+        root.appendChild(verdict(right, right ? (task.praise || T('v.hit')) : T('v.miss'), body));
         ctx.answered({
           correct: right,
           yours: labelOf(chosen),
@@ -982,9 +1692,9 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
   L.engines.evidence = function (task, ctx) {
     var root = h('div', { class: 'stack' });
     var choices = [
-      { id: 'richtig', label: 'Stimmt' },
-      { id: 'falsch', label: 'Stimmt nicht' },
-      { id: 'unklar', label: 'Steht nicht im Text' }
+      { id: 'richtig', label: T('v.yes') },
+      { id: 'falsch', label: T('v.no') },
+      { id: 'unklar', label: T('v.unclear') }
     ];
     var opts = h('div', { class: 'opts' });
     choices.forEach(function (c, i) {
@@ -1008,7 +1718,7 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
       if (task.verdict !== 'unklar' && task.evidence && ctx.sentences) {
         root.appendChild(evidenceStep(right));
       } else {
-        root.appendChild(verdict(right, right ? 'Gutes Auge.' : 'Nicht ganz', markup(task.explain || '')));
+        root.appendChild(verdict(right, right ? T('v.sharpEye') : T('v.notQuite'), markup(task.explain || '')));
         ctx.answered({ correct: right, yours: labelFor(id), right: labelFor(task.verdict), explain: task.explain || '' });
       }
     }
@@ -1019,7 +1729,7 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
 
     function evidenceStep(verdictWasRight) {
       var box = h('div', { class: 'stack' });
-      box.appendChild(h('p', { class: 'muted', text: 'Und jetzt der Beweis: Klick den Satz an, der das belegt.' }));
+      box.appendChild(h('p', { class: 'muted', text: T('v.proveIt') }));
       var ev = h('div', { class: 'evidence' });
       var found = false;
       ctx.sentences.forEach(function (s) {
@@ -1038,7 +1748,7 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
           isIt ? L.fx.right(0) : L.fx.wrong();
           var all = verdictWasRight && isIt;
           box.appendChild(verdict(all,
-            all ? 'Urteil und Beleg - beides sauber.' : (verdictWasRight ? 'Urteil ja, Beleg nein.' : 'Nicht ganz'),
+            all ? T('v.bothRight') : (verdictWasRight ? T('v.halfRight') : T('v.notQuite')),
             markup(task.explain || '')));
           ctx.answered({
             correct: all,
@@ -1091,7 +1801,7 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
       bank.appendChild(el);
     });
 
-    var check = h('button', { class: 'btn btn-primary', type: 'button', text: 'Prüfen', disabled: true });
+    var check = h('button', { class: 'btn btn-primary', type: 'button', text: T('f.check'), disabled: true });
     check.addEventListener('click', function () {
       var mine = picked.map(function (p) { return p.word; }).join(' ');
       var res = L.matches(mine, [task.solution].concat(task.alsoAccept || []));
@@ -1101,12 +1811,12 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
       check.remove();
       var body = res.ok
         ? markup(task.explain || '')
-        : '<b>Richtig:</b> ' + esc(task.solution) + '<br>' + markup(task.explain || '');
-      root.appendChild(verdict(res.ok, res.ok ? 'Perfekt gebaut.' : 'Fast - schau die Reihenfolge an', body));
+        : '<b>' + T('f.correct') + '</b> ' + esc(task.solution) + '<br>' + markup(task.explain || '');
+      root.appendChild(verdict(res.ok, res.ok ? T('f.built') : T('f.order'), body));
       ctx.answered({ correct: res.ok, yours: mine, right: task.solution, explain: task.explain || '' });
     });
 
-    root.appendChild(h('p', { class: 'muted', text: 'Tippe die Wörter in der richtigen Reihenfolge an. Ein paar passen nicht.' }));
+    root.appendChild(h('p', { class: 'muted', text: T('f.hint') }));
     root.appendChild(slot);
     root.appendChild(bank);
     root.appendChild(h('div', { class: 'row' }, [check]));
@@ -1120,15 +1830,15 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
     if (task.source) {
       root.appendChild(h('div', { class: 'ex-line' }, [h('div', { class: 'src', html: esc(task.source) })]));
     }
-    var field = h('input', { class: 'field', type: 'text', placeholder: task.placeholder || 'Deine Lösung …', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false' });
-    var check = h('button', { class: 'btn btn-primary', type: 'button', text: 'Prüfen' });
+    var field = h('input', { class: 'field', type: 'text', placeholder: task.placeholder || T('t.placeholder'), autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false' });
+    var check = h('button', { class: 'btn btn-primary', type: 'button', text: T('f.check') });
     var row = h('div', { class: 'type-row' }, [field, check]);
     root.appendChild(row);
     root.appendChild(accentBar(ctx.lang, field));
 
     var hintBtn = null;
     if (task.hint) {
-      hintBtn = h('button', { class: 'btn btn-ghost btn-sm', type: 'button', text: 'Kleiner Schubs' });
+      hintBtn = h('button', { class: 'btn btn-ghost btn-sm', type: 'button', text: T('t.nudge') });
       hintBtn.addEventListener('click', function () {
         hintBtn.replaceWith(h('p', { class: 'muted', html: '💡 ' + esc(task.hint) }));
       });
@@ -1145,7 +1855,7 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
 
       var body = '';
       if (res.ok && !res.exact) {
-        body = 'Inhaltlich richtig - nur die Akzente fehlen: <b>' + esc(res.target) + '</b><br>';
+        body = T('t.accents') + ' <b>' + esc(res.target) + '</b><br>';
       } else if (!res.ok) {
         var d = L.diff(mine, accepted[0]);
         var html = d.map(function (p) {
@@ -1155,9 +1865,9 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
       }
       body += markup(task.explain || '');
       if (accepted.length > 1 && res.ok) {
-        body += '<br><span class="muted">Auch möglich: ' + esc(accepted.slice(1).join(' · ')) + '</span>';
+        body += '<br><span class="muted">' + T('t.also') + ' ' + esc(accepted.slice(1).join(' · ')) + '</span>';
       }
-      root.appendChild(verdict(res.ok, res.ok ? (res.exact ? 'Genau so.' : 'Richtig - fast perfekt') : 'Schau mal genau hin', body));
+      root.appendChild(verdict(res.ok, res.ok ? (res.exact ? T('t.exact') : T('t.almost')) : T('t.look'), body));
       ctx.answered({
         correct: res.ok,
         exact: res.exact,
@@ -1213,8 +1923,8 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
     function finish() {
       var clean = misses === 0;
       var body = clean ? markup(task.explain || '')
-        : 'Du hast <b>' + misses + '</b> Fehlversuch' + (misses === 1 ? '' : 'e') + ' gebraucht. ' + markup(task.explain || '');
-      root.appendChild(verdict(clean, clean ? 'Alles auf Anhieb.' : 'Geschafft.', body));
+        : T('p.tries', { n: misses }) + ' ' + markup(task.explain || '');
+      root.appendChild(verdict(clean, clean ? T('p.clean') : T('p.done'), body));
       ctx.answered({
         correct: clean,
         partial: Math.max(0, 1 - misses / (task.pairs.length * 1.5)),
@@ -1224,7 +1934,7 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
       });
     }
 
-    root.appendChild(h('p', { class: 'muted', text: 'Immer zwei antippen, die zusammengehören.' }));
+    root.appendChild(h('p', { class: 'muted', text: T('p.hint') }));
     root.appendChild(h('div', { class: 'pairs' }, [colA, colB]));
     return root;
   };
@@ -1232,13 +1942,13 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
   /* =============== 6. Freischreiben: produzieren, dann vergleichen =============== */
   L.engines.write = function (task, ctx) {
     var root = h('div', { class: 'stack' });
-    var field = h('textarea', { class: 'field', placeholder: task.placeholder || 'Schreib los - Fehler sind hier ausdrücklich erlaubt.' });
+    var field = h('textarea', { class: 'field', placeholder: task.placeholder || T('w.placeholder') });
     root.appendChild(field);
     root.appendChild(accentBar(ctx.lang, field));
 
     if (task.mustUse && task.mustUse.length) {
       var chips = h('div', { class: 'row', style: 'margin-top:4px' });
-      chips.appendChild(h('span', { class: 'muted', text: 'Bau ein:' }));
+      chips.appendChild(h('span', { class: 'muted', text: T('w.use') }));
       task.mustUse.forEach(function (w) { chips.appendChild(h('span', { class: 'tag ghost', text: w, 'data-w': w })); });
       root.appendChild(chips);
       field.addEventListener('input', function () {
@@ -1251,7 +1961,7 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
       });
     }
 
-    var go = h('button', { class: 'btn btn-primary', type: 'button', text: 'Fertig - Musterlösung zeigen' });
+    var go = h('button', { class: 'btn btn-primary', type: 'button', text: T('w.go') });
     root.appendChild(h('div', { class: 'row' }, [go]));
 
     go.addEventListener('click', function () {
@@ -1263,13 +1973,13 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
 
       var panel = h('div', { class: 'stack' });
       panel.appendChild(h('div', { class: 'card' }, [
-        h('div', { class: 'task-kind', text: 'So könnte es klingen' }),
+        h('div', { class: 'task-kind', text: T('w.model') }),
         h('p', { style: 'margin-top:8px;color:var(--ink);font-size:15.5px;line-height:1.7', html: markup(task.model).replace(/\n/g, '<br>') })
       ]));
 
       if (task.checklist && task.checklist.length) {
         var list = h('div', { class: 'stack', style: 'gap:8px' });
-        list.appendChild(h('h3', { text: 'Vergleich deinen Text damit:' }));
+        list.appendChild(h('h3', { text: T('w.compare') }));
         var ticked = 0;
         task.checklist.forEach(function (c) {
           var b = h('button', { class: 'opt', type: 'button' }, [
@@ -1289,8 +1999,8 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
       root.appendChild(panel);
 
       var note = [];
-      note.push(words + ' Wörter geschrieben');
-      if ((task.mustUse || []).length) note.push(used.length + '/' + task.mustUse.length + ' Zielwörter benutzt');
+      note.push(T('w.words', { n: words }));
+      if ((task.mustUse || []).length) note.push(T('w.hit', { a: used.length, b: task.mustUse.length }));
       L.fx.done();
       ctx.answered({
         correct: enough && used.length >= Math.ceil(((task.mustUse || []).length) * 0.6),
@@ -1306,23 +2016,24 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
 })(window.LEKTION);
 </script>
 <script>/* assets/js/stations.js */
-/* Sprachen - die sechs Stationen einer Lerneinheit. */
+/* Sprachen - die sechs Stationen einer Lerneinheit.
+   Sobald eine Lektion offen ist, steht hier alles in der Zielsprache. */
 (function (L) {
   'use strict';
   var h = L.h, esc = L.esc;
+  var markup = function (s) { return L.markup(s); };
+  var rich = function (s, n) { return L.rich(s, n); };
+  var T = function (k, v) { return L.t(k, v); };
 
   L.STATIONS = [
-    { id: 'intro',  label: 'Einstieg' },
-    { id: 'vocab',  label: 'Wörter' },
-    { id: 'read',   label: 'Lesen' },
-    { id: 'train',  label: 'Training' },
-    { id: 'listen', label: 'Hören' },
-    { id: 'wrap',   label: 'Feedback' }
+    { id: 'intro' }, { id: 'vocab' }, { id: 'read' },
+    { id: 'train' }, { id: 'listen' }, { id: 'wrap' }
   ];
+  L.stationLabel = function (id) { return T('st.' + id); };
 
   L.views = {};
 
-  /* ---------------- Startseite: zwei Flaggen ---------------- */
+  /* ---------------- Startseite (bleibt deutsch: hier wird erst gewählt) ---------------- */
   function flagSvg(code) {
     if (code === 'fr') {
       return '<svg class="flag" viewBox="0 0 90 60" aria-hidden="true">' +
@@ -1338,29 +2049,30 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
     var prof = L.profile || { languages: {} };
     var wrap = h('div', { class: 'view wrap' });
 
-    var head = h('div', { class: 'home-head' }, [
+    wrap.appendChild(h('div', { class: 'home-head' }, [
       h('div', { class: 'eyebrow', text: 'Heute ' + new Date().toLocaleDateString('de-CH', { day: 'numeric', month: 'long' }) }),
       h('h1', { html: 'Womit willst du <span class="grad">Zeit verlieren</span>?' }),
-      h('p', { class: 'lead', style: 'margin-top:14px;max-width:52ch;margin-left:auto;margin-right:auto',
-        text: 'Eine Einheit dauert eine gute halbe Stunde: erst verstehen, dann lesen, dann spielen, zum Schluss echtes Hören.' })
-    ]);
-    wrap.appendChild(head);
+      h('p', {
+        class: 'lead', style: 'margin-top:14px;max-width:52ch;margin-left:auto;margin-right:auto',
+        text: 'Ab hier gilt nur noch die andere Sprache. Erklärungen, Aufgaben, Knöpfe – alles. Kein deutsches Wort mehr.'
+      })
+    ]));
 
     var picker = h('div', { class: 'picker' });
     ['es', 'fr'].forEach(function (lang) {
       var meta = prof.languages[lang] || {};
-      var todays = L.catalog.filter(function (e) { return e.lang === lang; })
+      var mine = L.catalog.filter(function (e) { return e.lang === lang; })
         .sort(function (a, b) { return a.date < b.date ? 1 : -1; });
-      var latest = todays[0];
-      var doneCount = todays.filter(function (e) { return L.state.done[e.id]; }).length;
+      var latest = mine[0];
+      var doneCount = mine.filter(function (e) { return L.state.done[e.id]; }).length;
       var isFresh = latest && !L.state.done[latest.id];
 
       var card = h('button', { class: 'lang-card', 'data-l': lang, type: 'button' }, [
         h('span', { html: flagSvg(lang) }),
-        h('h2', { text: meta.name || (lang === 'es' ? 'Spanisch' : 'Französisch') }),
-        h('div', { class: 'native', text: meta.nativeName || '' }),
+        h('h2', { text: meta.nativeName || (lang === 'es' ? 'Español' : 'Français') }),
+        h('div', { class: 'native', text: meta.name || '' }),
         h('div', { class: 'meta' }, [
-          h('span', { class: 'tag', text: 'Niveau ' + (meta.level || '?') }),
+          h('span', { class: 'tag', text: (meta.level || '?') }),
           isFresh ? h('span', { class: 'tag hot', text: 'Neue Einheit' })
                   : h('span', { class: 'tag ghost', text: latest ? 'Nochmal machen' : 'Noch nichts da' }),
           doneCount ? h('span', { class: 'tag', text: doneCount + '× erledigt' }) : null
@@ -1372,7 +2084,7 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
       ]);
       card.addEventListener('mouseenter', function () { document.body.dataset.lang = lang; });
       card.addEventListener('click', function () {
-        if (!latest) { L.toast('Für diese Sprache liegt noch keine Einheit bereit. Sag Claude Bescheid.'); return; }
+        if (!latest) { L.toast('Für diese Sprache liegt noch keine Einheit bereit.'); return; }
         L.fx.tap();
         L.go('#/lektion/' + latest.id);
       });
@@ -1380,10 +2092,9 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
     });
     wrap.appendChild(picker);
 
-    // Archiv
     var older = L.catalog.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; });
     if (older.length > 2) {
-      var arch = h('div', { class: 'card', style: 'margin-top:26px' }, [
+      wrap.appendChild(h('div', { class: 'card', style: 'margin-top:26px' }, [
         h('h3', { text: 'Frühere Einheiten' }),
         h('div', { class: 'stack', style: 'gap:2px;margin-top:10px' },
           older.slice(2).map(function (e) {
@@ -1391,32 +2102,34 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
               h('span', { class: 'ic', text: e.lang === 'es' ? '🇪🇸' : '🇫🇷' }),
               h('span', {}, [
                 h('div', { text: e.title }),
-                h('div', { class: 'muted', style: 'font-size:12px', text: L.fmtDate(e.date) + (L.state.done[e.id] ? ' · erledigt' : '') })
+                h('div', { class: 'muted', style: 'font-size:12px', text: L.fmtDate(e.date, 'de') + (L.state.done[e.id] ? ' · erledigt' : '') })
               ])
             ]);
           }))
-      ]);
-      wrap.appendChild(arch);
+      ]));
     }
 
     var xp = L.state.xp;
-    wrap.appendChild(h('p', { class: 'muted', style: 'text-align:center;margin-top:30px',
-      text: xp ? ('Bisher ' + xp + ' XP gesammelt' + (L.state.streakDays > 1 ? ' · ' + L.state.streakDays + ' Tage in Folge' : '')) : 'Noch keine XP. Das ändern wir gleich.' }));
+    wrap.appendChild(h('p', {
+      class: 'muted', style: 'text-align:center;margin-top:30px',
+      text: xp ? ('Bisher ' + xp + ' XP' + (L.state.streakDays > 1 ? ' · ' + L.state.streakDays + ' Tage in Folge' : ''))
+               : 'Noch keine XP. Das ändern wir gleich.'
+    }));
     return wrap;
   };
 
-  /* ---------------- Station 1: Einstieg + Grammatik ---------------- */
+  /* ---------------- Station 1: Einstieg ---------------- */
   L.views.intro = function (lesson) {
     var v = h('div', { class: 'view wrap stack-lg' });
     v.appendChild(h('div', {}, [
-      h('div', { class: 'eyebrow', text: lesson.level + ' · ' + L.fmtDate(lesson.date) }),
+      h('div', { class: 'eyebrow', text: lesson.level + ' · ' + L.fmtDate(lesson.date, lesson.lang) }),
       h('h1', { text: lesson.title }),
       h('p', { class: 'lead', style: 'margin-top:14px', text: lesson.subtitle || '' })
     ]));
 
     if (lesson.intro && lesson.intro.hook) {
       v.appendChild(h('div', { class: 'card' }, [
-        h('div', { class: 'task-kind', text: 'Worum es heute geht' }),
+        h('div', { class: 'task-kind', text: T('intro.hook') }),
         h('div', { class: 'prose', style: 'margin-top:9px', html: rich(lesson.intro.hook, 15.5) })
       ]));
     }
@@ -1445,7 +2158,6 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
       (g.examples || []).forEach(function (ex) {
         body.appendChild(h('div', { class: 'ex-line' }, [
           h('div', { class: 'src', html: markup(ex.src) }),
-          ex.de ? h('div', { class: 'trg', text: ex.de }) : null,
           ex.note ? h('div', { class: 'note', html: '→ ' + markup(ex.note) }) : null
         ]));
       });
@@ -1468,8 +2180,6 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
     return v;
   };
 
-  var markup = L.markup, rich = L.rich;
-
   /* ---------------- Station 2: Wörter ---------------- */
   L.views.vocab = function (lesson) {
     var v = h('div', { class: 'view wrap stack-lg' });
@@ -1477,24 +2187,26 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
     var opened = 0;
 
     v.appendChild(h('div', {}, [
-      h('div', { class: 'eyebrow', text: 'Station 2 · ' + words.length + ' Wörter' }),
-      h('h2', { text: 'Die Wörter, die gleich im Text auf dich warten' }),
-      h('p', { class: 'lead', style: 'margin-top:12px',
-        text: 'Erst raten, dann aufdecken. Was du selbst errätst, bleibt hängen - was du nur liest, nicht.' })
+      h('div', { class: 'eyebrow', text: T('vocab.eyebrow', { n: words.length }) }),
+      h('h2', { text: T('vocab.title') }),
+      h('p', { class: 'lead', style: 'margin-top:12px', text: T('vocab.lead') })
     ]));
 
     var grid = h('div', { class: 'vocab-grid' });
     words.forEach(function (w) {
       var card = h('button', { class: 'vcard', type: 'button' }, [
-        h('span', { class: 'hint', text: 'tippen' }),
+        h('span', { class: 'hint', text: T('vocab.tap') }),
         h('div', { class: 'term', text: w.term }),
         w.pos ? h('div', { class: 'pos', text: w.pos }) : null,
-        h('div', { class: 'de', text: w.de }),
+        h('div', { class: 'de', html: markup(w.def) }),
         w.example ? h('div', { class: 'ex', html: markup(w.example) }) : null
       ]);
       card.addEventListener('click', function () {
         var on = card.classList.toggle('open');
-        if (on) { opened++; L.fx.flip(); if (opened === words.length) { L.combo('Alle aufgedeckt'); L.sparks(card, 16); } }
+        if (on) {
+          opened++; L.fx.flip();
+          if (opened === words.length) { L.combo(T('vocab.all')); L.sparks(card, 16); }
+        }
       });
       grid.appendChild(card);
     });
@@ -1524,7 +2236,7 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
       if (idx === -1) return;
       var found = html.substr(idx, term.length);
       html = html.slice(0, idx) +
-        '<span class="gl">' + found + '<span class="tip">' + esc(g.de) + '</span></span>' +
+        '<span class="gl">' + found + '<span class="tip">' + esc(g.def) + '</span></span>' +
         html.slice(idx + term.length);
     });
     return html;
@@ -1536,44 +2248,46 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
     var words = (r.paragraphs || []).reduce(function (n, p) { return n + p.text.split(/\s+/).length; }, 0);
 
     v.appendChild(h('div', {}, [
-      h('div', { class: 'eyebrow', text: 'Station 3 · ca. ' + Math.max(2, Math.round(words / 90)) + ' Min Lesezeit' }),
-      h('h2', { text: 'Jetzt lesen - ohne Wörterbuch' }),
-      h('p', { class: 'lead', style: 'margin-top:12px',
-        text: 'Unterstrichene Wörter kannst du antippen. Alles andere: erraten. Du musst nicht jedes Wort verstehen, um den Text zu verstehen.' })
+      h('div', { class: 'eyebrow', text: T('read.eyebrow', { n: Math.max(2, Math.round(words / 90)) }) }),
+      h('h2', { text: T('read.title') }),
+      h('p', { class: 'lead', style: 'margin-top:12px', text: T('read.lead') })
     ]));
 
     var paper = h('div', { class: 'paper' });
     paper.style.setProperty('--read-size', L.state.settings.readSize + 'px');
 
     var tools = h('div', { class: 'paper-tools' });
-    var tTrans = h('button', { class: 'chip', type: 'button', 'aria-pressed': 'false', text: 'Übersetzung' });
-    tTrans.addEventListener('click', function () {
-      var on = paper.classList.toggle('show-trans');
-      tTrans.setAttribute('aria-pressed', on ? 'true' : 'false');
-      L.fx.tap();
+    var hasSimple = (r.paragraphs || []).some(function (p) { return p.simple; });
+    if (hasSimple) {
+      var tSimple = h('button', { class: 'chip', type: 'button', 'aria-pressed': 'false', text: T('read.simple') });
+      tSimple.addEventListener('click', function () {
+        var on = paper.classList.toggle('show-trans');
+        tSimple.setAttribute('aria-pressed', on ? 'true' : 'false');
+        L.fx.tap();
+      });
+      tools.appendChild(tSimple);
+    }
+    var tSmall = h('button', { class: 'chip', type: 'button', text: 'A−' });
+    tSmall.addEventListener('click', function () {
+      L.state.settings.readSize = Math.max(15, L.state.settings.readSize - 2);
+      paper.style.setProperty('--read-size', L.state.settings.readSize + 'px'); L.save();
     });
     var tBig = h('button', { class: 'chip', type: 'button', text: 'A+' });
     tBig.addEventListener('click', function () {
       L.state.settings.readSize = Math.min(24, L.state.settings.readSize + 2);
       paper.style.setProperty('--read-size', L.state.settings.readSize + 'px'); L.save();
     });
-    var tSmall = h('button', { class: 'chip', type: 'button', text: 'A−' });
-    tSmall.addEventListener('click', function () {
-      L.state.settings.readSize = Math.max(15, L.state.settings.readSize - 2);
-      paper.style.setProperty('--read-size', L.state.settings.readSize + 'px'); L.save();
-    });
-    tools.appendChild(tTrans); tools.appendChild(tSmall); tools.appendChild(tBig);
+    tools.appendChild(tSmall); tools.appendChild(tBig);
     paper.appendChild(tools);
 
     paper.appendChild(h('h2', { text: r.title }));
-    paper.appendChild(h('div', { class: 'byline', text: (r.kicker || '') + (r.source && r.source.note ? ' · ' + r.source.note : '') }));
+    paper.appendChild(h('div', { class: 'byline', text: [r.kicker, r.source && r.source.note].filter(Boolean).join(' · ') }));
 
     (r.paragraphs || []).forEach(function (p) {
       paper.appendChild(h('p', { html: glossed(p.text, r.glossary) }));
-      if (p.de) paper.appendChild(h('div', { class: 'trans', text: p.de }));
+      if (p.simple) paper.appendChild(h('div', { class: 'trans', text: p.simple }));
     });
 
-    // Tippen auf Mobilgeräten zeigt die Glosse ebenfalls
     paper.addEventListener('click', function (e) {
       var g = e.target.closest && e.target.closest('.gl');
       if (!g) return;
@@ -1584,7 +2298,7 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
     v.appendChild(paper);
     if (r.source && r.source.url) {
       v.appendChild(h('p', { class: 'muted', style: 'text-align:center' }, [
-        h('a', { href: r.source.url, target: '_blank', rel: 'noopener', style: 'color:var(--a1)', text: 'Originalquelle ansehen ↗' })
+        h('a', { href: r.source.url, target: '_blank', rel: 'noopener', style: 'color:var(--a1)', text: T('read.source') })
       ]));
     }
     return v;
@@ -1597,16 +2311,13 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
     var S = L.session;
     var i = S.taskIndex || 0;
 
+    if (i >= tasks.length) { v.appendChild(trainSummary(lesson)); return v; }
+
     var strip = h('div', { class: 'task-progress' });
     tasks.forEach(function (_, n) {
       var res = S.results[n];
       strip.appendChild(h('i', { class: res ? (res.correct ? 'done' : 'miss') : (n === i ? 'now' : '') }));
     });
-
-    if (i >= tasks.length) {
-      v.appendChild(trainSummary(lesson));
-      return v;
-    }
 
     var task = tasks[i];
     var host = h('div', { class: 'task-shell' });
@@ -1614,7 +2325,7 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
     host.appendChild(h('div', { class: 'task-head' }, [
       h('div', { class: 'task-num', text: String(i + 1) }),
       h('div', { style: 'flex:1' }, [
-        h('div', { class: 'task-kind', text: (task.kind || kindName(task.type)) }),
+        h('div', { class: 'task-kind', text: T('k.' + task.type) }),
         h('div', { class: 'task-q', html: markup(task.prompt) })
       ])
     ]));
@@ -1633,22 +2344,21 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
         S.results[i] = res;
         if (res.correct) {
           S.streak = (S.streak || 0) + 1;
-          var bonus = Math.min(S.streak, 5) * 2;
-          L.addXp(10 + bonus);
+          L.addXp(10 + Math.min(S.streak, 5) * 2);
           L.fx.right(S.streak);
-          if (S.streak >= 3) L.combo(S.streak + '× in Folge');
+          if (S.streak >= 3) L.combo(S.streak + '×');
           L.sparks(slot, 10 + S.streak);
         } else {
           S.streak = 0;
           if (!res.freeform) L.fx.wrong();
         }
         L.persistProgress();
-        var next = h('button', { class: 'btn btn-primary btn-block', type: 'button',
-          text: i + 1 < tasks.length ? 'Weiter' : 'Training abschliessen' });
+        var next = h('button', {
+          class: 'btn btn-primary btn-block', type: 'button',
+          text: i + 1 < tasks.length ? T('train.next') : T('train.finish')
+        });
         next.addEventListener('click', function () {
-          S.taskIndex = i + 1;
-          L.persistProgress();
-          L.render();
+          S.taskIndex = i + 1; L.persistProgress(); L.render();
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
         host.appendChild(h('div', { style: 'margin-top:6px' }, [next]));
@@ -1664,11 +2374,10 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
     return v;
   };
 
-  /* Aufklappbarer Blick zurück in den Lesetext – ohne die Station zu verlassen. */
   function lookupText(lesson) {
     var open = false;
     var body = h('div', { style: 'display:none' });
-    var btn = h('button', { class: 'btn btn-ghost btn-sm', type: 'button', text: '📄 Text nachschlagen' });
+    var btn = h('button', { class: 'btn btn-ghost btn-sm', type: 'button', text: T('train.lookup') });
     btn.addEventListener('click', function () {
       open = !open;
       if (open && !body.childNodes.length) {
@@ -1685,39 +2394,30 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
         body.appendChild(paper);
       }
       body.style.display = open ? '' : 'none';
-      btn.textContent = open ? '📄 Text zuklappen' : '📄 Text nachschlagen';
+      btn.textContent = open ? T('train.lookupClose') : T('train.lookup');
       L.fx.tap();
     });
     return h('div', { style: 'margin-top:10px' }, [h('div', { class: 'row' }, [btn]), body]);
-  }
-
-  function kindName(t) {
-    return { choice: 'Blitzrunde', evidence: 'Textdetektiv', forge: 'Satzschmiede',
-             transform: 'Verwandler', pairs: 'Paarjagd', write: 'Freischreiben' }[t] || 'Aufgabe';
   }
 
   function trainSummary(lesson) {
     var S = L.session;
     var scored = S.results.filter(function (r) { return r && !r.freeform; });
     var right = scored.filter(function (r) { return r.correct; }).length;
-    var box = h('div', { class: 'stack-lg' });
     var pct = scored.length ? Math.round(right / scored.length * 100) : 100;
+    var box = h('div', { class: 'stack-lg' });
 
     box.appendChild(h('div', { style: 'text-align:center' }, [
       ring(pct),
-      h('h2', { style: 'margin-top:10px', text: pct >= 85 ? 'Das sass.' : pct >= 60 ? 'Solide Runde.' : 'Alles Material zum Lernen.' }),
-      h('p', { class: 'lead', style: 'margin-top:8px', text: right + ' von ' + scored.length + ' auf Anhieb richtig.' })
+      h('h2', { style: 'margin-top:10px', text: pct >= 85 ? T('sum.great') : pct >= 60 ? T('sum.good') : T('sum.ok') }),
+      h('p', { class: 'lead', style: 'margin-top:8px', text: T('sum.count', { r: right, t: scored.length }) })
     ]));
 
     var wrong = S.results.filter(function (r) { return r && !r.correct && !r.freeform; });
     if (wrong.length) {
-      box.appendChild(h('div', { class: 'stack' }, [
-        h('h3', { text: 'Das schauen wir uns nochmal an' })
-      ].concat(wrong.map(mistakeCard))));
+      box.appendChild(h('div', { class: 'stack' }, [h('h3', { text: T('sum.review') })].concat(wrong.map(mistakeCard))));
     } else {
-      box.appendChild(h('div', { class: 'card', style: 'text-align:center' }, [
-        h('p', { text: 'Kein einziger Fehler. Beim nächsten Mal drehe ich auf.' })
-      ]));
+      box.appendChild(h('div', { class: 'card', style: 'text-align:center' }, [h('p', { text: T('sum.perfect') })]));
     }
     return box;
   }
@@ -1726,11 +2426,11 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
     return h('div', { class: 'mistake' }, [
       h('div', { class: 'q', html: markup(r.prompt) }),
       h('div', { class: 'line' }, [
-        h('span', { class: 'lbl', text: 'Du' }),
+        h('span', { class: 'lbl', text: T('m.you') }),
         h('span', { class: 'yours', text: r.yours || '—' })
       ]),
       h('div', { class: 'line' }, [
-        h('span', { class: 'lbl', text: 'Richtig' }),
+        h('span', { class: 'lbl', text: T('m.right') }),
         h('span', { class: 'right', text: r.right || '—' })
       ]),
       r.explain ? h('div', { class: 'exp', html: markup(r.explain) }) : null
@@ -1740,108 +2440,120 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
 
   function ring(pct) {
     var R = 58, C = 2 * Math.PI * R;
-    var off = C * (1 - pct / 100);
     var svg = '<svg width="138" height="138" viewBox="0 0 138 138">' +
       '<circle cx="69" cy="69" r="' + R + '" fill="none" stroke="rgba(255,255,255,.09)" stroke-width="9"/>' +
       '<circle cx="69" cy="69" r="' + R + '" fill="none" stroke="url(#gr)" stroke-width="9" stroke-linecap="round" ' +
-      'stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '"/>' +
+      'stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + (C * (1 - pct / 100)).toFixed(1) + '"/>' +
       '<defs><linearGradient id="gr" x1="0" y1="0" x2="1" y2="1">' +
       '<stop offset="0%" stop-color="var(--a1)"/><stop offset="100%" stop-color="var(--a2)"/>' +
       '</linearGradient></defs></svg>';
-    return h('div', { class: 'score-ring' }, [
-      h('div', { html: svg }),
-      h('div', { class: 'val', html: pct + '<small>%</small>' })
-    ]);
+    return h('div', { class: 'score-ring' }, [h('div', { html: svg }), h('div', { class: 'val', html: pct + '<small>%</small>' })]);
   }
   L.ring = ring;
 
 })(window.LEKTION);
 
-/* Stationen 5 & 6: Hören und Feedback. */
+/* Stationen 5 & 6: Hören und Bilanz. */
 (function (L) {
   'use strict';
   var h = L.h, esc = L.esc;
+  var markup = function (s) { return L.markup(s); };
+  var T = function (k, v) { return L.t(k, v); };
 
-  /* ---------------- Station 5: Hören (echte Quellen) ---------------- */
+  /* ---------------- Station 5: Hören ---------------- */
   L.views.listen = function (lesson) {
     var v = h('div', { class: 'view wrap stack-lg' });
     var li = lesson.listening || {};
-    var src = li.source || {};
     var S = L.session;
-    S.listening = S.listening || { notes: {}, passes: {}, selfRating: null };
+    S.listening = S.listening || { notes: {}, passes: {}, selfRating: null, episode: null, sourceIdx: 0 };
+
+    var sources = [li.source].concat(li.alternatives || []).filter(Boolean);
 
     v.appendChild(h('div', {}, [
-      h('div', { class: 'eyebrow', text: 'Station 5 · echtes Material' }),
-      h('h2', { text: li.headline || 'Jetzt ohne Stützräder' }),
-      h('p', { class: 'lead', style: 'margin-top:12px',
-        text: li.intro || 'Das hier ist nicht für Lernende gemacht. Genau darum ist es wertvoll. Du musst nicht alles verstehen - du musst durchkommen.' })
+      h('div', { class: 'eyebrow', text: T('l.eyebrow') }),
+      h('h2', { text: li.headline || T('l.head') }),
+      h('p', { class: 'lead', style: 'margin-top:12px', text: li.intro || T('l.intro') })
     ]));
 
-    /* Quellenkarte */
+    /* Quellenkarte mit eingebautem Spieler */
     var card = h('div', { class: 'source-card' });
-    card.appendChild(h('div', { class: 'sc-head' }, [
-      h('div', { class: 'sc-icon', text: src.icon || '🎧' }),
-      h('div', { style: 'flex:1' }, [
-        h('h3', { text: src.name || 'Hörquelle' }),
-        h('p', { style: 'font-size:13.5px;margin-top:5px', text: src.what || '' }),
-        h('div', { class: 'sc-meta' }, [
-          src.duration ? h('span', { class: 'tag', text: '⏱ ' + src.duration }) : null,
-          src.kind ? h('span', { class: 'tag', text: src.kind }) : null,
-          src.level ? h('span', { class: 'tag', text: src.level }) : null,
-          src.transcript ? h('span', { class: 'tag hot', text: 'mit Transkript' }) : null
-        ])
-      ])
-    ]));
+    var head = h('div', { class: 'sc-head' });
+    var icon = h('div', { class: 'sc-icon' });
+    var info = h('div', { style: 'flex:1' });
+    head.appendChild(icon); head.appendChild(info);
+    card.appendChild(head);
+    var playerSlot = h('div');
+    card.appendChild(playerSlot);
+    var pickNote = h('div');
+    card.appendChild(pickNote);
 
-    if (src.audioUrl) {
-      var au = h('audio', { controls: 'controls', preload: 'none', src: src.audioUrl, style: 'width:100%;padding:0 22px 14px' });
-      card.appendChild(au);
+    function showSource(n) {
+      var src = sources[n];
+      S.listening.sourceIdx = n;
+      icon.textContent = src.icon || '🎧';
+      info.innerHTML = '';
+      info.appendChild(h('h3', { text: src.name }));
+      if (src.what) info.appendChild(h('p', { style: 'font-size:13.5px;margin-top:5px', text: src.what }));
+      var meta = h('div', { class: 'sc-meta' });
+      if (src.kind) meta.appendChild(h('span', { class: 'tag', text: src.kind }));
+      if (src.level) meta.appendChild(h('span', { class: 'tag', text: src.level }));
+      if (src.transcriptUrl) {
+        meta.appendChild(h('a', { class: 'tag link', href: src.transcriptUrl, target: '_blank', rel: 'noopener', text: T('l.transcript') + ' ↗' }));
+      }
+      info.appendChild(meta);
+
+      playerSlot.innerHTML = '';
+      playerSlot.appendChild(L.player(src, lesson.lang, function (ep) {
+        S.listening.episode = { titel: ep.title, datum: ep.date, quelle: src.name, url: ep.url };
+        L.persistProgress();
+      }));
+
+      pickNote.innerHTML = '';
+      pickNote.appendChild(h('div', { class: 'alts' }, [
+        h('div', { class: 'muted', style: 'line-height:1.6', html: '📌 ' + esc(src.pick || T('a.hearNow')) })
+      ]));
+      L.persistProgress();
     }
 
-    var actions = h('div', { class: 'sc-actions' });
-    if (src.url) {
-      actions.appendChild(h('a', { class: 'btn btn-primary', href: src.url, target: '_blank', rel: 'noopener',
-        text: (src.cta || 'Folge öffnen') + ' ↗' }));
-    }
-    if (src.transcriptUrl) {
-      actions.appendChild(h('a', { class: 'btn', href: src.transcriptUrl, target: '_blank', rel: 'noopener', text: 'Transkript ↗' }));
-    }
-    card.appendChild(actions);
-
-    if (src.pick) {
+    /* Umschalter auf die Ausweichquellen */
+    if (sources.length > 1) {
+      var bar = h('div', { class: 'src-switch' });
+      sources.forEach(function (src, n) {
+        var b = h('button', { class: 'src-chip', type: 'button', 'aria-pressed': n === 0 ? 'true' : 'false' }, [
+          h('span', { text: src.icon || '🎧' }),
+          h('span', {}, [
+            h('div', { class: 'sc-n', text: src.name }),
+            src.level ? h('div', { class: 'sc-l', text: src.level }) : null
+          ])
+        ]);
+        b.addEventListener('click', function () {
+          bar.querySelectorAll('.src-chip').forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
+          b.setAttribute('aria-pressed', 'true');
+          showSource(n); L.fx.tap();
+        });
+        bar.appendChild(b);
+      });
       card.appendChild(h('div', { class: 'alts' }, [
-        h('div', { class: 'muted', style: 'line-height:1.6', html: '📌 ' + esc(src.pick) })
+        h('div', { class: 'task-kind', style: 'margin-bottom:9px', text: T('l.alts') }),
+        bar
       ]));
     }
 
-    if (li.alternatives && li.alternatives.length) {
-      var alts = h('div', { class: 'alts' });
-      alts.appendChild(h('div', { class: 'task-kind', style: 'margin-bottom:6px', text: 'Falls das nicht passt' }));
-      li.alternatives.forEach(function (a) {
-        alts.appendChild(h('a', { class: 'alt-link', href: a.url, target: '_blank', rel: 'noopener' }, [
-          h('span', {}, [
-            h('div', { text: a.name }),
-            h('div', { class: 'why', text: a.why || '' })
-          ]),
-          h('span', { class: 'go', text: '↗' })
-        ]));
-      });
-      card.appendChild(alts);
-    }
     v.appendChild(card);
+    showSource(Math.min(S.listening.sourceIdx || 0, sources.length - 1));
 
     /* Vorentlastung */
     if (li.pretask && li.pretask.length) {
       var pre = h('div', { class: 'card' }, [
-        h('h3', { text: 'Diese Wörter kommen mit ziemlicher Sicherheit vor' }),
-        h('p', { class: 'muted', style: 'margin-top:6px', text: 'Kurz anschauen - dann hakt dein Ohr später nicht daran fest.' })
+        h('h3', { text: T('l.pre') }),
+        h('p', { class: 'muted', style: 'margin-top:6px', text: T('l.preLead') })
       ]);
       var g = h('div', { class: 'vocab-grid', style: 'margin-top:14px' });
       li.pretask.forEach(function (w) {
         var c = h('button', { class: 'vcard', type: 'button' }, [
-          h('span', { class: 'hint', text: 'tippen' }),
+          h('span', { class: 'hint', text: T('vocab.tap') }),
           h('div', { class: 'term', text: w.term }),
-          h('div', { class: 'de', text: w.de })
+          h('div', { class: 'de', html: markup(w.def) })
         ]);
         c.addEventListener('click', function () { c.classList.toggle('open'); L.fx.flip(); });
         g.appendChild(c);
@@ -1851,30 +2563,33 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
     }
 
     /* Drei Durchgänge */
-    var protocol = li.protocol || defaultProtocol(lesson.lang);
+    var protocol = li.protocol || [
+      { title: T('l.p1t'), how: T('l.p1h'), task: T('l.p1x'), placeholder: T('l.p1p') },
+      { title: T('l.p2t'), how: T('l.p2h'), task: T('l.p2x'), placeholder: T('l.p2p') },
+      { title: T('l.p3t'), how: T('l.p3h'), task: T('l.p3x'), placeholder: T('l.p3p') }
+    ];
     var block = h('div', { class: 'stack' });
-    block.appendChild(h('h3', { text: 'Drei Durchgänge - mehr braucht es nicht' }));
+    block.appendChild(h('h3', { text: T('l.proto') }));
     protocol.forEach(function (p, idx) {
       var pane = h('div', { class: 'pass' + (idx === 0 ? ' active' : '') + (S.listening.passes[idx] ? ' done' : '') });
-      var head = h('button', { class: 'pass-head', type: 'button' }, [
+      var head2 = h('button', { class: 'pass-head', type: 'button' }, [
         h('div', { class: 'pass-n', text: S.listening.passes[idx] ? '✓' : String(idx + 1) }),
         h('div', { style: 'flex:1' }, [
           h('div', { class: 't', text: p.title }),
           h('div', { class: 's', text: p.how })
         ])
       ]);
-      head.addEventListener('click', function () {
+      head2.addEventListener('click', function () {
         block.querySelectorAll('.pass').forEach(function (o) { if (o !== pane) o.classList.remove('active'); });
-        pane.classList.toggle('active');
-        L.fx.tap();
+        pane.classList.toggle('active'); L.fx.tap();
       });
       var body = h('div', { class: 'pass-body' });
       body.appendChild(h('p', { style: 'font-size:14px', text: p.task }));
-      var ta = h('textarea', { class: 'field', placeholder: p.placeholder || 'Notiere in Stichworten …', style: 'min-height:90px' });
+      var ta = h('textarea', { class: 'field', placeholder: p.placeholder || '', style: 'min-height:90px' });
       ta.value = S.listening.notes[idx] || '';
       ta.addEventListener('input', function () { S.listening.notes[idx] = ta.value; L.persistProgress(); });
       body.appendChild(ta);
-      var ok = h('button', { class: 'btn btn-sm', type: 'button', text: 'Durchgang erledigt' });
+      var ok = h('button', { class: 'btn btn-sm', type: 'button', text: T('l.passDone') });
       ok.addEventListener('click', function () {
         S.listening.passes[idx] = true;
         pane.classList.add('done');
@@ -1885,121 +2600,109 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
         if (nxt) { pane.classList.remove('active'); nxt.classList.add('active'); }
       });
       body.appendChild(h('div', { class: 'row' }, [ok]));
-      pane.appendChild(head); pane.appendChild(body);
+      pane.appendChild(head2); pane.appendChild(body);
       block.appendChild(pane);
     });
     v.appendChild(block);
 
     /* Selbsteinschätzung */
     var self = h('div', { class: 'card' }, [
-      h('h3', { text: 'Wie viel ist hängen geblieben?' }),
-      h('p', { class: 'muted', style: 'margin-top:6px', text: 'Ehrlich sein lohnt sich - danach richte ich das nächste Hörmaterial aus.' })
+      h('h3', { text: T('l.self') }),
+      h('p', { class: 'muted', style: 'margin-top:6px', text: T('l.selfLead') })
     ]);
     var scale = h('div', { class: 'scale', style: 'margin-top:14px' });
     ['😵', '🙁', '🙂', '😄', '🤩'].forEach(function (e, i) {
-      var b = h('button', { type: 'button', text: e, 'aria-pressed': 'false', 'aria-label': (i + 1) + ' von 5' });
+      var b = h('button', { type: 'button', text: e, 'aria-label': (i + 1) + '/5',
+        'aria-pressed': S.listening.selfRating === i + 1 ? 'true' : 'false' });
       b.addEventListener('click', function () {
         scale.querySelectorAll('button').forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
         b.setAttribute('aria-pressed', 'true');
-        S.listening.selfRating = i + 1;
-        L.fx.tap(); L.persistProgress();
+        S.listening.selfRating = i + 1; L.fx.tap(); L.persistProgress();
       });
-      if (S.listening.selfRating === i + 1) b.setAttribute('aria-pressed', 'true');
       scale.appendChild(b);
     });
     self.appendChild(scale);
     self.appendChild(h('div', { class: 'scale-legend' }, [
-      h('span', { text: 'kaum was verstanden' }), h('span', { text: 'fast alles' })
+      h('span', { text: T('l.low') }), h('span', { text: T('l.high') })
     ]));
     v.appendChild(self);
     return v;
   };
 
-  function defaultProtocol(lang) {
-    var L1 = lang === 'fr' ? 'Französisch' : 'Spanisch';
+  /* ---------------- Station 6: Bilanz ---------------- */
+  function survey() {
     return [
-      { title: 'Einmal ganz durch, ohne Pause',
-        how: 'Nichts nachschlagen, nichts zurückspulen',
-        task: 'Worum geht es? Ein bis zwei Sätze auf Deutsch genügen. Wenn du nur das Thema erwischst: völlig in Ordnung.',
-        placeholder: 'Es geht um …' },
-      { title: 'Nochmal - diesmal mit Bleistift',
-        how: 'Pausieren erlaubt',
-        task: 'Sammle Zahlen, Namen, Orte und fünf Wörter, die du wiedererkannt hast. Auch Bruchstücke zählen.',
-        placeholder: 'Zahlen / Namen / Wörter …' },
-      { title: 'Eine Minute laut nachsprechen',
-        how: 'Irgendeine Stelle, die du magst',
-        task: 'Wähl eine Passage und sprich parallel mit. Rhythmus vor Perfektion - so baust du ' + L1 + '-Melodie auf.',
-        placeholder: 'Welche Stelle? Was war schwierig auszusprechen?' }
+      { id: 'difficulty', type: 'scale', q: T('q.diff'), low: T('q.diffLow'), high: T('q.diffHigh'),
+        emojis: ['🥱', '🙂', '👌', '😅', '🥵'] },
+      { id: 'fun', type: 'scale', q: T('q.fun'), low: T('q.funLow'), high: T('q.funHigh'),
+        emojis: ['😐', '🙂', '😊', '😃', '🔥'] },
+      { id: 'more', type: 'choice', q: T('q.more'), options: [
+        { id: 'deepen', label: T('q.more.deepen') },
+        { id: 'same', label: T('q.more.same') },
+        { id: 'new', label: T('q.more.new') }] },
+      { id: 'weakest', type: 'choice', q: T('q.weak'), options: [
+        { id: 'grammar', label: T('q.weak.grammar') },
+        { id: 'vocab', label: T('q.weak.vocab') },
+        { id: 'reading', label: T('q.weak.reading') },
+        { id: 'listening', label: T('q.weak.listening') },
+        { id: 'none', label: T('q.weak.none') }] },
+      { id: 'length', type: 'choice', q: T('q.len'), options: [
+        { id: 'short', label: T('q.len.short') },
+        { id: 'ok', label: T('q.len.ok') },
+        { id: 'long', label: T('q.len.long') }] },
+      { id: 'wish', type: 'text', q: T('q.wish'), placeholder: T('q.wishP') }
     ];
   }
-
-  /* ---------------- Station 6: Umfrage + Abschluss ---------------- */
-  var DEFAULT_SURVEY = [
-    { id: 'difficulty', type: 'scale', q: 'War die Einheit vom Niveau her passend?',
-      low: 'viel zu leicht', high: 'viel zu schwer', emojis: ['🥱', '🙂', '👌', '😅', '🥵'] },
-    { id: 'fun', type: 'scale', q: 'Und - hat es Spass gemacht?',
-      low: 'zäh', high: 'mehr davon', emojis: ['😐', '🙂', '😊', '😃', '🔥'] },
-    { id: 'more', type: 'choice', q: 'Willst du beim nächsten Mal am gleichen Thema dranbleiben?',
-      options: ['Ja, gleiches Grammatikthema vertiefen', 'Gleiches Thema, aber anderer Inhalt', 'Nein, etwas Neues'] },
-    { id: 'weakest', type: 'choice', q: 'Was hat sich am wackligsten angefühlt?',
-      options: ['Die Grammatik', 'Der Wortschatz', 'Der Lesetext', 'Das Hörverstehen', 'Nichts davon'] },
-    { id: 'length', type: 'choice', q: 'Zur Länge:',
-      options: ['Zu kurz, ich hätte weitergemacht', 'Genau richtig', 'Zu lang'] },
-    { id: 'wish', type: 'text', q: 'Wunsch an die nächste Einheit?',
-      placeholder: 'z.B. mehr Subjuntivo, Thema Reisen, längerer Hörtext …' }
-  ];
 
   L.views.wrap = function (lesson) {
     var v = h('div', { class: 'view wrap stack-lg' });
     var S = L.session;
     S.survey = S.survey || {};
-    var questions = (lesson.survey && lesson.survey.length ? lesson.survey : DEFAULT_SURVEY);
+    var questions = survey();
 
     var scored = S.results.filter(function (r) { return r && !r.freeform; });
     var right = scored.filter(function (r) { return r.correct; }).length;
     var pct = scored.length ? Math.round(right / scored.length * 100) : 0;
 
     v.appendChild(h('div', { style: 'text-align:center' }, [
-      h('div', { class: 'eyebrow', style: 'justify-content:center', text: 'Geschafft' }),
+      h('div', { class: 'eyebrow', style: 'justify-content:center', text: T('e.done') }),
       L.ring(pct),
       h('h1', { style: 'margin-top:12px', text: praise(pct) }),
-      h('p', { class: 'lead', style: 'margin-top:10px', text: lesson.outro || 'Noch drei Fragen - damit die nächste Einheit besser auf dich passt als diese.' })
+      h('p', { class: 'lead', style: 'margin-top:10px', text: lesson.outro || T('e.outro') })
     ]));
 
     v.appendChild(h('div', { class: 'stat-grid' }, [
-      stat(right + '/' + scored.length, 'richtig'),
-      stat(String(L.state.xp), 'XP gesamt'),
-      stat(String(Object.keys(S.listening && S.listening.passes || {}).length) + '/3', 'Hördurchgänge'),
-      stat(minutes(), 'Minuten')
+      stat(right + '/' + scored.length, T('e.sRight')),
+      stat(String(L.state.xp), T('e.sXp')),
+      stat(Object.keys((S.listening && S.listening.passes) || {}).length + '/3', T('e.sPass')),
+      stat(String(minutes()), T('e.sMin'))
     ]));
 
-    /* Umfrage */
     var form = h('div', { class: 'card' });
     questions.forEach(function (q) {
       var blk = h('div', { class: 'q-block' }, [h('div', { class: 'q-title', text: q.q })]);
       if (q.type === 'scale') {
         var sc = h('div', { class: 'scale' });
-        (q.emojis || ['1', '2', '3', '4', '5']).forEach(function (e, i) {
+        q.emojis.forEach(function (e, i) {
           var b = h('button', { type: 'button', text: e, 'aria-pressed': S.survey[q.id] === i + 1 ? 'true' : 'false' });
           b.addEventListener('click', function () {
             sc.querySelectorAll('button').forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
             b.setAttribute('aria-pressed', 'true');
-            S.survey[q.id] = i + 1; L.fx.tap(); L.persistProgress(); refreshDone();
+            S.survey[q.id] = i + 1; L.fx.tap(); L.persistProgress(); refresh();
           });
           sc.appendChild(b);
         });
         blk.appendChild(sc);
-        blk.appendChild(h('div', { class: 'scale-legend' }, [
-          h('span', { text: q.low || '' }), h('span', { text: q.high || '' })
-        ]));
+        blk.appendChild(h('div', { class: 'scale-legend' }, [h('span', { text: q.low }), h('span', { text: q.high })]));
       } else if (q.type === 'choice') {
         var ch = h('div', { class: 'choices' });
         q.options.forEach(function (o) {
-          var b = h('button', { class: 'choice', type: 'button', text: o, 'aria-pressed': S.survey[q.id] === o ? 'true' : 'false' });
+          var b = h('button', { class: 'choice', type: 'button', text: o.label,
+            'aria-pressed': S.survey[q.id] === o.id ? 'true' : 'false' });
           b.addEventListener('click', function () {
             ch.querySelectorAll('.choice').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
             b.setAttribute('aria-pressed', 'true');
-            S.survey[q.id] = o; L.fx.tap(); L.persistProgress(); refreshDone();
+            S.survey[q.id] = o.id; L.fx.tap(); L.persistProgress(); refresh();
           });
           ch.appendChild(b);
         });
@@ -2007,42 +2710,36 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
       } else {
         var ta = h('textarea', { class: 'field', placeholder: q.placeholder || '', style: 'min-height:80px' });
         ta.value = S.survey[q.id] || '';
-        ta.addEventListener('input', function () {
-          S.survey[q.id] = ta.value; L.persistProgress(); refreshDone();
-        });
+        ta.addEventListener('input', function () { S.survey[q.id] = ta.value; L.persistProgress(); refresh(); });
         blk.appendChild(ta);
       }
       form.appendChild(blk);
     });
     v.appendChild(form);
 
-    /* Fehlerrückblick */
+    v.appendChild(diagnose(lesson));
+
     var wrong = S.results.filter(function (r) { return r && !r.correct && !r.freeform; });
     if (wrong.length) {
-      v.appendChild(h('div', { class: 'stack' }, [
-        h('h3', { text: 'Dein Fehlerprotokoll - das nimmst du mit' })
-      ].concat(wrong.map(L.mistakeCard))));
+      v.appendChild(h('div', { class: 'stack' }, [h('h3', { text: T('e.mistakes') })].concat(wrong.map(L.mistakeCard))));
     }
 
-    /* Bericht für Claude */
     var reportCard = h('div', { class: 'card' });
-    reportCard.appendChild(h('h3', { text: 'Und jetzt das Wichtigste' }));
-    reportCard.appendChild(h('p', { style: 'margin-top:8px;font-size:14.5px',
-      text: 'Kopier den Bericht und wirf ihn Claude in den Chat. Damit weiss er beim nächsten Mal, was sitzt, was wackelt und worauf du Lust hast.' }));
+    reportCard.appendChild(h('h3', { text: T('e.reportT') }));
+    reportCard.appendChild(h('p', { style: 'margin-top:8px;font-size:14.5px', text: T('e.reportX') }));
     var pre = h('div', { class: 'report-box' });
     reportCard.appendChild(h('div', { style: 'margin-top:14px' }, [pre]));
-
-    var copyBtn = h('button', { class: 'btn btn-primary', type: 'button', text: '📋 Bericht kopieren' });
-    var dlBtn = h('button', { class: 'btn', type: 'button', text: '⬇ Als Datei' });
-    reportCard.appendChild(h('div', { class: 'row', style: 'margin-top:12px' }, [copyBtn, dlBtn]));
+    var copyBtn = h('button', { class: 'btn btn-primary', type: 'button', text: T('e.copy') });
+    var dlBtn = h('button', { class: 'btn', type: 'button', text: T('e.dl') });
+    reportCard.appendChild(h('div', { class: 'row', style: 'margin-top:12px' }, [githubButton(lesson), copyBtn, dlBtn]));
     v.appendChild(reportCard);
 
-    function refreshDone() { pre.textContent = L.buildReport(lesson); }
-    refreshDone();
+    function refresh() { pre.textContent = L.buildReport(lesson); }
+    refresh();
 
     copyBtn.addEventListener('click', function () {
       var txt = L.buildReport(lesson);
-      var done = function () { L.toast('Kopiert. Ab damit in den Chat.'); L.sparks(copyBtn, 14); L.fx.done(); };
+      var done = function () { L.toast(T('e.copied')); L.sparks(copyBtn, 14); L.fx.done(); };
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(txt).then(done, function () { fallbackCopy(txt, done); });
       } else fallbackCopy(txt, done);
@@ -2058,18 +2755,122 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
       finishLesson(lesson);
     });
 
-    var home = h('button', { class: 'btn btn-ghost btn-block', type: 'button', text: 'Zurück zur Übersicht' });
+    var home = h('button', { class: 'btn btn-ghost btn-block', type: 'button', text: T('e.home') });
     home.addEventListener('click', function () { finishLesson(lesson); L.go('#/'); });
     v.appendChild(home);
     return v;
   };
+
+  /* ---------------- Niveau-Diagnose ----------------
+     Nicht die Punktzahl, sondern: was kann er, was noch nicht.
+     Wird auch in den Bericht geschrieben und landet so im Lernstand. */
+  var SKILLS = ['verstehen', 'erkennen', 'produzieren', 'wortschatz'];
+  function skillOf(task, res) {
+    if (task && task.skill) return task.skill;
+    return { evidence: 'verstehen', choice: 'erkennen', pairs: 'wortschatz',
+             transform: 'produzieren', forge: 'produzieren', write: 'produzieren' }[res.type] || 'erkennen';
+  }
+
+  L.skillScores = function (lesson) {
+    var S = L.session, out = {};
+    S.results.forEach(function (r, i) {
+      if (!r) return;
+      var sk = skillOf((lesson.tasks || [])[i], r);
+      var b = out[sk] || (out[sk] = { right: 0, total: 0 });
+      b.total++;
+      if (r.correct) b.right++;
+      else if (r.freeform) b.total--;     // Freitext wird nicht gegen ihn gezählt
+    });
+    return out;
+  };
+
+  function verdictFor(q) {
+    return q >= 0.8 ? { t: T('d.solid'), c: 'ok' } : q >= 0.5 ? { t: T('d.mixed'), c: 'mid' } : { t: T('d.weak'), c: 'no' };
+  }
+
+  function diagnose(lesson) {
+    var S = L.session;
+    var scores = L.skillScores(lesson);
+    var box = h('div', { class: 'card diag' });
+    box.appendChild(h('h3', { text: T('d.title') }));
+    box.appendChild(h('p', { class: 'muted', style: 'margin-top:6px', text: T('d.lead') }));
+
+    var rows = h('div', { class: 'diag-rows' });
+    SKILLS.forEach(function (sk) {
+      var b = scores[sk];
+      var q = b && b.total ? b.right / b.total : null;
+      var vd = q === null ? { t: T('d.none'), c: 'na' } : verdictFor(q);
+      rows.appendChild(h('div', { class: 'diag-row ' + vd.c }, [
+        h('div', { class: 'dr-name', text: T('d.' + sk) }),
+        h('div', { class: 'dr-bar' }, [h('i', { style: 'width:' + (q === null ? 0 : Math.round(q * 100)) + '%' })]),
+        h('div', { class: 'dr-v', text: vd.t + (q === null ? '' : '  ' + b.right + '/' + b.total) })
+      ]));
+    });
+
+    var lr = S.listening && S.listening.selfRating;
+    if (lr) {
+      rows.appendChild(h('div', { class: 'diag-row ' + (lr >= 4 ? 'ok' : lr >= 3 ? 'mid' : 'no') }, [
+        h('div', { class: 'dr-name', text: T('st.listen') }),
+        h('div', { class: 'dr-bar' }, [h('i', { style: 'width:' + (lr / 5 * 100) + '%' })]),
+        h('div', { class: 'dr-v', text: lr + '/5' })
+      ]));
+    }
+    box.appendChild(rows);
+
+    /* Pro Grammatikthema, mit Namen aus der Lektion */
+    var byG = {};
+    S.results.forEach(function (r) {
+      if (!r || !r.grammar || r.freeform) return;
+      var g = byG[r.grammar] || (byG[r.grammar] = { right: 0, total: 0 });
+      g.total++; if (r.correct) g.right++;
+    });
+    var names = {};
+    (lesson.intro.grammar || []).forEach(function (g) { names[g.id] = g.name; });
+    var keys = Object.keys(byG);
+    if (keys.length) {
+      var list = h('div', { class: 'stack', style: 'gap:8px;margin-top:18px' });
+      list.appendChild(h('div', { class: 'task-kind', text: T('d.next') }));
+      keys.forEach(function (id) {
+        var g = byG[id], q = g.right / g.total, vd = verdictFor(q);
+        list.appendChild(h('div', { class: 'diag-item ' + vd.c }, [
+          h('span', { class: 'di-n', text: names[id] || id }),
+          h('span', { class: 'di-v', text: vd.t }),
+          h('span', { class: 'di-q', text: g.right + '/' + g.total })
+        ]));
+      });
+      box.appendChild(list);
+    }
+    return box;
+  }
+
+  /* ---------------- Bericht nach GitHub ---------------- */
+  function githubButton(lesson) {
+    var repo = (L.profile && L.profile.github) || '';
+    var btn = h('button', { class: 'btn', type: 'button', text: T('g.save') });
+    btn.addEventListener('click', function () {
+      if (!repo) { L.toast(T('g.no'), 3600); return; }
+      var body = '```json\n' + L.buildReport(lesson) + '\n```';
+      var url = 'https://github.com/' + repo + '/issues/new' +
+        '?title=' + encodeURIComponent('Lernbericht ' + lesson.id) +
+        '&body=' + encodeURIComponent(body);
+      if (url.length > 7500) {
+        url = 'https://github.com/' + repo + '/issues/new' +
+          '?title=' + encodeURIComponent('Lernbericht ' + lesson.id) +
+          '&body=' + encodeURIComponent('```json\n' + L.buildReport(lesson, true) + '\n```');
+      }
+      window.open(url, '_blank', 'noopener');
+      L.toast(T('g.saved'), 4200);
+      finishLesson(lesson);
+    });
+    return btn;
+  }
 
   function fallbackCopy(txt, done) {
     var ta = document.createElement('textarea');
     ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
     document.body.appendChild(ta); ta.select();
     try { document.execCommand('copy'); done(); }
-    catch (e) { L.toast('Kopieren klappt hier nicht - nimm den Knopf «Als Datei».', 3600); }
+    catch (e) { L.toast(T('e.copyFail'), 3600); }
     ta.remove();
   }
 
@@ -2080,11 +2881,9 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
     L.state.done[lesson.id] = {
       at: new Date().toISOString(),
       right: scored.filter(function (r) { return r.correct; }).length,
-      total: scored.length,
-      minutes: minutes()
+      total: scored.length, minutes: minutes()
     };
-    L.addXp(40);
-    L.save();
+    L.addXp(40); L.save();
   }
 
   function minutes() {
@@ -2092,15 +2891,10 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
     return Math.max(1, Math.round((Date.now() - (S.startedAt || Date.now())) / 60000));
   }
   function stat(n, l) { return h('div', { class: 'stat' }, [h('div', { class: 'n', text: n }), h('div', { class: 'l', text: l })]); }
-  function praise(p) {
-    if (p >= 90) return 'Das war stark.';
-    if (p >= 70) return 'Gut gemacht.';
-    if (p >= 45) return 'Durchgezogen - zählt.';
-    return 'Angefangen ist die halbe Miete.';
-  }
+  function praise(p) { return p >= 90 ? T('e.p90') : p >= 70 ? T('e.p70') : p >= 45 ? T('e.p45') : T('e.p0'); }
 
   /* ---------------- Bericht ---------------- */
-  L.buildReport = function (lesson) {
+  L.buildReport = function (lesson, kurz) {
     var S = L.session;
     var scored = S.results.filter(function (r) { return r && !r.freeform; });
     var byGrammar = {};
@@ -2110,27 +2904,24 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
       g.total++; if (r.correct) g.right++;
     });
     var report = {
-      bericht: 'lerneinheit',
-      version: 1,
-      lektion: lesson.id,
-      sprache: lesson.lang,
-      niveau: lesson.level,
-      datum: new Date().toISOString().slice(0, 10),
-      minuten: minutes(),
+      bericht: 'lerneinheit', version: 2,
+      lektion: lesson.id, sprache: lesson.lang, niveau: lesson.level,
+      datum: new Date().toISOString().slice(0, 10), minuten: minutes(),
       ergebnis: { richtig: scored.filter(function (r) { return r.correct; }).length, gesamt: scored.length },
       grammatik: byGrammar,
       fehler: S.results.filter(function (r) { return r && !r.correct && !r.freeform; })
         .map(function (r) { return { typ: r.type, thema: r.grammar, meins: r.yours, richtig: r.right }; }),
-      freitext: S.results.filter(function (r) { return r && r.freeform; })
-        .map(function (r) { return r.yours; }),
+      freitext: S.results.filter(function (r) { return r && r.freeform; }).map(function (r) { return r.yours; }),
       hoeren: {
-        quelle: (lesson.listening && lesson.listening.source && lesson.listening.source.name) || null,
+        folge: (S.listening && S.listening.episode) || null,
         durchgaenge: Object.keys((S.listening && S.listening.passes) || {}).length,
         selbsteinschaetzung: (S.listening && S.listening.selfRating) || null,
         notizen: (S.listening && S.listening.notes) || {}
       },
-      umfrage: S.survey || {}
+      umfrage: S.survey || {},
+      koennen: L.skillScores(lesson)
     };
+    if (kurz) { delete report.freitext; report.hoeren.notizen = {}; }
     return 'LERNBERICHT ' + lesson.id + '\n' + JSON.stringify(report, null, 1);
   };
 
@@ -2178,6 +2969,13 @@ LEKTION.profile = {
     "likedTopics": [],
     "dislikedTopics": [],
     "notes": []
+  },
+  "github": "konvalinaalexander-max/sprachen",
+  "tone": "26-jähriger Mann. Nah am Leben, roh, direkt, erwachsen. Kein Lehrbuch-Ton, keine geglätteten Situationen.",
+  "nextFormat": {
+    "es": "ueberkonstruiert",
+    "fr": "ueberkonstruiert",
+    "_doc": "Wechselt nach jeder Einheit: normal -> ueberkonstruiert -> normal. Beide stehen jetzt auf ueberkonstruiert, weil die normalen Einheiten vom 13.09. fertig sind."
   }
 };
 </script>
@@ -2185,498 +2983,657 @@ LEKTION.profile = {
 /* Erzeugt von tools/build-manifest.mjs – nicht von Hand ändern. */
 LEKTION.manifest([
   {
-    "id": "es-2026-09-13-bar-manolo",
+    "id": "es-2026-09-13-moto",
     "lang": "es",
     "level": "B1",
     "date": "2026-09-13",
-    "title": "Das letzte Bar im Viertel",
-    "subtitle": "Eine Geschichte aus Madrid – und die zwei Vergangenheiten, ohne die man auf Spanisch nichts erzählen kann.",
-    "minutes": 36,
+    "title": "La noche que perdí la moto",
+    "subtitle": "Madrid, julio, cuarenta grados y una Vespa de ochocientos euros. Y los dos pasados que necesitas para contar cualquier desastre.",
+    "minutes": 45,
     "grammar": [
       "es-indefinido-imperfecto"
     ],
-    "file": "lessons/es/2026-09-13-bar-manolo.js"
+    "file": "lessons/es/2026-09-13-moto.js"
   },
   {
-    "id": "fr-2026-09-13-dimanche-karim",
+    "id": "fr-2026-09-13-soiree-ratee",
     "lang": "fr",
     "level": "A2",
     "date": "2026-09-13",
-    "title": "Ein Sonntag in Marseille",
-    "subtitle": "Die eine Vergangenheitsform, mit der du auf Französisch sofort erzählen kannst – passé composé mit avoir.",
-    "minutes": 32,
+    "title": "La soirée où j'ai tout raté",
+    "subtitle": "Quarante-deux euros, une chemise mouillée et sept minutes de silence. Tout au passé composé avec avoir.",
+    "minutes": 42,
     "grammar": [
       "fr-passe-compose-avoir"
     ],
-    "file": "lessons/fr/2026-09-13-dimanche-karim.js"
+    "file": "lessons/fr/2026-09-13-soiree-ratee.js"
   }
 ]);
 </script>
-<script>/* lessons/es/2026-09-13-bar-manolo.js */
-/* es-2026-09-13-bar-manolo */
+<script>/* lessons/es/2026-09-13-moto.js */
+/* es-2026-09-13-moto */
 LEKTION.register({
-  id: 'es-2026-09-13-bar-manolo',
+  id: 'es-2026-09-13-moto',
   lang: 'es',
   level: 'B1',
   date: '2026-09-13',
-  minutes: 36,
-  title: 'Das letzte Bar im Viertel',
-  subtitle: 'Eine Geschichte aus Madrid – und die zwei Vergangenheiten, ohne die man auf Spanisch nichts erzählen kann.',
+  minutes: 45,
+  title: 'La noche que perdí la moto',
+  subtitle: 'Madrid, julio, cuarenta grados y una Vespa de ochocientos euros. Y los dos pasados que necesitas para contar cualquier desastre.',
 
   intro: {
-    hook: 'Spanisch hat zwei Vergangenheiten, und Deutsch nur eine. Genau da geht es schief.\n\nDenk an einen Film: Es gibt die *Handlung* – jemand kommt herein, sagt etwas, geht wieder. Und es gibt die *Kulisse* – es war Winter, das Licht war schlecht, alle waren müde. Handlung ist Indefinido. Kulisse ist Imperfecto.\n\nHeute liest du die Geschichte einer Bar, die 47 Jahre lang jeden Morgen um sechs aufmachte. Achte beim Lesen darauf, wann der Text erzählt – und wann er beschreibt.',
+    hook: 'El español tiene dos pasados. El alemán, en la práctica, uno solo. Ahí está el problema, y no se arregla traduciendo.\n\nPiensa en cualquier historia que hayas contado en un bar. Por un lado está *lo que pasó*: salí, bebí, perdí la moto. Por otro lado está *cómo estaba todo*: hacía calor, el bar estaba lleno, yo tenía veinticuatro años y ninguna idea de nada.\n\nLo que pasó va en indefinido. Cómo estaba todo, en imperfecto.\n\nHoy lees la historia de una noche en Madrid que terminó mal. Mientras lees, fíjate en una sola cosa: cuándo el texto *avanza* y cuándo solo *describe*.',
     grammar: [{
       id: 'es-indefinido-imperfecto',
-      name: 'Indefinido vs. Imperfecto',
-      why: 'Die Erzähl-Achse des Spanischen. Wer das kann, klingt sofort erwachsen.',
-      explain: 'Beide sind Vergangenheit. Die Frage ist nie „wann?“, sondern: *Bringt der Satz die Geschichte voran – oder baut er die Bühne?*\n\n_Indefinido_ (compró, cerró, entró): ein Ereignis, abgeschlossen, es passiert und ist vorbei. Die Kamera läuft weiter.\n\n_Imperfecto_ (tenía, había, conocía): Zustand, Gewohnheit, Beschreibung. Kein Anfang, kein Ende – es war einfach so. Die Kamera schwenkt über die Szene.',
+      name: 'Indefinido y imperfecto',
+      why: 'Es el eje de cualquier historia en español. Sin esto no puedes contar ni una noche de viernes.',
+      explain: 'Los dos son pasado. La pregunta nunca es *cuándo* pasó, sino otra: ¿esta frase hace avanzar la historia o construye el escenario?\n\n_El indefinido_ (salí, perdí, pagué) presenta un hecho terminado. Pasa y se acaba. La cámara sigue adelante.\n\n_El imperfecto_ (hacía, estaba, tenía) presenta un estado, una costumbre o una descripción. No tiene principio ni final: simplemente era así. La cámara mira alrededor.\n\nY una advertencia que ahorra muchos errores: la duración no decide nada. Tres años pueden ir en indefinido si los cuentas como un bloque cerrado.',
       table: {
         head: ['', 'Indefinido', 'Imperfecto'],
         rows: [
-          ['Frage dahinter', '*Was geschah dann?*', '*Wie war es?*'],
-          ['-ar (comprar)', 'compr_é_, compr_aste_, compr_ó_', 'compr_aba_, compr_abas_, compr_aba_'],
-          ['-er/-ir (vender)', 'vend_í_, vend_iste_, vend_ió_', 'vend_ía_, vend_ías_, vend_ía_'],
-          ['Unregelmässig', 'fui, tuve, hizo, estuvo, dijo', 'nur drei: _era_, _iba_, _veía_'],
-          ['Signalwörter', 'un día, ayer, en 1978, de repente', 'siempre, cada mañana, mientras, antes'],
-          ['Typische Rolle', 'Ereigniskette', 'Hintergrund, Alter, Wetter, Gefühl']
+          ['La pregunta', '*¿Qué pasó entonces?*', '*¿Cómo estaba todo?*'],
+          ['-ar (aparcar)', 'aparqu_é_, aparc_aste_, aparc_ó_', 'aparc_aba_, aparc_abas_, aparc_aba_'],
+          ['-er / -ir (perder)', 'perd_í_, perd_iste_, perd_ió_', 'perd_ía_, perd_ías_, perd_ía_'],
+          ['Irregulares', 'fui, tuve, hizo, estuvo, dijo, quiso', 'solo tres: _era_, _iba_, _veía_'],
+          ['Palabras que avisan', 'aquella noche, a las cinco, de repente', 'siempre, cada día, mientras, todavía'],
+          ['Para qué sirve', 'la cadena de hechos', 'el fondo: edad, calor, ambiente, humor']
         ]
       },
       examples: [
-        { src: 'El barrio _era_ otro. _Había_ talleres y una fábrica.', de: 'Das Viertel war ein anderes. Es gab Werkstätten und eine Fabrik.', note: 'Kulisse – so sah es damals eben aus.' },
-        { src: 'Un martes de marzo, la fábrica _cerró_.', de: 'An einem Dienstag im März schloss die Fabrik.', note: 'Ereignis. Ein Punkt auf der Zeitachse, die Geschichte springt vorwärts.' },
-        { src: 'Los clientes _pedían_ un carajillo hasta que _sonó_ la sirena.', de: 'Die Gäste bestellten (immer) einen Carajillo, bis die Sirene ertönte.', note: 'Beide zusammen: die laufende Gewohnheit wird von einem Ereignis unterbrochen. Das ist das Grundmuster.' },
-        { src: 'Cuando su mujer _murió_, _pensó_ en cerrar.', de: 'Als seine Frau starb, dachte er ans Aufhören.', note: 'Zwei Ereignisse nacheinander – kein Hintergrund weit und breit.' }
+        { src: '_Hacía_ un calor que no se podía aguantar.',
+          note: 'Decorado. Así estaba la noche, sin principio ni final.' },
+        { src: 'Aquella noche _aparqué_ la moto en una calle estrecha.',
+          note: 'Hecho. Un punto en la línea del tiempo; la historia salta hacia delante.' },
+        { src: 'El bar _estaba_ lleno cuando _llegamos_.',
+          note: 'Los dos juntos: la situación que ya existía (imperfecto) y lo que ocurre dentro de ella (indefinido). Este es el esquema básico de toda narración.' },
+        { src: 'Nacho ya _llevaba_ cuatro cervezas.',
+          note: 'Situación en curso. Nadie cuenta cuándo empezó ni cuándo terminó: solo cómo estaba en ese momento.' },
+        { src: '_Pagué_ doscientos diez euros de multa.',
+          note: 'Hecho cerrado, con su cifra y su final. Indefinido sin discusión.' }
       ],
       pitfalls: [
-        'Deutsch hilft dir hier *nicht*. „Er hatte eine Bar“ kann beides sein: _tenía un bar_ (jahrelang, Zustand) oder _tuvo un bar_ (von 1978 bis 2025, abgeschlossener Block). Frag dich immer: Kulisse oder Ereignis?',
-        'Bestimmte Verben kippen die Bedeutung. _Conocía a Manuel_ = ich kannte ihn. _Conocí a Manuel_ = ich lernte ihn kennen. Ebenso: _sabía_ (wusste) / _supe_ (erfuhr), _quería_ (wollte) / _quise_ (versuchte tatsächlich).',
-        'Eine Zeitspanne mit Anfang UND Ende ist Indefinido, auch wenn sie ewig gedauert hat: _Durante cuarenta y siete años, el bar abrió cada mañana._ Der ganze Block ist abgeschlossen.'
+        'Traducir desde el alemán no te ayuda casi nunca. Una misma frase alemana puede ser _tenía una moto_ (estado, años) o _tuve una moto_ (de 2019 a 2021, bloque cerrado). Pregúntate siempre: ¿decorado o acción?',
+        'Algunos verbos cambian de significado. _Conocía a Nacho_ = ya lo conocía de antes. _Conocí a una chica_ = la conocí en ese momento. Igual: _sabía_ (lo tenía en la cabeza) frente a _supe_ (me enteré), _quería_ (tenía la intención) frente a _quise_ (lo intenté de verdad).',
+        'El imperfecto no significa "hace mucho tiempo". Significa que miras la acción por dentro, sin sus bordes. Por eso vale también para ayer: _ayer llovía cuando salí_.'
       ]
     }],
     vocab: [
-      { term: 'el taller', pos: 'sustantivo', de: 'die Werkstatt', example: 'Había talleres, pescaderías y una fábrica de muebles.' },
-      { term: 'la pescadería', pos: 'sustantivo', de: 'der Fischladen', example: 'Las pescaderías se convirtieron en cafeterías.' },
-      { term: 'el mono (de trabajo)', pos: 'sustantivo', de: 'der Blaumann, Overall', example: 'Los clientes entraban con el mono de trabajo.' },
-      { term: 'el carajillo', pos: 'sustantivo', de: 'Kaffee mit einem Schuss Schnaps', example: 'Pedían un carajillo y discutían de fútbol.' },
-      { term: 'la hostelería', pos: 'sustantivo', de: 'das Gastgewerbe', example: 'No sabía nada de hostelería, pero sabía hacer café.' },
-      { term: 'despedir', pos: 'verbo', de: 'entlassen', example: 'Primero despidieron a cincuenta trabajadores.' },
-      { term: 'vaciarse', pos: 'verbo', de: 'sich leeren', example: 'Entendí que el barrio se estaba vaciando.' },
-      { term: 'el piso turístico', pos: 'sustantivo', de: 'die Ferienwohnung', example: 'Los talleres se convirtieron en pisos turísticos.' },
-      { term: 'resistir', pos: 'verbo', de: 'durchhalten, standhalten', example: 'Manuel resistió veinte años más.' },
-      { term: 'cobrar', pos: 'verbo', de: 'kassieren, Geld verlangen', example: 'Manuel no le cobró.' },
-      { term: 'el jubilado', pos: 'sustantivo', de: 'der Rentner', example: 'Era Andrés, jubilado, ochenta y un años.' },
-      { term: 'el propietario', pos: 'sustantivo', de: 'der Eigentümer, Vermieter', example: 'El propietario quiere abrir una tienda de ropa.' },
-      { term: 'añadir', pos: 'verbo', de: 'hinzufügen', example: 'Luego se ríe y añade una frase.' },
-      { term: 'exagerar', pos: 'verbo', de: 'übertreiben', example: 'Tampoco hay que exagerar.' }
+      { term: 'aguantar', pos: 'verbo', def: 'Soportar algo desagradable sin rendirse.', example: 'Hacía un calor que no se podía aguantar.' },
+      { term: 'una broma pesada', pos: 'expresión', def: 'Una broma que no hace gracia, que molesta.', example: 'Madrid en julio es una broma pesada.' },
+      { term: 'de mierda', pos: 'expresión (vulgar)', def: 'Muy malo. Se usa muchísimo y en cualquier bar, pero no en una carta formal.', example: 'Un contrato de mierda en una empresa de reparto.' },
+      { term: 'el reparto', pos: 'sustantivo', def: 'El trabajo de llevar paquetes o comida a casa de la gente.', example: 'Trabajaba en una empresa de reparto.' },
+      { term: 'de segunda mano', pos: 'expresión', def: 'Que ya ha tenido otro dueño antes que tú.', example: 'Una Vespa de segunda mano.' },
+      { term: 'el candado', pos: 'sustantivo', def: 'Cierre de metal con llave que se pone a una bici o una moto.', example: 'Le puse el candado y me fui.' },
+      { term: 'merecer la pena', pos: 'expresión', def: 'Valer el esfuerzo o el tiempo que cuesta.', example: 'No pasó nada que merezca la pena.' },
+      { term: 'amanecer', pos: 'verbo', def: 'Empezar a haber luz por la mañana.', example: 'Todavía no había amanecido.' },
+      { term: 'el hueco', pos: 'sustantivo', def: 'Espacio vacío donde antes había algo.', example: 'Solo un hueco entre dos coches.' },
+      { term: 'la comisaría', pos: 'sustantivo', def: 'La oficina donde trabaja la policía.', example: 'Fui a la comisaría a las siete.' },
+      { term: 'el número de bastidor', pos: 'sustantivo', def: 'El número que identifica una moto o un coche, como su DNI.', example: 'No me sabía el número de bastidor.' },
+      { term: 'el expediente', pos: 'sustantivo', def: 'El conjunto de papeles de un caso oficial.', example: 'Me dio un número de expediente.' },
+      { term: 'la grúa', pos: 'sustantivo', def: 'Camión que se lleva los vehículos mal aparcados.', example: 'Se la había llevado la grúa.' },
+      { term: 'la multa', pos: 'sustantivo', def: 'Dinero que pagas al Estado cuando has hecho algo prohibido.', example: 'Pagué doscientos diez euros de multa.' },
+      { term: 'la señal', pos: 'sustantivo', def: 'El cartel en la calle que dice lo que está permitido y lo que no.', example: 'Yo nunca había leído la señal.' },
+      { term: 'el chaval', pos: 'sustantivo (coloquial)', def: 'Chico joven. Palabra muy normal en España, nada formal.', example: 'Un chaval de diecinueve años.' }
     ]
   },
 
   reading: {
-    title: 'El último bar del barrio',
-    kicker: 'Reportage',
-    source: {
-      kind: 'adaptiert',
-      note: 'Nach dem Muster spanischer Lokalreportagen für dich auf B1 geschrieben'
-    },
+    title: 'La noche que perdí la moto',
+    kicker: 'Primera persona',
+    source: { kind: 'adaptado', note: 'Escrito para ti en el español que se habla, no en el de los libros' },
     glossary: [
-      { term: 'hostelería', de: 'Gastgewerbe' },
-      { term: 'talleres', de: 'Werkstätten' },
-      { term: 'mono de trabajo', de: 'Blaumann, Arbeitsoverall' },
-      { term: 'carajillo', de: 'Kaffee mit Schnaps' },
-      { term: 'sirena', de: 'Sirene (Schichtende)' },
-      { term: 'despidieron', de: 'sie entließen (despedir)' },
-      { term: 'se estaba vaciando', de: 'leerte sich gerade' },
-      { term: 'pisos turísticos', de: 'Ferienwohnungen' },
-      { term: 'jubilado', de: 'Rentner' },
-      { term: 'cobró', de: 'er kassierte (cobrar)' }
+      { term: 'aguantar', def: 'soportar' },
+      { term: 'broma pesada', def: 'broma que no hace gracia' },
+      { term: 'de mierda', def: 'muy malo (vulgar, pero normalísimo)' },
+      { term: 'reparto', def: 'llevar paquetes a la gente' },
+      { term: 'de segunda mano', def: 'usado, no nuevo' },
+      { term: 'candado', def: 'cierre de metal con llave' },
+      { term: 'reguetón', def: 'música latina de fiesta' },
+      { term: 'merezca la pena', def: 'valga el esfuerzo' },
+      { term: 'amanecido', def: 'llegado la luz del día' },
+      { term: 'hueco', def: 'espacio vacío' },
+      { term: 'comisaría', def: 'oficina de la policía' },
+      { term: 'bastidor', def: 'el número que identifica la moto' },
+      { term: 'expediente', def: 'papeles de un caso oficial' },
+      { term: 'grúa', def: 'camión que se lleva los coches' },
+      { term: 'carga y descarga', def: 'zona solo para camiones que dejan mercancía' },
+      { term: 'multa', def: 'dinero que pagas por algo prohibido' },
+      { term: 'chaval', def: 'chico joven' }
     ],
     paragraphs: [
       {
-        text: 'Durante cuarenta y siete años, el Bar Manolo abrió cada mañana a las seis. Manuel Ortega, que entonces tenía veintidós años, lo compró en 1978 con el dinero que su padre le había dejado. No sabía nada de hostelería, pero sabía hacer café.',
-        de: 'Siebenundvierzig Jahre lang öffnete die Bar Manolo jeden Morgen um sechs. Manuel Ortega, damals zweiundzwanzig, kaufte sie 1978 mit dem Geld, das sein Vater ihm hinterlassen hatte. Er wusste nichts über das Gastgewerbe, aber er konnte Kaffee machen.'
+        text: 'Eran las once y media de la noche y hacía un calor que no se podía aguantar. Madrid en julio es una broma pesada: el asfalto sigue quemando a medianoche y la gente sale a la calle porque en casa no hay quien duerma.',
+        simple: 'Era de noche y hacía muchísimo calor. En Madrid, en julio, la gente sale a la calle porque en casa no se puede dormir.'
       },
       {
-        text: 'El barrio era otro. Había talleres, pescaderías y una fábrica de muebles que daba trabajo a doscientas personas. Los clientes entraban con el mono de trabajo, pedían un carajillo y discutían de fútbol hasta que sonaba la sirena. Manuel los conocía a todos por su nombre.',
-        de: 'Das Viertel war ein anderes. Es gab Werkstätten, Fischläden und eine Möbelfabrik, die zweihundert Menschen Arbeit gab. Die Gäste kamen im Blaumann herein, bestellten einen Carajillo und stritten über Fußball, bis die Sirene ertönte. Manuel kannte sie alle beim Namen.'
+        text: 'Yo tenía veinticuatro años, un contrato de mierda en una empresa de reparto y una Vespa de segunda mano que me había costado ochocientos euros y tres meses de discusiones con mi madre. Aquella noche la aparqué en una calle estrecha de Lavapiés, le puse el candado, le di dos palmadas en el asiento como un idiota y me fui a buscar a Nacho.',
+        simple: 'Yo tenía veinticuatro años y una moto vieja. Aquella noche la dejé en una calle pequeña y fui a ver a mi amigo Nacho.'
       },
       {
-        text: 'Un martes de marzo, la fábrica cerró. Fue rápido: primero despidieron a cincuenta trabajadores, luego a cien, y en junio ya no quedaba nadie. "Aquel verano entendí que el barrio se estaba vaciando", cuenta Manuel. Poco a poco, los talleres se convirtieron en pisos turísticos y las pescaderías en cafeterías donde un café cuesta cuatro euros.',
-        de: 'An einem Dienstag im März schloss die Fabrik. Es ging schnell: Zuerst entließen sie fünfzig Arbeiter, dann hundert, und im Juni war niemand mehr übrig. „In jenem Sommer begriff ich, dass sich das Viertel leerte“, erzählt Manuel. Nach und nach wurden aus den Werkstätten Ferienwohnungen und aus den Fischläden Cafés, in denen ein Kaffee vier Euro kostet.'
+        text: 'El bar estaba lleno. Había gente de pie hasta en la puerta, el aire olía a cerveza caliente y alguien había puesto reguetón a un volumen que no dejaba hablar. Nacho ya llevaba cuatro cervezas y estaba en esa fase en la que todo le parece una idea excelente.',
+        simple: 'El bar estaba lleno de gente y había mucho ruido. Nacho ya había bebido bastante.'
       },
       {
-        text: 'Manuel resistió veinte años más. Subió el precio del café una sola vez, de un euro a un euro diez, y lo hizo pidiendo perdón. Cuando su mujer murió en 2019, pensó en cerrar, pero no lo hizo. "Mientras entrara alguien por esa puerta, yo estaba aquí."',
-        de: 'Manuel hielt noch zwanzig Jahre durch. Den Kaffeepreis erhöhte er ein einziges Mal, von einem Euro auf einen Euro zehn – und entschuldigte sich dabei. Als seine Frau 2019 starb, dachte er ans Aufhören, tat es aber nicht. „Solange jemand durch diese Tür kam, war ich hier.“'
+        text: '—Nos vamos a Malasaña —dijo. —No tengo dinero. —Yo tampoco. Vamos igual.',
+        simple: 'Nacho quiso ir a otro barrio. Ninguno de los dos tenía dinero, pero fueron igual.'
       },
       {
-        text: 'El viernes pasado entró el último cliente. Era Andrés, jubilado, ochenta y un años, cliente desde 1981. Pidió lo de siempre. Manuel no le cobró.',
-        de: 'Letzten Freitag kam der letzte Gast herein. Es war Andrés, Rentner, einundachtzig Jahre, Stammgast seit 1981. Er bestellte das Übliche. Manuel kassierte nichts.'
+        text: 'Y fuimos. Esa parte siempre la cuento rápido, porque entre las dos y las cinco de la mañana no pasó nada que merezca la pena. Bebimos, gritamos, conocí a una chica que estudiaba Derecho y que me explicó durante veinte minutos por qué el sistema judicial español no funciona. Le di mi número. Nunca me escribió.',
+        simple: 'Estuvieron de fiesta hasta las cinco. Conoció a una chica, le dio su número y ella nunca contestó.'
       },
       {
-        text: 'Ahora el local está vacío. El propietario quiere abrir una tienda de ropa. Manuel tiene sesenta y nueve años y dice que va a dormir hasta las nueve por primera vez en su vida. Luego se ríe y añade: "Bueno, hasta las siete. Tampoco hay que exagerar."',
-        de: 'Jetzt steht das Lokal leer. Der Eigentümer will einen Kleiderladen eröffnen. Manuel ist neunundsechzig und sagt, er werde zum ersten Mal in seinem Leben bis neun schlafen. Dann lacht er und fügt hinzu: „Na gut, bis sieben. Man muss es ja nicht übertreiben.“'
+        text: 'Lo cuento sin pena. A esa edad yo repartía paquetes doce horas al día por mil doscientos euros y creía que todo era temporal: el trabajo, el piso compartido, los tres compañeros que dejaban los platos sucios cuatro días. Lo único que sentía mío era la moto.',
+        simple: 'En esa época trabajaba mucho por poco dinero. Pensaba que era una situación temporal. La moto era lo único suyo.'
+      },
+      {
+        text: 'A las cinco y media salimos. Todavía no había amanecido, pero el cielo ya tenía ese color gris sucio que en Madrid significa que has hecho algo mal. Volvimos andando hasta Lavapiés. Tardamos cuarenta minutos porque Nacho quiso comprar un bocadillo y luego se lo comió sentado en un banco, muy despacio, como si tuviera todo el tiempo del mundo.',
+        simple: 'Salieron a las cinco y media y volvieron andando. Tardaron mucho porque Nacho se paró a comer.'
+      },
+      {
+        text: 'Cuando llegué a la calle, la moto no estaba.',
+        simple: 'La moto ya no estaba allí.'
+      },
+      {
+        text: 'No había cristales rotos. No había restos del candado. No había nada. Solo un hueco entre dos coches y una mancha de aceite en el suelo. Me quedé mirando ese hueco durante dos minutos enteros, como un imbécil, esperando que apareciera.',
+        simple: 'No había señales de robo. Solo un espacio vacío. Él se quedó mirando sin saber qué hacer.'
+      },
+      {
+        text: 'Nacho fue el primero que habló. Dijo: «Tío, igual la aparcaste en otra calle.» No la había aparcado en otra calle.',
+        simple: 'Nacho pensó que quizá la había dejado en otro sitio. No era verdad.'
+      },
+      {
+        text: 'Fui a la comisaría a las siete de la mañana, sin dormir, oliendo a tabaco y con la camisa pegada a la espalda. El policía que me atendió no levantó la vista del ordenador. Me preguntó el modelo, el color y el número de bastidor. No me sabía el número de bastidor. Entonces me miró medio segundo, y en ese medio segundo cabía toda su opinión sobre mi generación.',
+        simple: 'Fue a la policía muy temprano. El policía le pidió datos que él no sabía y lo miró mal.'
+      },
+      {
+        text: 'Rellené un papel. Me dijo que lo normal es que no aparezca nunca, que en Madrid desaparecen unas veinte motos al día y que casi todas terminan en piezas. Me dio un número de expediente y volvió al ordenador. Salí a la calle y ya eran las ocho, y la ciudad había empezado otra vez como si nada.',
+        simple: 'El policía le dijo que casi nunca se recuperan las motos. Él salió a la calle a las ocho.'
+      },
+      {
+        text: 'Tres días después me llamaron. La moto había aparecido. Nadie la había robado: se la había llevado la grúa, porque aquella calle era zona de carga y descarga entre las ocho y las diez de la mañana y yo nunca había leído la señal.',
+        simple: 'Tres días después le llamaron: la moto no estaba robada. Se la había llevado la grúa por aparcar mal.'
+      },
+      {
+        text: 'Pagué doscientos diez euros de multa y ochenta y cinco de depósito. En total, casi cuatro veces lo que valía la moto en ese momento.',
+        simple: 'Tuvo que pagar casi trescientos euros, mucho más de lo que valía la moto.'
+      },
+      {
+        text: 'Vendí la Vespa en septiembre, por quinientos euros, a un chaval de diecinueve años que tenía exactamente la misma cara que yo había tenido en abril. No le dije nada de la señal. Ahora voy en metro y duermo bien.',
+        simple: 'En septiembre vendió la moto a un chico joven. No le contó el problema. Ahora va en metro.'
       }
     ]
   },
 
   tasks: [
     {
-      type: 'evidence',
-      kind: 'Textdetektiv',
-      prompt: 'Manuel kaufte die Bar mit geerbtem Geld.',
+      type: 'evidence', skill: 'verstehen',
+      prompt: 'La moto no era nueva cuando la compró.',
       verdict: 'richtig',
-      evidence: 'con el dinero que su padre le había dejado',
-      explain: 'Im Text steht: *lo compró en 1978 con el dinero que su padre le había dejado*. Nebenbei siehst du dort das Plusquamperfekt (había dejado) – die Vorvergangenheit: Der Vater hatte ihm das Geld hinterlassen, bevor Manuel kaufte.'
+      evidence: 'una Vespa de segunda mano que me había costado ochocientos euros',
+      explain: 'Está en el segundo párrafo: *una Vespa de segunda mano*. Y fíjate en _había costado_: es pluscuamperfecto, lo que pasó **antes** de la noche que se cuenta.'
     },
     {
-      type: 'evidence',
-      kind: 'Textdetektiv',
-      prompt: 'Die Fabrik entließ alle Arbeiter am selben Tag.',
+      type: 'evidence', skill: 'verstehen',
+      prompt: 'Alguien le robó la moto aquella noche.',
       verdict: 'falsch',
-      evidence: 'primero despidieron a cincuenta trabajadores, luego a cien',
-      explain: 'Es lief gestaffelt: *primero … luego … y en junio ya no quedaba nadie*. Achte auf die Zeitformen: die Entlassungen sind Ereignisse (Indefinido), aber *quedaba* beschreibt einen Zustand – deshalb Imperfecto.'
+      evidence: 'se la había llevado la grúa',
+      explain: 'Justo lo contrario: *Nadie la había robado: se la había llevado la grúa*. El texto te lo prepara antes, cuando dice que no había cristales rotos ni restos del candado. Las pistas estaban ahí.'
     },
     {
-      type: 'evidence',
-      kind: 'Textdetektiv',
-      prompt: 'Manuel will in einem anderen Viertel eine neue Bar aufmachen.',
+      type: 'evidence', skill: 'verstehen',
+      prompt: 'Nacho pagó una parte de la multa.',
       verdict: 'unklar',
-      explain: 'Davon steht kein Wort im Text. Er sagt nur, dass er ausschlafen will – und nimmt das sofort wieder halb zurück. Die Kunst beim Leseverstehen ist, nicht zu ergänzen, was plausibel klingt.'
+      explain: 'El texto no dice ni una palabra sobre eso. Nacho desaparece de la historia después del banco. Lo difícil de la comprensión lectora no es entender: es no añadir lo que suena lógico pero no está escrito.'
     },
     {
-      type: 'choice',
-      kind: 'Blitzrunde',
+      type: 'choice', skill: 'erkennen',
       grammar: 'es-indefinido-imperfecto',
-      prompt: 'Warum heisst es *El barrio era otro* – und nicht *fue otro*?',
+      prompt: '¿Por qué el texto dice *Eran las once y media* y no *Fueron las once y media*?',
       options: [
-        { text: 'Weil beschrieben wird, wie das Viertel damals war – Kulisse, kein Ereignis.', why: 'Genau. Keine Handlung, kein Anfang, kein Ende: nur der Zustand von damals. Klassisches Imperfecto.' },
-        { text: 'Weil es lange gedauert hat.', why: 'Dauer allein entscheidet nicht. *Durante cuarenta y siete años, el bar abrió* dauerte auch lange – und steht trotzdem im Indefinido, weil der Zeitraum als abgeschlossener Block erzählt wird.' },
-        { text: 'Weil *ser* immer im Imperfecto steht.', why: 'Nein. *Fue rápido* steht im selben Text im Indefinido. Es kommt auf die Rolle im Satz an, nicht auf das Verb.' },
-        { text: 'Weil kein konkretes Datum genannt wird.', why: 'Auch ohne Datum kann Indefinido stehen: *Un día cerró*. Der Unterschied ist Kulisse gegen Ereignis, nicht Datum gegen kein Datum.' }
+        { text: 'Porque la hora es decorado: dice cómo estaba la escena, no lo que pasó.',
+          why: 'Exacto. La hora, el tiempo y la edad son el fondo de la escena. Por eso la hora en una narración va casi siempre en imperfecto.' },
+        { text: 'Porque son las once y media de la noche y no del día.',
+          why: 'Eso no cambia nada gramaticalmente. *Eran las tres de la tarde* funciona igual.' },
+        { text: 'Porque *ser* siempre va en imperfecto cuando se habla del pasado.',
+          why: 'No. En el mismo texto tienes *Nacho fue el primero que habló*, en indefinido. Depende del papel de la frase, no del verbo.' },
+        { text: 'Porque la frase está al principio del texto.',
+          why: 'La posición no decide nada. Un texto puede empezar perfectamente con un hecho en indefinido.' }
       ],
       answer: 0,
-      praise: 'Genau die richtige Frage gestellt.'
+      praise: 'Has hecho la pregunta correcta.'
     },
     {
-      type: 'transform',
-      kind: 'Verwandler',
+      type: 'transform', skill: 'produzieren',
       grammar: 'es-indefinido-imperfecto',
-      prompt: 'Der Satz steht in der Gegenwart. Erzähl ihn als *Gewohnheit von damals*.',
-      source: 'Cada mañana abre a las seis y saluda a todos por su nombre.',
+      prompt: 'Esta frase está en presente. Cuéntala como una *costumbre de aquella época*.',
+      source: 'Reparto paquetes doce horas al día y creo que todo es temporal.',
       answer: [
-        'Cada mañana abría a las seis y saludaba a todos por su nombre.',
-        'Cada mañana abría a las seis y saludaba a todos por sus nombres.'
+        'Repartía paquetes doce horas al día y creía que todo era temporal.',
+        'Yo repartía paquetes doce horas al día y creía que todo era temporal.'
       ],
-      hint: '„Cada mañana“ ist das Signal. Beide Verben landen in derselben Zeit.',
-      explain: '*Cada mañana* schreit Gewohnheit – also Imperfecto: _abría_, _saludaba_. Mit Indefinido (_abrió, saludó_) würde daraus ein einziger Morgen statt eines ganzen Lebensabschnitts.'
+      hint: 'Tres verbos, y los tres describen cómo era tu vida entonces. Ninguno es un hecho puntual.',
+      explain: 'Los tres van en imperfecto: _repartía_, _creía_, _era_. Con indefinido (_repartí, creí, fue_) sonaría a un solo día concreto, no a una etapa de la vida.'
     },
     {
-      type: 'forge',
-      kind: 'Satzschmiede',
+      type: 'forge', skill: 'produzieren',
       grammar: 'es-indefinido-imperfecto',
-      prompt: 'Bau den Satz: *Die Gäste bestellten (immer) einen Carajillo, bis die Sirene ertönte.*',
-      solution: 'Los clientes pedían un carajillo hasta que sonó la sirena',
-      alsoAccept: ['Los clientes pedían un carajillo hasta que sonaba la sirena'],
-      distractors: ['pidieron', 'sonaba', 'estaban'],
-      explain: 'Das Grundmuster jeder spanischen Erzählung: laufender Hintergrund im Imperfecto (_pedían_), unterbrochen von einem Ereignis im Indefinido (_sonó_). Die Sirene ist der Knall, der die Szene beendet.'
+      prompt: 'Construye la frase: la situación era que el bar ya estaba lleno, y dentro de esa situación ocurre la llegada.',
+      solution: 'El bar estaba lleno cuando llegamos',
+      alsoAccept: ['Cuando llegamos el bar estaba lleno'],
+      distractors: ['estuvo', 'llegábamos', 'era'],
+      explain: 'El esquema básico de toda narración española: el fondo en imperfecto (_estaba_), el hecho que ocurre dentro en indefinido (_llegamos_). Si inviertes las formas, inviertes la película.'
     },
     {
-      type: 'pairs',
-      kind: 'Paarjagd',
+      type: 'pairs', skill: 'wortschatz',
       grammar: 'es-indefinido-imperfecto',
-      prompt: 'Diese Verben ändern ihre Bedeutung je nach Zeitform. Finde die Paare.',
+      prompt: 'Estos verbos cambian de significado según la forma. Une cada uno con lo que quiere decir.',
       pairs: [
-        ['conocía a Manuel', 'ich kannte Manuel (schon länger)'],
-        ['conocí a Manuel', 'ich lernte Manuel kennen'],
-        ['sabía la verdad', 'ich wusste die Wahrheit'],
-        ['supe la verdad', 'ich erfuhr die Wahrheit'],
-        ['quería cerrar', 'ich wollte schliessen'],
-        ['quise cerrar', 'ich versuchte zu schliessen']
+        ['conocía a Nacho', 'ya lo conocía desde antes'],
+        ['conocí a una chica', 'la conocí en ese momento, por primera vez'],
+        ['sabía el número', 'lo tenía en la cabeza'],
+        ['supe la verdad', 'me enteré de repente'],
+        ['quería vender la moto', 'tenía la intención'],
+        ['quise arrancarla', 'lo intenté de verdad']
       ],
-      explain: 'Bei *conocer, saber, querer, poder* ist der Unterschied nicht die Dauer, sondern die Bedeutung. Imperfecto = der Zustand. Indefinido = der Moment, in dem der Zustand einsetzt oder ein Versuch stattfand.'
+      explain: 'Con *conocer, saber, querer* y *poder*, la diferencia no es de duración sino de significado. El imperfecto describe el estado; el indefinido marca el momento exacto en que ese estado empieza, o el intento concreto.'
     },
     {
-      type: 'write',
-      kind: 'Freischreiben',
+      type: 'choice', skill: 'erkennen',
       grammar: 'es-indefinido-imperfecto',
-      prompt: 'Jetzt du: Erzähl von einem Ort aus deiner Kindheit, den es nicht mehr gibt. Erst die Kulisse (Imperfecto), dann was passierte (Indefinido).',
-      placeholder: 'Cuando yo era pequeño, había …',
-      minWords: 35,
-      mustUse: ['era', 'había', 'un día'],
-      checklist: [
-        'Ich habe mit einer Beschreibung im Imperfecto angefangen (era, había, tenía …).',
-        'Mindestens ein Ereignis steht im Indefinido (cerró, vino, se fue …).',
-        'Ich habe kein Ereignis versehentlich ins Imperfecto gesetzt.',
-        'Ich habe mich getraut, einen Satz zu schreiben, der länger ist als nötig.'
+      prompt: 'En el texto: *Bebimos, gritamos, conocí a una chica.* ¿Qué pasaría con *Bebíamos, gritábamos, conocía a una chica*?',
+      options: [
+        { text: 'Se convertiría en una rutina repetida, no en una sola noche.',
+          why: 'Justo. El imperfecto abre las acciones y las repite. Y entonces *aquella noche* ya no encajaría en la frase.' },
+        { text: 'No cambiaría nada, solo suena más literario.',
+          why: 'Cambia bastante. El indefinido cierra los hechos; el imperfecto los deja abiertos. Aquí el texto habla de **una** noche concreta.' },
+        { text: 'Sería incorrecto: *conocer* no tiene imperfecto.',
+          why: 'Sí lo tiene: _conocía_. Lo que pasa es que significa otra cosa, "ya la conocía de antes", y eso contradice la historia.' },
+        { text: 'Se entendería como una suposición sobre el futuro.',
+          why: 'No. El imperfecto nunca es futuro. Solo cambia la mirada: de hecho cerrado a situación abierta.' }
       ],
-      model: 'Cuando yo era pequeño, había una papelería en la esquina de mi calle. La dueña se llamaba Rosa y siempre tenía un caramelo debajo del mostrador. Los sábados yo iba con mi abuelo y comprábamos el periódico. Un día de invierno, Rosa no abrió. Estuvo enferma tres semanas y después vendió la tienda. Ahora hay un banco. Nunca entré.'
+      answer: 0
+    },
+    {
+      type: 'write', skill: 'produzieren',
+      grammar: 'es-indefinido-imperfecto',
+      prompt: 'Ahora tú. Cuenta una noche que terminó peor de lo que empezó. Primero cómo estaba todo (imperfecto), después qué pasó (indefinido). Sin filtro: nadie más lo va a leer.',
+      placeholder: 'Era un viernes y yo estaba …',
+      minWords: 50,
+      mustUse: ['era', 'estaba', 'de repente'],
+      checklist: [
+        'He empezado describiendo la situación, con imperfecto (era, estaba, había, tenía…).',
+        'Los hechos que hacen avanzar la historia están en indefinido (salí, perdí, dije…).',
+        'No he metido ningún hecho puntual en imperfecto por error.',
+        'He escrito por lo menos una frase que no habría escrito en un examen.'
+      ],
+      model: 'Era un viernes de febrero y estábamos en casa de Marco, que vivía en un cuarto piso sin ascensor. No teníamos ningún plan. A las once alguien dijo que había una fiesta en el otro lado de la ciudad y de repente todos estábamos en la calle buscando un taxi. No encontramos ninguno. Fuimos andando cuarenta minutos con un frío horrible y cuando llegamos la fiesta ya se había terminado. Volvimos en el primer metro de la mañana, sin hablar. Marco todavía lo cuenta como si hubiera sido una buena noche.'
     }
   ],
 
   listening: {
-    headline: 'Und jetzt echtes Spanisch, ungebremst',
-    intro: 'Zehn bis fünfzehn Minuten, gesprochen von Muttersprachlern für Muttersprachler-Tempo. Du wirst nicht alles verstehen – das ist keine Panne, das ist der Punkt. Dein Ohr lernt gerade Spanisch, nicht dein Kopf.',
+    headline: 'Y ahora, español de verdad',
+    intro: 'Esto no está hecho para estudiantes: es español que habla para españoles. No vas a entenderlo todo, y no pasa nada. Tu oído está aprendiendo, aunque tu cabeza crea que no.',
     source: {
-      name: 'Hoy Hablamos',
+      name: 'Español con Juan',
       icon: '🎙️',
-      kind: 'Podcast, täglich',
-      duration: '10–15 Min',
+      kind: 'Podcast semanal',
       level: 'B1–B2',
-      what: 'Jeden Werktag eine Folge zu Kultur, Alltag und Aktuellem aus Spanien. Deutlich gesprochen, aber ohne Lern-Zeitlupe – genau die Stufe über dem, wo du stehst.',
-      url: 'https://hoyhablamos.com/',
-      cta: 'Podcast öffnen',
-      transcript: true,
-      pick: 'Nimm die neueste Folge, die 10–15 Minuten lang ist. Wenn dich ein Titel neugierig macht: nimm den. Interesse schlägt Niveau.'
+      what: 'Juan habla solo, en español, sobre cosas normales: la comida, los vecinos, la nostalgia, las manías de la gente. Ni muy rápido ni muy lento. Justo el escalón siguiente al tuyo.',
+      itunesId: 976549237,
+      country: 'us',
+      minMinutes: 8,
+      maxMinutes: 35,
+      homepage: 'https://1001reasonstolearnspanish.com/podcasts/',
+      transcriptUrl: 'https://1001reasonstolearnspanish.com/podcasts/',
+      pick: 'El episodio más reciente ya está cargado aquí arriba: dale al play y listo. Si el tema no te dice nada, abre la lista y elige otro. El interés importa más que el nivel.'
     },
     alternatives: [
-      { name: 'News in Slow Spanish (Intermediate)', url: 'https://www.newsinslowspanish.com/home/news/intermediate', why: 'Wenn Hoy Hablamos heute zu schnell ist – gleiche Inhalte, halbes Tempo, mit mitlaufendem Transkript.' },
-      { name: 'Charlas Hispanas', url: 'https://charlashispanas.com/', why: 'Kurze Folgen zu Wortschatz und Landeskunde, mit vollständiger Transkription.' },
-      { name: 'Radio Ambulante (NPR)', url: 'https://radioambulante.org/', why: 'Echter Erzähljournalismus aus ganz Lateinamerika. Anspruchsvoll (C1), aber die Geschichten ziehen einen durch – und alle Folgen haben Transkript.' },
-      { name: 'RTVE Play Radio', url: 'https://www.rtve.es/play/radio/', why: 'Öffentlich-rechtliches Radio aus Spanien. Nachrichten, ungefiltert, kein Lernmaterial.' }
+      {
+        name: 'Charlas Hispanas', icon: '🗣️', kind: 'Podcast diario', level: 'B1',
+        what: 'Episodios cortos sobre vocabulario, expresiones y cultura de América Latina. Perfecto para un día con poca energía.',
+        itunesId: 1496665566, country: 'us', minMinutes: 4, maxMinutes: 20,
+        homepage: 'https://charlashispanas.com/',
+        pick: 'Cualquier episodio vale. Son cortos, así que puedes escuchar dos.'
+      },
+      {
+        name: 'Radio Ambulante', icon: '📻', kind: 'Periodismo narrativo', level: 'C1',
+        what: 'Historias reales de toda América Latina: cárceles, fronteras, dinero, familias que se rompen. Es más difícil de lo que necesitas, pero las historias tiran de ti hacia delante.',
+        itunesId: 527614348, country: 'us', minMinutes: 15, maxMinutes: 45,
+        homepage: 'https://radioambulante.org/',
+        pick: 'Para el día que quieras ponerte a prueba de verdad. En su web tienes la transcripción completa de cada episodio.'
+      }
     ],
     pretask: [
-      { term: 'el barrio', de: 'das Stadtviertel' },
-      { term: 'el alquiler', de: 'die Miete' },
-      { term: 'según', de: 'laut, gemäss' },
-      { term: 'la encuesta', de: 'die Umfrage' },
-      { term: 'a lo largo de', de: 'im Laufe von' },
-      { term: 'en cuanto a', de: 'was … betrifft' },
-      { term: 'sin embargo', de: 'jedoch, allerdings' },
-      { term: 'darse cuenta de', de: 'etwas bemerken' }
+      { term: 'el barrio', def: 'la parte de la ciudad donde vives' },
+      { term: 'el alquiler', def: 'el dinero que pagas cada mes por una vivienda' },
+      { term: 'según', def: 'de acuerdo con lo que dice alguien' },
+      { term: 'la encuesta', def: 'estudio en el que se pregunta a mucha gente' },
+      { term: 'a lo largo de', def: 'durante todo un periodo de tiempo' },
+      { term: 'en cuanto a', def: 'hablando del tema de…' },
+      { term: 'sin embargo', def: 'pero, a pesar de eso' },
+      { term: 'darse cuenta de', def: 'notar algo que antes no veías' }
     ]
   },
 
-  outro: 'Eine Bar, zwei Vergangenheiten, ein ganzes Stadtviertel. Noch kurz drei Fragen – damit die nächste Einheit genauer auf dich passt.'
+  outro: 'Una noche, dos pasados y trescientos euros tirados. Unas preguntas rápidas y has terminado.'
 });
 </script>
-<script>/* lessons/fr/2026-09-13-dimanche-karim.js */
-/* fr-2026-09-13-dimanche-karim */
+<script>/* lessons/fr/2026-09-13-soiree-ratee.js */
+/* fr-2026-09-13-soiree-ratee */
 LEKTION.register({
-  id: 'fr-2026-09-13-dimanche-karim',
+  id: 'fr-2026-09-13-soiree-ratee',
   lang: 'fr',
   level: 'A2',
   date: '2026-09-13',
-  minutes: 32,
-  title: 'Ein Sonntag in Marseille',
-  subtitle: "Die eine Vergangenheitsform, mit der du auf Französisch sofort erzählen kannst – passé composé mit avoir.",
+  minutes: 42,
+  title: "La soirée où j'ai tout raté",
+  subtitle: "Quarante-deux euros, une chemise mouillée et sept minutes de silence. Tout au passé composé avec avoir.",
 
   intro: {
-    hook: "Auf Französisch erzählst du fast alles Vergangene mit zwei Bausteinen: einer Form von *avoir* und einem *participe passé*. Mehr braucht es erst mal nicht.\n\nJ'ai mangé. Il a dormi. Nous avons pris le bus. Fertig.\n\nHeute begleitest du Karim durch seinen freien Sonntag – und wirst merken, dass fast jeder Satz dieser Geschichte nach demselben Muster gebaut ist. Wenn du das Muster einmal siehst, siehst du es überall.",
+    hook: "Pour raconter une soirée en français, tu n'as besoin que de deux morceaux :\n\nune forme d'*avoir* + un *participe passé*.\n\nJ'ai couru. J'ai payé. Elle n'a pas écrit. C'est tout.\n\nAujourd'hui tu lis l'histoire d'un type qui a rencontré une fille et qui a tout raté, étape par étape. Presque chaque phrase est construite de la même façon. Quand tu vois le modèle une fois, tu le vois partout.",
     grammar: [{
       id: 'fr-passe-compose-avoir',
-      name: 'Passé composé mit avoir',
-      why: "Die Standard-Vergangenheit. Rund 90% aller französischen Verben bilden sie mit avoir.",
-      explain: "Zwei Teile, immer in dieser Reihenfolge:\n\n*avoir im Präsens* + *participe passé*\n\nDas Partizip ändert sich nicht – egal wer spricht. _J'ai mangé_, _elles ont mangé_: dasselbe Wort. Das macht diese Zeit so bequem.",
+      name: 'Le passé composé avec avoir',
+      why: "C'est le passé normal du français parlé. Environ neuf verbes sur dix le forment avec avoir.",
+      explain: "Deux morceaux, toujours dans cet ordre :\n\n*avoir au présent* + *participe passé*\n\nLe participe ne change pas, même si c'est une femme qui parle ou s'il y a plusieurs personnes. _J'ai payé_, _elles ont payé_ : le même mot. C'est ce qui rend ce temps facile.\n\nPour former le participe : -er donne -é (payer → payé), -ir donne -i (finir → fini), -re donne souvent -u (attendre → attendu). Et puis il y a les irréguliers, qui sont malheureusement les plus utilisés.",
       table: {
-        head: ['avoir', 'Beispiel', 'Deutsch'],
+        head: ['avoir', 'exemple', 'le participe vient de'],
         rows: [
-          ["j'_ai_", "j'ai mangé", 'ich habe gegessen'],
-          ['tu _as_', 'tu as dormi', 'du hast geschlafen'],
-          ['il / elle _a_', 'elle a pris le bus', 'sie hat den Bus genommen'],
-          ['nous _avons_', 'nous avons marché', 'wir sind gelaufen'],
-          ['vous _avez_', 'vous avez entendu', 'ihr habt gehört'],
-          ['ils / elles _ont_', 'ils ont payé', 'sie haben bezahlt']
+          ["j'_ai_", "j'ai payé", 'payer (-er → -é)'],
+          ['tu _as_', 'tu as couru', '*courir → couru*'],
+          ['il / elle _a_', 'elle a attendu', 'attendre (-re → -u)'],
+          ['nous _avons_', 'nous avons ri', '*rire → ri* (irrégulier)'],
+          ['vous _avez_', 'vous avez bu', '*boire → bu* (irrégulier)'],
+          ['ils / elles _ont_', 'ils ont dit', '*dire → dit* (irrégulier)']
         ]
       },
       examples: [
-        { src: "Karim _a dormi_ jusqu'à dix heures.", de: 'Karim hat bis zehn Uhr geschlafen.', note: 'dormir → dormi. Verben auf -ir hängen meist einfach -i an.' },
-        { src: "Il _a préparé_ un café et il _a ouvert_ la fenêtre.", de: 'Er machte einen Kaffee und öffnete das Fenster.', note: 'préparer → préparé (regelmässig), ouvrir → ouvert (unregelmässig). Beide brauchen avoir.' },
-        { src: "Ils _ont pris_ le bus.", de: 'Sie nahmen den Bus.', note: 'prendre → pris. Die häufigen Verben sind unregelmässig – wie im Deutschen auch.' },
-        { src: "Il _n'a pas_ dormi.", de: 'Er hat nicht geschlafen.', note: 'Die Verneinung legt sich um *avoir*, nicht um das Partizip. Nie: _il a pas dormi_ in geschriebenem Französisch.' }
+        { src: "J'_ai couru_ presque deux kilomètres.",
+          note: 'courir → couru. Un des irréguliers qu’on utilise tous les jours.' },
+        { src: "On _a commandé_ deux bières et j'_ai payé_.",
+          note: "Deux verbes, donc deux fois avoir. On ne peut pas en utiliser un seul pour les deux." },
+        { src: "Elle _n'a pas_ écrit.",
+          note: "La négation entoure *avoir*, jamais le participe. À l'écrit : _elle n'a pas écrit_, pas _elle a pas écrit_." },
+        { src: "Elle _a bu_ une gorgée et elle _a dit_ : « D'accord. »",
+          note: 'boire → bu, dire → dit. Deux participes très courts, deux verbes très fréquents.' },
+        { src: "Nadia _a regardé_ ma chemise.",
+          note: "Le participe reste *regardé* même si c'est elle qui regarde. Avec avoir, pas d'accord avec le sujet." }
       ],
       pitfalls: [
-        "Das Partizip passt sich bei *avoir* nicht an das Subjekt an. *Elle a mangé* – nicht _mangée_. (Bei *être* wäre das anders, aber das ist ein Thema für ein andermal.)",
-        "Ein paar sehr häufige Verben nehmen nicht avoir, sondern *être*: aller, venir, partir, arriver, rester, entrer, sortir, monter, descendre, naître, mourir, tomber. _J'ai allé_ gibt es nicht – es heisst _je suis allé_. Merk dir für heute nur: Bewegungsverben sind anders.",
-        "*ne … pas* umschliesst nur die Form von avoir: _je n'ai pas compris_. Das Partizip bleibt draussen vor der Tür."
+        "Avec *avoir*, le participe ne s'accorde pas avec le sujet. On écrit *elle a payé*, jamais _elle a payée_. (Avec *être*, c'est différent, mais c'est pour un autre jour.)",
+        "Quelques verbes très fréquents prennent *être* : aller, venir, partir, arriver, rester, entrer, sortir, monter, descendre, rentrer, naître, mourir, tomber. _J'ai allé_ n'existe pas : on dit _je suis allé_. Dans le texte, tu verras *je suis rentré à pied* et *il est reparti* — c'est exactement ce cas.",
+        "*ne … pas* se met autour de la forme d'avoir seulement : _je n'ai pas compris_. Devant une voyelle, *ne* devient *n'*. À l'oral, beaucoup de gens laissent tomber le *ne* — mais pas à l'écrit."
       ]
     }],
     vocab: [
-      { term: "d'habitude", pos: 'adverbe', de: 'normalerweise', example: "D'habitude, il travaille le samedi." },
-      { term: 'la boulangerie', pos: 'nom f.', de: 'die Bäckerei', example: "Il travaille à la boulangerie de son oncle." },
-      { term: 'dehors', pos: 'adverbe', de: 'draussen', example: "Dehors, il a entendu les cloches." },
-      { term: 'la cloche', pos: 'nom f.', de: 'die Glocke', example: "les cloches de l'église" },
-      { term: 'le contraire', pos: 'nom m.', de: 'das Gegenteil', example: "Il a fait exactement le contraire." },
-      { term: 'le portefeuille', pos: 'nom m.', de: 'das Portemonnaie', example: "Bastien a oublié son portefeuille." },
-      { term: 'oublier', pos: 'verbe', de: 'vergessen', example: "Il a oublié son portefeuille — comme toujours." },
-      { term: 'marcher', pos: 'verbe', de: 'gehen, zu Fuss laufen', example: "Ils ont marché jusqu'au parc." },
-      { term: 'le bateau', pos: 'nom m.', de: 'das Boot, das Schiff', example: "Ils ont regardé les bateaux." },
-      { term: 'retrouver', pos: 'verbe', de: 'jemanden treffen (verabredet)', example: "Karim a retrouvé sa sœur au cinéma." },
-      { term: 'ennuyeux', pos: 'adjectif', de: 'langweilig', example: "Le film était long et un peu ennuyeux." },
-      { term: 'presque', pos: 'adverbe', de: 'fast, beinahe', example: "Mais il n'a pas dormi. Presque." },
-      { term: 'avoir de la chance', pos: 'expression', de: 'Glück haben', example: "On a de la chance d'habiter ici." }
+      { term: 'rater', pos: 'verbe', def: 'ne pas réussir quelque chose', example: "La soirée où j'ai tout raté." },
+      { term: 'le compte en banque', pos: 'nom m.', def: "l'endroit où se trouve ton argent", example: "J'ai regardé mon compte en banque." },
+      { term: 'mouillé', pos: 'adjectif', def: "plein d'eau ; le contraire de sec", example: "La chemise complètement mouillée." },
+      { term: 'la tournée', pos: 'nom f.', def: 'quand une seule personne paie les boissons de tout le monde', example: "On a commandé la deuxième tournée." },
+      { term: 'une infirmière', pos: 'nom f.', def: "la personne qui s'occupe des malades à l'hôpital", example: "Elle est infirmière de nuit." },
+      { term: 'une gorgée', pos: 'nom f.', def: "la petite quantité qu'on boit en une seule fois", example: "Elle a bu une gorgée de bière." },
+      { term: 'drôle', pos: 'adjectif', def: 'qui fait rire les autres', example: "J'ai voulu être drôle." },
+      { term: 'le colocataire', pos: 'nom m.', def: "la personne avec qui tu partages l'appartement", example: "Une histoire sur mon ancien colocataire." },
+      { term: 'faire la bise', pos: 'expression', def: 'se dire au revoir en touchant la joue de l’autre', example: "Elle m'a fait la bise." },
+      { term: 'la station-service', pos: 'nom f.', def: "l'endroit où on met de l'essence dans la voiture", example: "Devant une station-service." },
+      { term: 'garer', pos: 'verbe', def: 'mettre une voiture quelque part et l’arrêter', example: "Un homme a garé sa voiture à côté de moi." },
+      { term: 'baisser la vitre', pos: 'expression', def: 'ouvrir la fenêtre de la voiture', example: "Il a baissé la vitre." },
+      { term: 'hocher la tête', pos: 'expression', def: 'bouger la tête de haut en bas pour dire oui', example: "Il a hoché la tête." },
+      { term: 'suffire', pos: 'verbe', def: 'être assez, ne pas demander plus', example: "Trente secondes suffisent." },
+      { term: 'honnête', pos: 'adjectif', def: 'qui dit la vérité, sans jouer un rôle', example: "La conversation la plus honnête de la soirée." }
     ]
   },
 
   reading: {
-    title: 'Le dimanche de Karim',
-    kicker: 'Kurzgeschichte',
-    source: { kind: 'adaptiert', note: 'Für dich auf A2 geschrieben – jeder Satz benutzbar' },
+    title: "La soirée où j'ai tout raté",
+    kicker: 'Première personne',
+    source: { kind: 'adapté', note: "Écrit pour toi au niveau A2, avec le vocabulaire qu'on utilise vraiment" },
     glossary: [
-      { term: "D'habitude", de: 'normalerweise' },
-      { term: 'Dehors', de: 'draussen' },
-      { term: 'cloches', de: 'Glocken' },
-      { term: 'le contraire', de: 'das Gegenteil' },
-      { term: 'portefeuille', de: 'Portemonnaie' },
-      { term: 'ennuyeux', de: 'langweilig' },
-      { term: 'Presque', de: 'fast' }
+      { term: 'raté', def: 'pas réussi' },
+      { term: 'compte en banque', def: "là où est ton argent" },
+      { term: 'mouillée', def: "pleine d'eau" },
+      { term: 'tournée', def: 'les boissons payées par une seule personne' },
+      { term: 'infirmière', def: "elle s'occupe des malades" },
+      { term: 'gorgée', def: 'petite quantité à boire' },
+      { term: 'drôle', def: 'qui fait rire' },
+      { term: 'colocataire', def: 'la personne avec qui tu habites' },
+      { term: 'bise', def: 'bonjour ou au revoir sur la joue' },
+      { term: 'station-service', def: "là où on met de l'essence" },
+      { term: 'garé', def: 'arrêté sa voiture' },
+      { term: 'vitre', def: 'la fenêtre de la voiture' },
+      { term: 'hoché', def: 'bougé la tête pour dire oui' },
+      { term: 'suffisent', def: 'sont assez' },
+      { term: 'honnête', def: 'vraie, sans jouer un rôle' }
     ],
     paragraphs: [
       {
-        text: "Dimanche dernier, Karim a dormi jusqu'à dix heures. C'est rare. D'habitude, il travaille le samedi et le dimanche à la boulangerie de son oncle.",
-        de: 'Letzten Sonntag hat Karim bis zehn Uhr geschlafen. Das ist selten. Normalerweise arbeitet er samstags und sonntags in der Bäckerei seines Onkels.'
+        text: "Vendredi dernier, j'ai rencontré une fille. Enfin, j'ai essayé.",
+        simple: "Vendredi, il a essayé de rencontrer une fille."
       },
       {
-        text: "Il a préparé un café très fort et il a ouvert la fenêtre. Dehors, il a entendu les cloches de l'église et les cris des enfants sur la place. Il a pensé : « Aujourd'hui, je ne fais rien. »",
-        de: 'Er machte sich einen sehr starken Kaffee und öffnete das Fenster. Draussen hörte er die Kirchenglocken und das Rufen der Kinder auf dem Platz. Er dachte: „Heute tue ich gar nichts.“'
+        text: "Elle s'appelle Nadia. On a parlé pendant trois semaines sur une application et elle a proposé un verre. J'ai dit oui trop vite. Après, j'ai regardé mon compte en banque : quarante-deux euros jusqu'à la fin du mois. J'ai dit oui quand même.",
+        simple: "Ils ont parlé trois semaines sur une application. Il a accepté un rendez-vous, mais il n'avait presque pas d'argent."
       },
       {
-        text: "Alors il a fait exactement le contraire. Il a téléphoné à son ami Bastien et ils ont pris le bus jusqu'au Vieux-Port de Marseille. Ils ont mangé des sardines grillées dans un petit restaurant. Karim a payé, parce que Bastien a oublié son portefeuille — comme toujours.",
-        de: 'Also tat er genau das Gegenteil. Er rief seinen Freund Bastien an, und sie nahmen den Bus zum Alten Hafen von Marseille. Sie assen gegrillte Sardinen in einem kleinen Restaurant. Karim bezahlte, weil Bastien sein Portemonnaie vergessen hatte – wie immer.'
+        text: "Vendredi, j'ai quitté le travail à dix-huit heures. J'ai pris une douche, j'ai mis ma seule chemise propre et j'ai attendu le bus vingt minutes. Le bus n'est pas venu. Alors j'ai couru. J'ai couru presque deux kilomètres, en chemise, au mois de juillet. Tu imagines le résultat.",
+        simple: "Le bus n'est pas arrivé. Il a couru deux kilomètres en juillet. Il a beaucoup transpiré."
       },
       {
-        text: "L'après-midi, ils ont marché jusqu'au parc et ils ont regardé les bateaux pendant deux heures. Ils n'ont pas beaucoup parlé. Bastien a dit une seule phrase : « On a de la chance d'habiter ici. » Karim a répondu : « Oui. »",
-        de: 'Am Nachmittag liefen sie bis zum Park und schauten zwei Stunden lang den Booten zu. Sie redeten nicht viel. Bastien sagte einen einzigen Satz: „Wir haben Glück, dass wir hier wohnen.“ Karim antwortete: „Ja.“'
+        text: "Je suis arrivé avec dix minutes de retard et la chemise complètement mouillée. Nadia a regardé ma chemise. Elle n'a rien dit. C'était pire.",
+        simple: "Il est arrivé en retard, avec la chemise mouillée. Elle n'a rien dit du tout."
       },
       {
-        text: "Le soir, Karim a retrouvé sa sœur au cinéma. Le film était long et un peu ennuyeux, mais il n'a pas dormi. Presque.",
-        de: 'Am Abend traf Karim seine Schwester im Kino. Der Film war lang und ein bisschen langweilig, aber er schlief nicht ein. Fast.'
+        text: "On a commandé deux bières et j'ai payé : onze euros. J'ai fait un calcul rapide dans ma tête et j'ai compris que je pouvais payer exactement deux tournées, pas trois.",
+        simple: "Il a payé les bières. Avec son argent, il pouvait payer deux fois, pas plus."
+      },
+      {
+        text: "Au début, ça a bien marché. Elle a parlé de son travail — elle est infirmière de nuit — et elle a raconté des histoires d'hôpital que je ne peux pas répéter ici. J'ai ri. Elle a ri. J'ai pensé : d'accord, ça va aller.",
+        simple: "Au début, tout allait bien. Elle a raconté son travail à l'hôpital et ils ont ri."
+      },
+      {
+        text: "Et puis j'ai fait la chose stupide.",
+        simple: "Ensuite, il a fait une bêtise."
+      },
+      {
+        text: "J'ai voulu être drôle. J'ai raconté une histoire sur mon ancien colocataire, une histoire avec beaucoup de détails, une histoire que mes amis adorent. Elle a duré sept minutes et personne n'a ri. À la fin, Nadia a bu une gorgée de bière et elle a dit : « D'accord. »",
+        simple: "Il a raconté une longue histoire drôle. Personne n'a ri. Nadia a seulement dit « d'accord »."
+      },
+      {
+        text: "Il y a eu un silence. Un vrai. Pas un silence agréable.",
+        simple: "Après, il y a eu un silence désagréable."
+      },
+      {
+        text: "On a commandé la deuxième tournée. J'ai payé encore. On a parlé de la météo — la météo ! — et elle a regardé son téléphone deux fois. Vers vingt-trois heures, elle a dit qu'elle travaillait tôt le lendemain. C'était peut-être vrai.",
+        simple: "Ils ont bu encore une bière. Ils ont parlé de la météo. Elle est partie vers onze heures."
+      },
+      {
+        text: "On s'est dit au revoir devant le bar. Elle m'a fait la bise. J'ai dit : « On se refait ça. » Elle a souri et elle a répondu : « Oui, peut-être. » Peut-être.",
+        simple: "Ils se sont dit au revoir. Elle a répondu « peut-être », pas « oui »."
+      },
+      {
+        text: "Je suis rentré à pied parce que je n'avais plus assez pour le taxi. En chemin, j'ai acheté un kebab à trois euros cinquante. C'était le pire kebab de ma vie, et je l'ai mangé debout, tout seul, devant une station-service.",
+        simple: "Il est rentré à pied. Il a mangé un mauvais kebab, seul, dans la rue."
+      },
+      {
+        text: "Un homme a garé sa voiture à côté de moi. Il a baissé la vitre et il m'a demandé si ça allait. J'ai répondu que oui. Il a hoché la tête et il est reparti. C'est la conversation la plus honnête que j'ai eue de toute la soirée.",
+        simple: "Un inconnu lui a demandé si tout allait bien. C'était le meilleur moment de la soirée."
+      },
+      {
+        text: "Le lendemain matin, j'ai regardé mon téléphone. Elle n'a pas écrit. Deux jours après, elle n'a toujours pas écrit.",
+        simple: "Le lendemain et deux jours après, elle n'a pas écrit."
+      },
+      {
+        text: "Mais j'ai gardé une chose de cette soirée : je sais maintenant que je n'ai pas besoin de sept minutes pour être drôle. Trente secondes suffisent. Et si personne ne rit à la trentième seconde, il faut s'arrêter.",
+        simple: "Il a quand même appris quelque chose : une histoire drôle doit être courte."
+      },
+      {
+        text: "C'est cher, quarante-deux euros pour apprendre ça. Mais ce n'est pas le plus cher que j'ai payé. Et puis, j'ai raté la soirée, pas la leçon.",
+        simple: "La leçon a coûté quarante-deux euros. Il a raté la soirée, mais il a appris quelque chose."
       }
     ]
   },
 
   tasks: [
     {
-      type: 'evidence',
-      kind: 'Textdetektiv',
-      prompt: 'Karim arbeitet normalerweise auch am Sonntag.',
+      type: 'evidence', skill: 'verstehen',
+      prompt: "C'est lui qui a payé les boissons.",
       verdict: 'richtig',
-      evidence: 'il travaille le samedi et le dimanche à la boulangerie de son oncle',
-      explain: "Steht direkt da – und zwar im Präsens, weil es eine Gewohnheit ist. Der Rest der Geschichte erzählt einen einzelnen Sonntag, deshalb passé composé."
+      evidence: "On a commandé deux bières et j'ai payé",
+      explain: "C'est écrit deux fois : *On a commandé deux bières et j'ai payé* et plus tard *J'ai payé encore*. Le mot *encore* te dit que c'est la deuxième fois."
     },
     {
-      type: 'evidence',
-      kind: 'Textdetektiv',
-      prompt: 'Bastien hat das Essen bezahlt.',
+      type: 'evidence', skill: 'verstehen',
+      prompt: "Son histoire de sept minutes a beaucoup fait rire Nadia.",
       verdict: 'falsch',
-      evidence: "Karim a payé, parce que Bastien a oublié son portefeuille",
-      explain: "Umgekehrt: *Karim a payé*. Und das kleine *comme toujours* am Satzende verrät, dass Bastien das öfter macht."
+      evidence: "Elle a duré sept minutes et personne n'a ri",
+      explain: "Exactement le contraire : *personne n'a ri*. Et le « D'accord » de Nadia après une gorgée de bière n'est pas une réponse — c'est une façon polie de changer de sujet."
     },
     {
-      type: 'evidence',
-      kind: 'Textdetektiv',
-      prompt: 'Karim wohnt seit seiner Kindheit in Marseille.',
+      type: 'evidence', skill: 'verstehen',
+      prompt: "Nadia a trouvé la soirée agréable.",
       verdict: 'unklar',
-      explain: "Marseille kommt vor, Karims Kindheit nicht. Bastien sagt zwar *on a de la chance d'habiter ici* – aber seit wann die beiden dort wohnen, erfährst du nie. Beim Leseverstehen gilt: nur zählen, was wirklich dasteht."
+      explain: "On ne sait rien de ce qu'elle a pensé. Elle a dit « peut-être » et elle n'a pas écrit — mais le texte ne donne jamais son avis. En compréhension écrite, seul ce qui est écrit compte, pas ce qu'on devine."
     },
     {
-      type: 'choice',
-      kind: 'Blitzrunde',
+      type: 'choice', skill: 'erkennen',
       grammar: 'fr-passe-compose-avoir',
-      prompt: 'Wie lautet das participe passé von *prendre*?',
+      prompt: "Quel est le participe passé de *courir* ?",
       options: [
-        { text: 'ils ont pris', why: "Richtig. *prendre → pris*. Die Familie dazu: apprendre → appris, comprendre → compris." },
-        { text: 'ils ont prendu', why: "Klingt logisch, gibt es aber nicht. Die -u-Endung gehört zu Verben wie entendre → entendu, répondre → répondu. *prendre* tanzt aus der Reihe." },
-        { text: 'ils ont prené', why: "-é ist die Endung der -er-Verben (parler → parlé). *prendre* endet nicht auf -er." },
-        { text: 'ils ont prendé', why: "Diese Form gibt es im Französischen nicht – hier wurden Infinitiv und Endung einfach zusammengeklebt." }
+        { text: "j'ai couru", why: "Correct. *courir → couru*. Même modèle : boire → bu, lire → lu, voir → vu." },
+        { text: "j'ai courru", why: "Un r de trop. C'est l'infinitif qui a deux r au futur (*je courrai*), pas le participe." },
+        { text: "j'ai couri", why: "La terminaison -i existe (finir → fini, dormir → dormi), mais *courir* ne la prend pas." },
+        { text: "j'ai couré", why: "-é appartient aux verbes en -er (payer → payé). *courir* ne finit pas en -er." }
       ],
       answer: 0,
-      praise: 'Sitzt.'
+      praise: 'Parfait.'
     },
     {
-      type: 'transform',
-      kind: 'Verwandler',
+      type: 'transform', skill: 'produzieren',
       grammar: 'fr-passe-compose-avoir',
-      prompt: 'Setz den Satz ins passé composé.',
-      source: 'Il prépare un café et il ouvre la fenêtre.',
-      answer: ["Il a préparé un café et il a ouvert la fenêtre."],
-      hint: 'Zwei Verben, also zweimal avoir. Und ouvrir ist unregelmässig.',
-      explain: "*préparer* ist brav: préparé. *ouvrir* nicht: ouvert. Jedes Verb bekommt sein eigenes *a* – man kann es nicht einmal für beide benutzen."
+      prompt: "Mets cette phrase au passé composé.",
+      source: "Je prends une douche et je mets ma seule chemise propre.",
+      answer: ["J'ai pris une douche et j'ai mis ma seule chemise propre."],
+      hint: "Deux verbes, donc deux fois *avoir*. Et les deux participes sont irréguliers.",
+      explain: "*prendre → pris*, *mettre → mis*. Deux irréguliers dans la même phrase, et les deux finissent par un son qu'on n'entend pas. Chaque verbe reçoit son propre *ai*."
     },
     {
-      type: 'transform',
-      kind: 'Verwandler',
+      type: 'transform', skill: 'produzieren',
       grammar: 'fr-passe-compose-avoir',
-      prompt: 'Verneine diesen Satz.',
-      source: 'Il a dormi pendant le film.',
-      answer: ["Il n'a pas dormi pendant le film.", "Il n'a pas dormi pendant le film"],
-      hint: 'ne … pas legt sich um den Teil, der konjugiert ist.',
-      explain: "*ne* und *pas* umschliessen *a*, nicht *dormi*: _il n'a pas dormi_. Vor einem Vokal wird ne zu n'. Genauso im Text: _Ils n'ont pas beaucoup parlé._"
+      prompt: "Mets cette phrase à la forme négative.",
+      source: "Elle a écrit le lendemain.",
+      answer: ["Elle n'a pas écrit le lendemain.", "Elle n'a pas écrit le lendemain"],
+      hint: "*ne … pas* se met autour du mot qui est conjugué, pas autour du participe.",
+      explain: "*ne* et *pas* entourent *a*, pas *écrit* : _elle n'a pas écrit_. Devant une voyelle, *ne* devient *n'*. Tu as le même modèle dans le texte : _elle n'a toujours pas écrit_."
     },
     {
-      type: 'forge',
-      kind: 'Satzschmiede',
+      type: 'forge', skill: 'produzieren',
       grammar: 'fr-passe-compose-avoir',
-      prompt: 'Bau den Satz: *Sie haben gegrillte Sardinen in einem kleinen Restaurant gegessen.*',
-      solution: 'Ils ont mangé des sardines grillées dans un petit restaurant',
-      distractors: ['sont', 'mangés', 'ils'],
-      explain: "*manger* nimmt avoir → _ils ont mangé_. Das Partizip bleibt unverändert (nicht _mangés_). Und beachte: das Adjektiv *grillées* passt sich sehr wohl an – aber an *sardines*, nicht ans Verb."
+      prompt: "Construis la phrase : il a mangé le kebab debout, seul, devant une station-service.",
+      solution: "Je l'ai mangé debout tout seul devant une station-service",
+      distractors: ['suis', 'mangée', 'été'],
+      explain: "*manger* prend avoir → _j'ai mangé_. Le participe ne change pas (pas _mangée_). Le petit *l'* devant *ai* remplace *le kebab* : c'est un pronom, et il se met toujours avant le verbe."
     },
     {
-      type: 'pairs',
-      kind: 'Paarjagd',
+      type: 'pairs', skill: 'wortschatz',
       grammar: 'fr-passe-compose-avoir',
-      prompt: 'Infinitiv und participe passé zusammenbringen. Alle sechs kommen im Text vor.',
+      prompt: "Associe chaque infinitif à son participe passé. Les six sont dans le texte.",
       pairs: [
-        ['faire', 'fait'],
+        ['courir', 'couru'],
         ['prendre', 'pris'],
+        ['boire', 'bu'],
         ['dire', 'dit'],
-        ['ouvrir', 'ouvert'],
-        ['entendre', 'entendu'],
-        ['répondre', 'répondu']
+        ['rire', 'ri'],
+        ['avoir', 'eu']
       ],
-      explain: "Muster erkennen lohnt sich: -endre und -ondre werden zu -endu / -ondu. Der Rest ist Auswendiglernen – aber es sind zum Glück nur etwa dreissig Verben, und du benutzt sie täglich."
+      explain: "Il y a des modèles : beaucoup d'irréguliers finissent en -u (couru, bu, eu, vu, lu). D'autres en -is (pris, mis) ou en -it (dit, écrit). Ce sont environ trente verbes, et tu les utilises tous les jours."
     },
     {
-      type: 'write',
-      kind: 'Freischreiben',
+      type: 'choice', skill: 'erkennen',
       grammar: 'fr-passe-compose-avoir',
-      prompt: 'Dein letzter Sonntag. Vier bis sechs Sätze, alle im passé composé. Es darf banal sein – Karims Tag war es auch.',
-      placeholder: "Dimanche dernier, j'ai …",
-      minWords: 25,
-      mustUse: ["j'ai", 'dimanche'],
-      checklist: [
-        "Jeder Vergangenheitssatz hat eine Form von *avoir* darin.",
-        'Kein Partizip hat ein zusätzliches -e oder -s bekommen.',
-        'Ich habe mindestens ein unregelmässiges Partizip benutzt (fait, pris, vu, eu …).',
-        'Ein Satz ist verneint (n… pas).'
+      prompt: "Dans le texte : *Je suis rentré à pied.* Pourquoi *suis* et non *ai* ?",
+      options: [
+        { text: "Parce que *rentrer* fait partie des verbes de mouvement qui prennent être.",
+          why: "Oui. aller, venir, partir, arriver, rentrer, sortir, monter, descendre… tous avec être. C'est le sujet de la prochaine fois." },
+        { text: "Parce que la phrase parle de lui-même.",
+          why: "Non, ça ne change rien. *J'ai payé* parle aussi de lui et prend avoir." },
+        { text: "Parce que la phrase est au présent.",
+          why: "Non, *suis rentré* est bien un passé composé : *être* au présent + participe passé. Même construction, autre auxiliaire." },
+        { text: "Parce qu'il y a *à pied* dans la phrase.",
+          why: "Le complément ne décide rien. On dit *j'ai marché à pied* avec avoir. C'est le verbe *rentrer* qui décide." }
       ],
-      model: "Dimanche dernier, j'ai dormi jusqu'à neuf heures. J'ai pris un café et j'ai lu les nouvelles. L'après-midi, j'ai téléphoné à ma mère et nous avons parlé pendant une heure. Après, j'ai fait les courses. Le soir, j'ai regardé un film avec un ami. Nous n'avons pas beaucoup aimé le film, mais nous avons beaucoup ri."
+      answer: 0
+    },
+    {
+      type: 'write', skill: 'produzieren',
+      grammar: 'fr-passe-compose-avoir',
+      prompt: "À toi. Raconte une soirée qui s'est mal passée. Cinq ou six phrases, toutes au passé composé. Sois honnête : personne d'autre ne va le lire.",
+      placeholder: "Samedi dernier, j'ai …",
+      minWords: 40,
+      mustUse: ["j'ai", "je n'ai pas"],
+      checklist: [
+        "Chaque phrase au passé a une forme d'*avoir* dedans.",
+        "Aucun participe n'a reçu un -e ou un -s en plus.",
+        "J'ai utilisé au moins deux participes irréguliers (fait, pris, bu, vu, eu…).",
+        "Une phrase au moins est à la forme négative (n'… pas).",
+        "J'ai écrit une phrase que je n'aurais pas écrite dans un examen."
+      ],
+      model: "Samedi dernier, j'ai organisé un petit dîner chez moi. J'ai acheté trop de nourriture et j'ai oublié le vin. Mon ami Théo a apporté une bouteille, mais il a cassé deux verres en arrivant. Après, j'ai brûlé les pâtes. On a commandé des pizzas et on a attendu une heure et demie. Personne n'a rien dit, mais je n'ai pas dormi de la nuit. La semaine prochaine, on va au restaurant."
     }
   ],
 
   listening: {
-    headline: 'Zehn Minuten echte Nachrichten',
-    intro: "Jetzt kommt richtiges Französisch aus dem Radio – aber langsam gesprochen und mit einfacherem Wortschatz. RFI macht das seit Jahrzehnten für Französischlernende, jeden Abend neu. Und es gibt ein Transkript zum Mitlesen.",
+    headline: 'Dix minutes de vraies informations',
+    intro: "Maintenant, du français de la radio : parlé lentement, avec des mots simples, mais fait par une vraie chaîne d'information. RFI le fait depuis des dizaines d'années pour les gens qui apprennent le français. Et il y a une transcription pour lire en même temps.",
     source: {
       name: 'Journal en français facile (RFI)',
       icon: '📻',
-      kind: 'Nachrichten, werktags neu',
-      duration: '10 Min',
+      kind: 'Informations, chaque jour de la semaine',
       level: 'A2–B1',
-      what: "Das Weltgeschehen in zehn Minuten, in klarem und langsamem Französisch – gemacht von einem echten Nachrichtensender, nicht von einer Lern-App. Zu jeder Sendung gibt es das Transkript.",
-      url: 'https://francaisfacile.rfi.fr/',
-      cta: 'Zur Sendung',
-      transcript: true,
-      pick: "Nimm die Ausgabe von heute oder gestern. Beim ersten Mal: nur die ersten fünf Minuten – das reicht völlig. Lies das Transkript erst NACH dem zweiten Durchgang, sonst liest du statt zu hören."
+      what: "L'actualité du monde en dix minutes, dans un français clair et lent. Ce n'est pas une application pour apprendre : c'est une vraie radio qui parle doucement.",
+      itunesId: 1573764973,
+      country: 'us',
+      minMinutes: 5,
+      maxMinutes: 20,
+      homepage: 'https://francaisfacile.rfi.fr/',
+      transcriptUrl: 'https://francaisfacile.rfi.fr/',
+      pick: "L'émission la plus récente est déjà chargée ici : appuie sur play. La première fois, écoute seulement les cinq premières minutes, ça suffit. Et lis la transcription seulement APRÈS la deuxième écoute, sinon tu lis au lieu d'écouter."
     },
     alternatives: [
-      { name: 'RFI – Podcast-Übersicht', url: 'https://www.rfi.fr/fr/podcasts/', why: 'Falls der direkte Link nicht lädt: hier alle RFI-Podcasts, „Journal en français facile“ ist darunter.' },
-      { name: 'Coffee Break French', url: 'https://coffeebreaklanguages.com/coffeebreakfrench/', why: 'Wenn Nachrichten heute zu viel sind: Dialoge mit englischer Erklärung dazwischen, ab absolutem Anfängerniveau.' },
-      { name: 'News in Slow French', url: 'https://www.newsinslowfrench.com/', why: 'Dieselbe Idee wie RFI, noch etwas langsamer, mit mitlaufendem Transkript.' },
-      { name: 'InnerFrench', url: 'https://innerfrench.com/podcast/', why: 'Für den Tag, an dem du mehr willst: langsames, sehr klares Französisch über Kultur und Gesellschaft (B1). Hebt dich sichtbar auf die nächste Stufe.' }
+      {
+        name: 'One Thing In A French Day', icon: '🥖', kind: 'Journal personnel, deux fois par semaine', level: 'A2–B1',
+        what: "Laetitia raconte trois ou quatre minutes de sa vie à Paris : le marché, la pluie, ses enfants. Très court, entièrement en français.",
+        itunesId: 210206924, country: 'us', minMinutes: 2, maxMinutes: 12,
+        homepage: 'https://onethinginafrenchday.podbean.com/',
+        pick: "Pour un jour de fatigue. Un épisode dure moins longtemps qu'un café."
+      },
+      {
+        name: 'Français Authentique', icon: '🎧', kind: 'Podcast, chaque semaine', level: 'A2–B1',
+        what: "Johan explique une expression ou une idée, lentement et clairement, sans jamais passer par une autre langue.",
+        itunesId: 500549470, country: 'us', minMinutes: 5, maxMinutes: 25,
+        homepage: 'https://www.francaisauthentique.com/',
+        pick: "Bien quand tu veux comprendre une expression française jusqu'au bout."
+      },
+      {
+        name: 'InnerFrench', icon: '🚀', kind: 'Podcast, deux fois par mois', level: 'B1–B2',
+        what: "Hugo parle de culture, d'histoire et de société. C'est au-dessus de ton niveau, mais son français est d'une clarté rare.",
+        itunesId: 1231472946, country: 'us', minMinutes: 10, maxMinutes: 45,
+        homepage: 'https://innerfrench.com/podcast/',
+        pick: "Le jour où tu veux voir jusqu'où tu es monté."
+      }
     ],
     pretask: [
-      { term: 'le journal', de: 'die Nachrichtensendung' },
-      { term: "aujourd'hui", de: 'heute' },
-      { term: 'selon', de: 'laut, gemäss' },
-      { term: 'le gouvernement', de: 'die Regierung' },
-      { term: 'une grève', de: 'ein Streik' },
-      { term: 'des milliers de', de: 'Tausende von' },
-      { term: 'à la suite de', de: 'infolge von' },
-      { term: "il s'agit de", de: 'es geht um' }
+      { term: 'le journal', def: "l'émission qui donne les informations" },
+      { term: "aujourd'hui", def: 'ce jour, maintenant' },
+      { term: 'selon', def: "d'après ce que dit quelqu'un" },
+      { term: 'le gouvernement', def: 'les personnes qui dirigent un pays' },
+      { term: 'une grève', def: 'quand les travailleurs arrêtent de travailler pour protester' },
+      { term: 'des milliers de', def: 'un très grand nombre de' },
+      { term: 'à la suite de', def: 'après quelque chose, à cause de cela' },
+      { term: "il s'agit de", def: 'le sujet est…' }
     ]
   },
 
-  outro: "Ein banaler Sonntag – und trotzdem zwanzig Sätze Vergangenheit. Genau so lernt man das. Noch drei kurze Fragen, dann bist du durch."
+  outro: "Une soirée ratée, quarante-deux euros, et vingt phrases au passé composé. Encore quelques questions et c'est fini."
 });
 </script>
 <script>/* assets/js/app.js */
@@ -2709,6 +3666,7 @@ LEKTION.register({
     if (!m) {
       current = { id: null, station: null };
       L.session = null;
+      L.uiLang = 'de';
       document.body.dataset.view = 'home';
       document.body.dataset.lang = 'es';
       draw(L.views.home());
@@ -2720,6 +3678,7 @@ LEKTION.register({
 
     document.body.dataset.view = 'lesson';
     document.body.dataset.lang = entry.lang;
+    L.uiLang = entry.lang;          // ab hier keine deutsche Silbe mehr
 
     L.load(entry).then(function (lesson) {
       if (!L.session || L.session.lessonId !== lesson.id) {
@@ -2747,10 +3706,10 @@ LEKTION.register({
   function missing(id, why) {
     return h('div', { class: 'view wrap empty' }, [
       h('div', { class: 'big', text: '🗺️' }),
-      h('h2', { text: 'Diese Einheit finde ich nicht' }),
-      h('p', { class: 'lead', style: 'margin-top:10px', text: why || ('Unbekannte Lektion: ' + id) }),
+      h('h2', { text: L.t('err.title') }),
+      h('p', { class: 'lead', style: 'margin-top:10px', text: why || id }),
       h('div', { class: 'row', style: 'justify-content:center;margin-top:22px' }, [
-        h('button', { class: 'btn btn-primary', type: 'button', text: 'Zur Übersicht', onclick: function () { L.go('#/'); } })
+        h('button', { class: 'btn btn-primary', type: 'button', text: L.t('err.home'), onclick: function () { L.go('#/'); } })
       ])
     ]);
   }
@@ -2776,7 +3735,7 @@ LEKTION.register({
       var b = h('button', { class: 'rail-step', 'data-state': state, type: 'button',
         disabled: i > cur + 1 ? 'disabled' : null }, [
         h('span', { class: 'bar' }, [h('i')]),
-        h('span', { text: s.label })
+        h('span', { text: L.stationLabel(s.id) })
       ]);
       b.addEventListener('click', function () { L.go('#/lektion/' + lesson.id + '/' + s.id); });
       inner.appendChild(b);
@@ -2799,7 +3758,7 @@ LEKTION.register({
 
     footEl.style.display = '';
     var inner = h('div', { class: 'footbar-inner' });
-    inner.appendChild(h('div', { class: 'hint', text: hintFor(station, lesson) }));
+    inner.appendChild(h('div', { class: 'hint', text: hintFor(station) }));
     var b = h('button', { class: 'btn btn-primary', type: 'button', text: labelFor(station) });
     b.addEventListener('click', function () {
       L.fx.tap();
@@ -2810,17 +3769,11 @@ LEKTION.register({
   }
 
   function labelFor(station) {
-    return { intro: 'Wörter ansehen', vocab: 'Text lesen', read: 'Los, testen',
-             train: 'Weiter zum Hören', listen: 'Abschliessen' }[station] || 'Weiter';
+    return L.t('foot.' + station) === 'foot.' + station ? L.t('foot.next') : L.t('foot.' + station);
   }
-  function hintFor(station, lesson) {
-    return {
-      intro: 'Erst verstehen, dann üben.',
-      vocab: 'Tipp: nicht auswendig lernen - nur einmal kurz begegnen.',
-      read: 'Zweimal lesen ist besser als einmal nachschlagen.',
-      train: 'Fehler sind hier gratis.',
-      listen: 'Echtes Material. Unverstandenes ist normal.'
-    }[station] || '';
+  function hintFor(station) {
+    var k = 'hint.' + station;
+    return L.t(k) === k ? '' : L.t(k);
   }
 
   /* ---------------- Kopfzeile ---------------- */
@@ -2839,25 +3792,27 @@ LEKTION.register({
     var sheet = document.getElementById('sheet');
     var box = sheet.querySelector('.sheet-inner');
     box.innerHTML = '';
-    box.appendChild(h('h3', { text: 'Menü', style: 'margin-bottom:14px' }));
+    box.appendChild(h('h3', { text: L.t('menu.title'), style: 'margin-bottom:14px' }));
 
     var items = [];
     if (L.session) {
-      items.push(['🏠', 'Einheit verlassen (Stand bleibt gespeichert)', function () { close(); L.go('#/'); }]);
-      items.push(['↺', 'Diese Einheit neu starten', function () {
+      items.push(['🏠', L.t('menu.leave'), function () { close(); L.go('#/'); }]);
+      items.push(['↺', L.t('menu.restart'), function () {
         delete L.state.progress[L.session.lessonId];
         L.session = null; L.save(); close(); route();
       }, 'danger']);
     }
-    items.push([L.state.settings.sound ? '🔊' : '🔇', L.state.settings.sound ? 'Töne ausschalten' : 'Töne einschalten', function () {
-      L.state.settings.sound = !L.state.settings.sound; L.save(); close(); L.toast(L.state.settings.sound ? 'Töne an' : 'Töne aus');
-    }]);
+    items.push([L.state.settings.sound ? '🔊' : '🔇',
+      L.state.settings.sound ? L.t('menu.soundOff') : L.t('menu.soundOn'), function () {
+        L.state.settings.sound = !L.state.settings.sound; L.save(); close();
+        L.toast(L.state.settings.sound ? L.t('toast.soundOn') : L.t('toast.soundOff'));
+      }]);
     if (!L.standalone) {
-      items.push(['📖', 'Quellen & Methode', function () { close(); window.open('docs/QUELLEN.md', '_blank'); }]);
+      items.push(['📖', L.t('menu.docs'), function () { close(); window.open('docs/QUELLEN.md', '_blank'); }]);
     }
-    items.push(['🧹', 'Allen Fortschritt löschen', function () {
-      if (confirm('Wirklich alles zurücksetzen? XP, Serie und alle Zwischenstände sind dann weg.')) {
-        L.resetAll(); L.session = null; close(); L.go('#/'); L.toast('Alles zurückgesetzt.');
+    items.push(['🧹', L.t('menu.reset'), function () {
+      if (confirm(L.t('menu.confirm'))) {
+        L.resetAll(); L.session = null; close(); L.go('#/'); L.toast(L.t('toast.reset'));
       }
     }, 'danger']);
 
@@ -2869,7 +3824,7 @@ LEKTION.register({
       ]));
     });
     box.appendChild(h('div', { class: 'menu-sep' }));
-    box.appendChild(h('button', { class: 'btn btn-ghost btn-block', type: 'button', text: 'Schliessen', onclick: close }));
+    box.appendChild(h('button', { class: 'btn btn-ghost btn-block', type: 'button', text: L.t('menu.close'), onclick: close }));
     sheet.classList.add('open');
     function close() { sheet.classList.remove('open'); }
   }

@@ -10,13 +10,15 @@ const PRECACHE = [
   "./assets/css/app.css",
   "./assets/icons/icon.svg",
   "./assets/js/core.js",
+  "./assets/js/i18n.js",
+  "./assets/js/audio.js",
   "./assets/js/tasks.js",
   "./assets/js/stations.js",
   "./assets/js/app.js",
   "./learner/profile.js",
   "./lessons/manifest.js",
-  "./lessons/es/2026-09-13-bar-manolo.js",
-  "./lessons/fr/2026-09-13-dimanche-karim.js"
+  "./lessons/es/2026-09-13-moto.js",
+  "./lessons/fr/2026-09-13-soiree-ratee.js"
 ];
 /* PRECACHE:END */
 

@@ -3,7 +3,9 @@
    ctx.answered({correct, yours, right, explain, skipped}) meldet das Ergebnis zurück. */
 (function (L) {
   'use strict';
-  var h = L.h, esc = L.esc, markup = function (s) { return L.markup(s); };
+  var h = L.h, esc = L.esc;
+  var markup = function (s) { return L.markup(s); };
+  var T = function (k, v) { return L.t(k, v); };
   L.engines = {};
 
   function verdict(good, title, bodyHtml) {
@@ -70,10 +72,10 @@
         });
         var chosen = task.options[idx];
         var why = (typeof chosen === 'object' && chosen.why) ? chosen.why : '';
-        var body = (right ? '' : '<b>Richtig wäre:</b> ' + esc(labelOf(task.options[task.answer])) + '<br>')
+        var body = (right ? '' : '<b>' + T('v.shouldBe') + '</b> ' + esc(labelOf(task.options[task.answer])) + '<br>')
           + markup(why || task.explain || '');
         if (why && task.explain) body += '<br><span class="muted">' + markup(task.explain) + '</span>';
-        root.appendChild(verdict(right, right ? (task.praise || 'Sitzt.') : 'Knapp daneben', body));
+        root.appendChild(verdict(right, right ? (task.praise || T('v.hit')) : T('v.miss'), body));
         ctx.answered({
           correct: right,
           yours: labelOf(chosen),
@@ -92,9 +94,9 @@
   L.engines.evidence = function (task, ctx) {
     var root = h('div', { class: 'stack' });
     var choices = [
-      { id: 'richtig', label: 'Stimmt' },
-      { id: 'falsch', label: 'Stimmt nicht' },
-      { id: 'unklar', label: 'Steht nicht im Text' }
+      { id: 'richtig', label: T('v.yes') },
+      { id: 'falsch', label: T('v.no') },
+      { id: 'unklar', label: T('v.unclear') }
     ];
     var opts = h('div', { class: 'opts' });
     choices.forEach(function (c, i) {
@@ -118,7 +120,7 @@
       if (task.verdict !== 'unklar' && task.evidence && ctx.sentences) {
         root.appendChild(evidenceStep(right));
       } else {
-        root.appendChild(verdict(right, right ? 'Gutes Auge.' : 'Nicht ganz', markup(task.explain || '')));
+        root.appendChild(verdict(right, right ? T('v.sharpEye') : T('v.notQuite'), markup(task.explain || '')));
         ctx.answered({ correct: right, yours: labelFor(id), right: labelFor(task.verdict), explain: task.explain || '' });
       }
     }
@@ -129,7 +131,7 @@
 
     function evidenceStep(verdictWasRight) {
       var box = h('div', { class: 'stack' });
-      box.appendChild(h('p', { class: 'muted', text: 'Und jetzt der Beweis: Klick den Satz an, der das belegt.' }));
+      box.appendChild(h('p', { class: 'muted', text: T('v.proveIt') }));
       var ev = h('div', { class: 'evidence' });
       var found = false;
       ctx.sentences.forEach(function (s) {
@@ -148,7 +150,7 @@
           isIt ? L.fx.right(0) : L.fx.wrong();
           var all = verdictWasRight && isIt;
           box.appendChild(verdict(all,
-            all ? 'Urteil und Beleg - beides sauber.' : (verdictWasRight ? 'Urteil ja, Beleg nein.' : 'Nicht ganz'),
+            all ? T('v.bothRight') : (verdictWasRight ? T('v.halfRight') : T('v.notQuite')),
             markup(task.explain || '')));
           ctx.answered({
             correct: all,
@@ -201,7 +203,7 @@
       bank.appendChild(el);
     });
 
-    var check = h('button', { class: 'btn btn-primary', type: 'button', text: 'Prüfen', disabled: true });
+    var check = h('button', { class: 'btn btn-primary', type: 'button', text: T('f.check'), disabled: true });
     check.addEventListener('click', function () {
       var mine = picked.map(function (p) { return p.word; }).join(' ');
       var res = L.matches(mine, [task.solution].concat(task.alsoAccept || []));
@@ -211,12 +213,12 @@
       check.remove();
       var body = res.ok
         ? markup(task.explain || '')
-        : '<b>Richtig:</b> ' + esc(task.solution) + '<br>' + markup(task.explain || '');
-      root.appendChild(verdict(res.ok, res.ok ? 'Perfekt gebaut.' : 'Fast - schau die Reihenfolge an', body));
+        : '<b>' + T('f.correct') + '</b> ' + esc(task.solution) + '<br>' + markup(task.explain || '');
+      root.appendChild(verdict(res.ok, res.ok ? T('f.built') : T('f.order'), body));
       ctx.answered({ correct: res.ok, yours: mine, right: task.solution, explain: task.explain || '' });
     });
 
-    root.appendChild(h('p', { class: 'muted', text: 'Tippe die Wörter in der richtigen Reihenfolge an. Ein paar passen nicht.' }));
+    root.appendChild(h('p', { class: 'muted', text: T('f.hint') }));
     root.appendChild(slot);
     root.appendChild(bank);
     root.appendChild(h('div', { class: 'row' }, [check]));
@@ -230,15 +232,15 @@
     if (task.source) {
       root.appendChild(h('div', { class: 'ex-line' }, [h('div', { class: 'src', html: esc(task.source) })]));
     }
-    var field = h('input', { class: 'field', type: 'text', placeholder: task.placeholder || 'Deine Lösung …', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false' });
-    var check = h('button', { class: 'btn btn-primary', type: 'button', text: 'Prüfen' });
+    var field = h('input', { class: 'field', type: 'text', placeholder: task.placeholder || T('t.placeholder'), autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false' });
+    var check = h('button', { class: 'btn btn-primary', type: 'button', text: T('f.check') });
     var row = h('div', { class: 'type-row' }, [field, check]);
     root.appendChild(row);
     root.appendChild(accentBar(ctx.lang, field));
 
     var hintBtn = null;
     if (task.hint) {
-      hintBtn = h('button', { class: 'btn btn-ghost btn-sm', type: 'button', text: 'Kleiner Schubs' });
+      hintBtn = h('button', { class: 'btn btn-ghost btn-sm', type: 'button', text: T('t.nudge') });
       hintBtn.addEventListener('click', function () {
         hintBtn.replaceWith(h('p', { class: 'muted', html: '💡 ' + esc(task.hint) }));
       });
@@ -255,7 +257,7 @@
 
       var body = '';
       if (res.ok && !res.exact) {
-        body = 'Inhaltlich richtig - nur die Akzente fehlen: <b>' + esc(res.target) + '</b><br>';
+        body = T('t.accents') + ' <b>' + esc(res.target) + '</b><br>';
       } else if (!res.ok) {
         var d = L.diff(mine, accepted[0]);
         var html = d.map(function (p) {
@@ -265,9 +267,9 @@
       }
       body += markup(task.explain || '');
       if (accepted.length > 1 && res.ok) {
-        body += '<br><span class="muted">Auch möglich: ' + esc(accepted.slice(1).join(' · ')) + '</span>';
+        body += '<br><span class="muted">' + T('t.also') + ' ' + esc(accepted.slice(1).join(' · ')) + '</span>';
       }
-      root.appendChild(verdict(res.ok, res.ok ? (res.exact ? 'Genau so.' : 'Richtig - fast perfekt') : 'Schau mal genau hin', body));
+      root.appendChild(verdict(res.ok, res.ok ? (res.exact ? T('t.exact') : T('t.almost')) : T('t.look'), body));
       ctx.answered({
         correct: res.ok,
         exact: res.exact,
@@ -323,8 +325,8 @@
     function finish() {
       var clean = misses === 0;
       var body = clean ? markup(task.explain || '')
-        : 'Du hast <b>' + misses + '</b> Fehlversuch' + (misses === 1 ? '' : 'e') + ' gebraucht. ' + markup(task.explain || '');
-      root.appendChild(verdict(clean, clean ? 'Alles auf Anhieb.' : 'Geschafft.', body));
+        : T('p.tries', { n: misses }) + ' ' + markup(task.explain || '');
+      root.appendChild(verdict(clean, clean ? T('p.clean') : T('p.done'), body));
       ctx.answered({
         correct: clean,
         partial: Math.max(0, 1 - misses / (task.pairs.length * 1.5)),
@@ -334,7 +336,7 @@
       });
     }
 
-    root.appendChild(h('p', { class: 'muted', text: 'Immer zwei antippen, die zusammengehören.' }));
+    root.appendChild(h('p', { class: 'muted', text: T('p.hint') }));
     root.appendChild(h('div', { class: 'pairs' }, [colA, colB]));
     return root;
   };
@@ -342,13 +344,13 @@
   /* =============== 6. Freischreiben: produzieren, dann vergleichen =============== */
   L.engines.write = function (task, ctx) {
     var root = h('div', { class: 'stack' });
-    var field = h('textarea', { class: 'field', placeholder: task.placeholder || 'Schreib los - Fehler sind hier ausdrücklich erlaubt.' });
+    var field = h('textarea', { class: 'field', placeholder: task.placeholder || T('w.placeholder') });
     root.appendChild(field);
     root.appendChild(accentBar(ctx.lang, field));
 
     if (task.mustUse && task.mustUse.length) {
       var chips = h('div', { class: 'row', style: 'margin-top:4px' });
-      chips.appendChild(h('span', { class: 'muted', text: 'Bau ein:' }));
+      chips.appendChild(h('span', { class: 'muted', text: T('w.use') }));
       task.mustUse.forEach(function (w) { chips.appendChild(h('span', { class: 'tag ghost', text: w, 'data-w': w })); });
       root.appendChild(chips);
       field.addEventListener('input', function () {
@@ -361,7 +363,7 @@
       });
     }
 
-    var go = h('button', { class: 'btn btn-primary', type: 'button', text: 'Fertig - Musterlösung zeigen' });
+    var go = h('button', { class: 'btn btn-primary', type: 'button', text: T('w.go') });
     root.appendChild(h('div', { class: 'row' }, [go]));
 
     go.addEventListener('click', function () {
@@ -373,13 +375,13 @@
 
       var panel = h('div', { class: 'stack' });
       panel.appendChild(h('div', { class: 'card' }, [
-        h('div', { class: 'task-kind', text: 'So könnte es klingen' }),
+        h('div', { class: 'task-kind', text: T('w.model') }),
         h('p', { style: 'margin-top:8px;color:var(--ink);font-size:15.5px;line-height:1.7', html: markup(task.model).replace(/\n/g, '<br>') })
       ]));
 
       if (task.checklist && task.checklist.length) {
         var list = h('div', { class: 'stack', style: 'gap:8px' });
-        list.appendChild(h('h3', { text: 'Vergleich deinen Text damit:' }));
+        list.appendChild(h('h3', { text: T('w.compare') }));
         var ticked = 0;
         task.checklist.forEach(function (c) {
           var b = h('button', { class: 'opt', type: 'button' }, [
@@ -399,8 +401,8 @@
       root.appendChild(panel);
 
       var note = [];
-      note.push(words + ' Wörter geschrieben');
-      if ((task.mustUse || []).length) note.push(used.length + '/' + task.mustUse.length + ' Zielwörter benutzt');
+      note.push(T('w.words', { n: words }));
+      if ((task.mustUse || []).length) note.push(T('w.hit', { a: used.length, b: task.mustUse.length }));
       L.fx.done();
       ctx.answered({
         correct: enough && used.length >= Math.ceil(((task.mustUse || []).length) * 0.6),

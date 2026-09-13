@@ -13,6 +13,8 @@ const iconUri = 'data:image/svg+xml;base64,' + Buffer.from(icon, 'utf8').toStrin
 
 const scripts = [
   'assets/js/core.js',
+  'assets/js/i18n.js',
+  'assets/js/audio.js',
   'assets/js/tasks.js',
   'assets/js/stations.js',
   'learner/profile.js',

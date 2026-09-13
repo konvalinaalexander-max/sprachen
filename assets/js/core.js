@@ -244,9 +244,10 @@
     return out;
   };
 
-  LEKTION.fmtDate = function (iso) {
+  LEKTION.fmtDate = function (iso, lang) {
+    var loc = { es: 'es-ES', fr: 'fr-FR' }[lang] || 'de-CH';
     try {
-      return new Date(iso + 'T12:00:00').toLocaleDateString('de-CH',
+      return new Date(iso + 'T12:00:00').toLocaleDateString(loc,
         { weekday: 'long', day: 'numeric', month: 'long' });
     } catch (e) { return iso; }
   };

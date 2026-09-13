@@ -2,10 +2,50 @@
 
 Für Claude. Alexander sagt im Chat „ich möchte heute lernen“ – dann läuft das hier ab.
 
+## Vier Regeln, die nicht verhandelbar sind
+
+**1. Kein deutsches Wort in einer Lektionsdatei.** Titel, Erklärungen, Aufgaben,
+Rückmeldungen, Wortschatz, Hörstation – alles in der Zielsprache, auf einem Niveau,
+das er versteht. Wortbedeutungen werden *einsprachig* erklärt (`def`), so wie in
+einem Lernerwörterbuch: `el taller` → `Local donde se arreglan coches`. Keine
+Übersetzung, auch nicht als Hilfe. `npm run validate` sucht nach deutschen Wörtern
+und bricht ab, wenn es welche findet. Deutsch gibt es nur auf der Startseite,
+wo die Sprache erst gewählt wird, und im Menü-Rahmen der Startseite.
+
+**2. Der Ton ist der eines 26-jährigen Mannes, nicht der eines Lehrbuchs.**
+Die Texte sollen ihm gefallen, nicht seiner Lehrerin. Nah am Leben, roh, direkt:
+Geld, Arbeit, Nächte, Fehlschläge, Sex, Alkohol, Behörden, Peinlichkeiten. Umgangs-
+sprache gehört dazu, auch das gelegentliche Kraftwort – so redet man, und genau das
+soll er lernen. Wortschatzeinträge markieren das dann als *(vulgar)* / *(familier)*.
+Keine geglätteten Lehrbuchsituationen, keine Hotelbuchungen, keine Kinder auf dem
+Spielplatz. Eine Person, ein Konflikt, ein Detail, das wehtut oder komisch ist.
+Keine Belehrung am Schluss.
+
+**3. Jede zweite Einheit ist ein Ausbruch.**
+Immer abwechselnd:
+- **normal** – so wie in dieser Datei beschrieben. Wortschatz und Grammatik sauber
+  beibringen, sechs Stationen, ordentlich aufgebaut.
+- **überkonstruiert** – ein eigenes Format. Escape Room, Simulator mit 3D-Ansicht
+  (CSS-3D oder ein Canvas-Renderer, kein echtes Spiel), Ermittlungsfall,
+  Dialogsimulation mit Verzweigungen, Zeitdruck, Punktestand, Karte, Inventar.
+  Die Stationen dürfen dabei komplett anders heissen und anders funktionieren.
+  Hier wird absichtlich übertrieben. Vorher im Netz nach Ideen suchen, nicht
+  zweimal dasselbe Format bauen.
+Welches dran ist, steht in `learner/profile.json` unter `nextFormat`. Nach jeder
+Einheit umschalten.
+
+**4. Die Hörquelle wird abgespielt, nicht verlinkt.** Er will nicht auf einer
+Website landen, auf der er ein Abo abschliessen soll. Deshalb trägt jede Quelle
+eine `itunesId`; die App holt darüber zur Laufzeit die Folgenliste und spielt die
+Audiodatei direkt im Player ab, mit Folgentitel und Datum. Ein `url`-Feld gibt es
+nicht mehr – der Prüfer lehnt es ab. `homepage` ist nur der Notausgang, falls die
+Folgenliste nicht lädt.
+
 ## Ablauf einer Anfrage
 
 ```bash
-npm run plan          # 1. Was ist dran? Beide Sprachen, oder: npm run plan -- es
+npm run profil        # 1. Was kann er, was nicht? (aus seinen Antworten)
+npm run plan          # 2. Welches Thema ist dran? Beide Sprachen, oder: -- es
 ```
 
 `tools/plan.mjs` liest `learner/` und sagt pro Sprache:
@@ -28,6 +68,12 @@ npm run check                            # 4. prüfen + Manifest + sprachen.html
 git add -A && git commit && git push
 ```
 
+**Vor dem Bauen immer erst `npm run profil`.** Das sagt, was er wirklich kann –
+aus seinen Antworten, nicht aus seiner Selbsteinschätzung. Steht dort
+„Selbst produzieren 30%“, dann braucht die nächste Einheit mehr `transform`,
+`forge` und `write` und weniger Ankreuzen. Steht dort „Text verstehen 95%“,
+dann darf der Text härter werden.
+
 **Zum Schluss immer `sprachen.html` mit SendUserFile in den Chat legen.** Das ist
 die Datei, mit der er arbeitet – eine einzige HTML-Datei, Doppelklick genügt.
 Er will sie jedes Mal hier haben, nicht aus dem Repository holen müssen.
@@ -39,30 +85,42 @@ ganze Lektion nacherzählen. Die Überraschung ist Teil des Spass.
 
 ## Wenn er einen Bericht schickt
 
-Am Ende jeder Einheit spuckt die App einen `LERNBERICHT …`-Block aus. Kommt der im Chat:
+Am Ende jeder Einheit erzeugt die App einen `LERNBERICHT …`-Block. Drei Wege,
+wie der zurückkommt:
+
+1. **GitHub-Knopf** (der bequemste): Die App öffnet ein vorausgefülltes Issue im
+   Repository. Er drückt nur noch „Create“. Dann hier das Issue lesen
+   (`mcp__github__issue_read`), den JSON-Block herausnehmen, verarbeiten, und das
+   Issue mit einem kurzen Kommentar schliessen.
+2. **Kopieren** und in den Chat werfen.
+3. **Als Datei** herunterladen und schicken.
+
+Verarbeitet wird immer gleich:
 
 ```bash
-# Text in eine Datei unter inbox/ legen, dann:
+# JSON-Block in eine Datei unter inbox/ legen, dann:
 node tools/report.mjs inbox/bericht-....json
 git add -A && git commit -m "Lernstand nach <Lektion>" && git push
 ```
 
 Das schreibt `learner/history.json`, verschiebt die Leitner-Boxen in
-`learner/curriculum.json` und zieht die Vorlieben in `learner/profile.json` nach.
-**Nie von Hand an den Boxen drehen** – ausser er sagt ausdrücklich „das kann ich schon“.
+`learner/curriculum.json`, zieht die Vorlieben in `learner/profile.json` nach und
+schreibt **`learner/skills.json`** fort – das Können-Profil, das aus seinen
+Antworten entsteht. **Nie von Hand an den Boxen drehen** – ausser er sagt
+ausdrücklich „das kann ich schon“.
 
 Danach kurz rückmelden, was sich verschoben hat, und was daraus für nächstes Mal folgt.
 
 ## Wie eine gute Lektion aussieht
 
-Sechs Stationen, zusammen 30–40 Minuten:
+Sechs Stationen, zusammen 40–45 Minuten. Er ist schnell und will gefordert werden:
 
 | Station | Inhalt | Zeit |
 |---|---|---|
-| Einstieg | Hook + **eine** Grammatik, auf den Text zugeschnitten | 6 Min |
+| Einstieg | Hook + **eine** Grammatik, auf den Text zugeschnitten | 7 Min |
 | Wörter | 8–14 Vokabeln, alle aus dem Text | 4 Min |
-| Lesen | der Text, mit Glossar und Übersetzung auf Abruf | 6 Min |
-| Training | 6–9 Aufgaben, gemischte Typen | 10 Min |
+| Lesen | der Text, mit Glossar und einfacherer Fassung auf Abruf | 10 Min |
+| Training | 8–10 Aufgaben, gemischte Typen | 12 Min |
 | Hören | echte externe Quelle, drei Durchgänge | 10 Min |
 | Feedback | Umfrage + Fehlerprotokoll + Bericht | 3 Min |
 
@@ -72,7 +130,13 @@ dicht genug vor, funktioniert offline, kein Urheberrecht. Authentisch bleibt es
 trotzdem – echte Themen, echte Stimmen, gerne nach einer realen Meldung gebaut.
 Dann `reading.source.url` auf das Original setzen.
 
-Länge: A1 80–220, A2 120–320, B1 200–450, B2 280–600 Wörter. Der Prüfer meckert sonst.
+Länge: **rund zwei A4-Seiten.** A1 250–500, A2 420–750, B1 600–1000, B2 700–1200
+Wörter. Der Prüfer meckert sonst. Lieber am oberen Rand als am unteren – kurze
+Texte langweilen ihn.
+
+Zu jedem Absatz gehört `simple`: dieselbe Aussage noch einmal, in einfacheren
+Sätzen derselben Sprache. Das ersetzt die frühere Übersetzung und hält die
+Immersion. Keine deutschen Übersetzungen mehr, das Feld `de` ist abgeschafft.
 
 Was einen Text gut macht: eine Person, ein Konflikt, ein Detail, das hängen bleibt.
 Keine Lehrbuchdialoge über das Buchen von Hotelzimmern.
@@ -91,15 +155,25 @@ der Prüfer schlägt sonst Alarm. Immer eine Aussage einbauen, die *nicht* im Te
 
 `write` zum Schluss: produzieren lassen, dann Musterlösung und Selbstcheck.
 
+**Jede Aufgabe braucht ein `skill`:** `verstehen`, `erkennen`, `produzieren` oder
+`wortschatz`. Daraus baut die App am Schluss die Niveau-Diagnose („was kannst du,
+was nicht“) und daraus entsteht `learner/skills.json`. Ohne `skill` fällt die
+Aufgabe aus der Diagnose – der Prüfer warnt. Auf Verteilung achten: mindestens
+zwei Aufgaben pro Fertigkeit, sonst ist die Messung Rauschen.
+
 ### Die Hörquelle
 Kommt aus dem echten Internet, nie selbst erzeugt – das war eine ausdrückliche Ansage.
-`docs/QUELLEN.md` hat die kuratierte Liste. Regeln:
-- 10–15 Minuten, sonst sprengt es den Rahmen
-- **rotieren** – `plan` zeigt, was zuletzt lief
+`docs/QUELLEN.md` hat die kuratierte Liste mit allen iTunes-Kennungen. Regeln:
+- `itunesId` ist Pflicht, `country: 'us'` (grösster Katalog, alle Sendungen drin)
+- `minMinutes` / `maxMinutes` setzen, sonst rutscht eine 90-Minuten-Folge herein
+- **keine Quelle mit Bezahlschranke.** Öffentlich-rechtlich oder frei, sonst nicht
+- **keine Sendung mit englischen Erklärteilen** – das bricht die Immersion genauso
+  wie Deutsch. Coffee Break und die Duolingo-Podcasts fallen damit raus
+- **rotieren** – `plan` zeigt, was zuletzt tatsächlich gehört wurde
 - Transkript ist ein starkes Plus
-- immer 2–4 `alternatives`, denn Links sterben
-- `source.pick` sagt konkret, welche Folge zu nehmen ist („die neueste, 10–15 Min“)
-- verlinkt wird die stabile Übersichtsseite, nicht eine einzelne Folge von heute
+- immer 2–3 `alternatives`, alle mit eigener `itunesId`; sie sind im Player
+  direkt umschaltbar
+- `source.pick` erklärt, was ihn erwartet – nicht mehr, welchen Link er suchen soll
 
 Die drei Durchgänge sind bewusst nicht folgenbezogen: global verstehen → Details
 sammeln → eine Minute nachsprechen. Das funktioniert mit jeder Folge und ist

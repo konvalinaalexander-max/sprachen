@@ -105,9 +105,12 @@ for (const lang of langs) {
   }
 
   // Hörquellen rotieren
-  const usedSources = lessons.filter((l) => l.lang === lang)
-    .sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 3)
-    .map((l) => l.listening?.source?.name).filter(Boolean);
+  const usedSources = sessions.slice(0, 3).map((s) => s.hoeren?.folge?.quelle)
+    .filter(Boolean)
+    .concat(lessons.filter((l) => l.lang === lang)
+      .sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 2)
+      .map((l) => l.listening?.source?.name).filter(Boolean))
+    .filter((v, i, a) => a.indexOf(v) === i);
   if (usedSources.length) {
     console.log('');
     console.log(`  ${col.dim('Zuletzt gehört: ' + usedSources.join(' → ') + '  (etwas anderes wählen)')}`);

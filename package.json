@@ -11,6 +11,7 @@
     "report": "node tools/report.mjs",
     "check": "node tools/validate.mjs && node tools/build-manifest.mjs && node tools/bundle.mjs",
     "serve": "node tools/serve.mjs",
-    "bundle": "node tools/bundle.mjs"
+    "bundle": "node tools/bundle.mjs",
+    "profil": "node tools/profil.mjs"
   }
 }

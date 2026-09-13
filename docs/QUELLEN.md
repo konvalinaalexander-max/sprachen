@@ -1,52 +1,70 @@
 # Quellen fürs Hören und Lesen
 
-Kuratiert am 13. September 2026. Links altern – wenn einer tot ist, nimm eine
-Ausweichquelle und trag die Änderung hier nach.
+Stand 13. September 2026.
 
-> **Hinweis zur Prüfung:** Diese Liste wurde aus Suchergebnissen und bekannten
-> Adressen zusammengestellt. Die Sitzung, die sie angelegt hat, hatte keinen
-> direkten Netzzugang zum Nachladen der Seiten, konnte die Links also nicht
-> einzeln aufrufen. Darum steht in jeder Lektion mindestens eine Ausweichquelle.
-> Wenn ein Link nicht mehr stimmt: hier korrigieren, nicht nur in der Lektion.
+## Wie das Hören jetzt funktioniert
+
+Früher stand in der Lektion ein Link auf eine Website. Das war schlecht: mal
+landete man auf einer Abo-Seite, mal wusste man nicht, welche Folge gemeint war.
+
+Jetzt trägt jede Quelle nur noch eine **iTunes-Kennung**. Die App fragt damit im
+Browser die öffentliche Apple-Schnittstelle nach der Folgenliste, nimmt die
+neueste Folge in der passenden Länge und hängt die **Audiodatei direkt in den
+Player**. Auf dem Bildschirm stehen Titel, Datum und Dauer – es gibt keine Frage
+mehr, welche Folge gemeint ist. Wer eine andere will, klappt die Liste auf.
+
+Zwei Wege werden probiert, weil einer immer klemmt: erst `fetch`, dann JSONP
+(ein `<script>`-Tag, das auch ohne CORS und über `file://` funktioniert). Klappt
+beides nicht – meist weil man offline ist –, erscheint ein ehrlicher Hinweis mit
+zwei Direktlinks statt eines kaputten Players.
+
+**Auswahlkriterien:** kostenlos, ohne Bezahlschranke, vollständig in der
+Zielsprache. Sendungen mit englischen Erklärstrecken (Coffee Break, die
+Duolingo-Podcasts, News in Slow) fallen raus – sie brechen die Immersion genauso
+wie Deutsch.
 
 ---
 
 ## Spanisch
 
-### Hören
-
-| Quelle | Niveau | Länge | Transkript | Wofür |
+| Quelle | iTunes-ID | Niveau | Länge | Transkript |
 |---|---|---|---|---|
-| [Hoy Hablamos](https://hoyhablamos.com/) | B1–B2 | 10–15 Min | ja | Werktags neu, Alltag und Kultur aus Spanien. Die Standardwahl für B1. |
-| [News in Slow Spanish](https://www.newsinslowspanish.com/home/news/intermediate) | A2–B1 | 20 Min | ja, mitlaufend | Wenn das Tempo sonst zu hoch ist. Nachrichten in halber Geschwindigkeit. |
-| [Charlas Hispanas](https://charlashispanas.com/) | B1 | kurz | ja, vollständig | Wortschatz und Landeskunde in kleinen Portionen. |
-| [Radio Ambulante (NPR)](https://radioambulante.org/) | C1 | 25–35 Min | ja | Erzähljournalismus aus ganz Lateinamerika. Zu schwer – und trotzdem wertvoll, weil die Geschichten tragen. Für Tage mit Lust auf Herausforderung. |
-| [RTVE Play Radio](https://www.rtve.es/play/radio/) | C1 | beliebig | nein | Öffentlich-rechtliches Radio, völlig ungefiltert. Das kalte Wasser. |
-| [Español con Juan](https://1001reasonstolearnspanish.com/) | B1–B2 | 15–20 Min | teils | Geschichten, die Vokabular absichtlich wiederholen. Sehr beliebt bei Mittelstufe. |
+| [Español con Juan](https://1001reasonstolearnspanish.com/podcasts/) | `976549237` | B1–B2 | 10–30 Min | teilweise |
+| [Charlas Hispanas](https://charlashispanas.com/) | `1496665566` | B1 | 4–15 Min | ja |
+| [Radio Ambulante](https://radioambulante.org/) | `527614348` | C1 | 25–35 Min | ja, vollständig |
 
-### Lesen (für Vorlagen und echte Artikel)
+**Español con Juan** ist die Standardwahl: Juan spricht allein, komplett auf
+Spanisch, über Alltägliches. Nicht zu schnell, nicht zu langsam – genau eine
+Stufe über B1. **Charlas Hispanas** für Tage mit wenig Energie, kurze Folgen.
+**Radio Ambulante** ist eigentlich zu schwer, aber es ist Erzähljournalismus von
+NPR, und die Geschichten ziehen einen durch. Für den Tag mit Lust auf Kampf.
+
+### Lesen (als Vorlage für eigene Texte)
 - [El País](https://elpais.com/) – Standardzeitung, B2+
-- [BBC Mundo](https://www.bbc.com/mundo) – kürzere Artikel, klarer gebaut, B1+
-- [Practica Español](https://practicaespanol.com/) – Agenturmeldungen nach Niveau sortiert, mit Übungen
+- [BBC Mundo](https://www.bbc.com/mundo) – kürzer, klarer gebaut, B1+
+- [Practica Español](https://practicaespanol.com/) – Agenturmeldungen nach Niveau sortiert
 
 ---
 
 ## Französisch
 
-### Hören
-
-| Quelle | Niveau | Länge | Transkript | Wofür |
+| Quelle | iTunes-ID | Niveau | Länge | Transkript |
 |---|---|---|---|---|
-| [Journal en français facile (RFI)](https://francaisfacile.rfi.fr/) | A2–B1 | 10 Min | ja | Die Hauptquelle. Echte Nachrichten, langsam gesprochen, werktags neu. Genau das Format, das gewünscht war. |
-| [RFI – alle Podcasts](https://www.rfi.fr/fr/podcasts/) | gemischt | gemischt | teils | Ausweichadresse, falls der direkte Link hakt. |
-| [Coffee Break French](https://coffeebreaklanguages.com/coffeebreakfrench/) | A1–B1 | 15–20 Min | teils | Vier Staffeln ab null. Mit englischen Erklärungen zwischendurch – gut an schwachen Tagen. |
-| [News in Slow French](https://www.newsinslowfrench.com/) | A2–B1 | 20 Min | ja, mitlaufend | Dieselbe Idee wie RFI, nochmal langsamer. |
-| [InnerFrench](https://innerfrench.com/podcast/) | B1–B2 | 20–30 Min | ja | Das Ziel, auf das hingearbeitet wird. Sehr klar gesprochen, Themen mit Substanz. |
+| [Journal en français facile (RFI)](https://francaisfacile.rfi.fr/) | `1573764973` | A2–B1 | 10 Min | ja |
+| [One Thing In A French Day](https://onethinginafrenchday.podbean.com/) | `210206924` | A2–B1 | 3–6 Min | ja |
+| [Français Authentique](https://www.francaisauthentique.com/) | `500549470` | A2–B1 | 5–20 Min | ja |
+| [InnerFrench](https://innerfrench.com/podcast/) | `1231472946` | B1–B2 | 20–40 Min | ja |
+
+**RFI** ist die Hauptquelle: echte Nachrichten, werktags neu, langsam gesprochen,
+öffentlich-rechtlich und mit Transkript. Genau das Format, das gewünscht war.
+**One Thing In A French Day** ist das Gegenteil – drei Minuten Pariser Alltag,
+sehr sanft. **Français Authentique** erklärt Ausdrücke, ohne je in eine andere
+Sprache zu wechseln. **InnerFrench** ist das Ziel, auf das hingearbeitet wird.
 
 ### Lesen
 - [1jour1actu](https://www.1jour1actu.com/) – Nachrichten für Kinder, sprachlich ideal für A2
-- [Le Monde](https://www.lemonde.fr/) – für später
 - [RFI Savoirs](https://savoirs.rfi.fr/) – Lernmaterial mit Transkripten
+- [Le Monde](https://www.lemonde.fr/) – für später
 
 ---
 
@@ -60,9 +78,15 @@ Bewusste Entscheidung, kein Kompromiss:
 4. **Urheberrecht.** Fremde Artikel gehören nicht in ein fremdes Repository.
 
 Authentizität geht dabei nicht verloren: Themen und Tonfall kommen aus echten
-Quellen, oft direkt nach einer realen Meldung gebaut. Das Original wird dann in
-`reading.source.url` verlinkt.
+Quellen, oft direkt nach einer realen Meldung gebaut.
 
 **Beim Hören ist es umgekehrt** – da wurde ausdrücklich echtes Material verlangt,
 und das ist richtig so: Nachrichtensprecher, Podcast-Gäste und Interviewpartner
-klingen anders als jedes Lehrwerk. Genau daran muss sich das Ohr gewöhnen.
+klingen anders als jedes Lehrwerk.
+
+## Wenn eine Quelle nicht mehr geht
+
+iTunes-Kennungen sind langlebig, aber Sendungen werden eingestellt. Wenn der
+Player dauerhaft nichts findet: neue Kennung suchen (die Zahl hinter `id` in
+jeder `podcasts.apple.com`-Adresse), hier eintragen und in den betroffenen
+Lektionen ersetzen.

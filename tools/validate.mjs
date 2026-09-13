@@ -47,19 +47,27 @@ for (const l of lessons) {
   });
   const vocab = l.intro?.vocab || [];
   if (vocab.length < 6) W(`nur ${vocab.length} Vokabeln – 8 bis 14 sind der Richtwert`);
-  vocab.forEach((v, i) => { if (!v.term || !v.de) E(`intro.vocab[${i}]: term/de fehlt`); });
+  vocab.forEach((v, i) => {
+    if (!v.term || !v.def) E(`intro.vocab[${i}]: term/def fehlt`);
+    if (v.de) E(`intro.vocab[${i}]: Feld "de" ist abgeschafft – Erklärung gehört einsprachig nach "def"`);
+  });
 
   /* Lesetext */
   const paras = l.reading?.paragraphs || [];
   if (!paras.length) E('reading.paragraphs ist leer');
   const fullText = paras.map((p) => p.text).join(' ');
   const words = fullText.split(/\s+/).filter(Boolean).length;
-  const limits = { A1: [80, 220], A2: [120, 320], B1: [200, 450], B2: [280, 600] };
+  // Zwei A4-Seiten sind der Richtwert – er will gefordert werden.
+  const limits = { A1: [250, 500], A2: [420, 750], B1: [600, 1000], B2: [700, 1200] };
   const lim = limits[l.level] || [100, 600];
   if (words < lim[0]) W(`Lesetext hat nur ${words} Wörter (Richtwert ${l.level}: ${lim[0]}–${lim[1]})`);
   if (words > lim[1]) W(`Lesetext hat ${words} Wörter – für ${l.level} eher lang (${lim[0]}–${lim[1]})`);
-  paras.forEach((p, i) => { if (!p.de) W(`reading.paragraphs[${i}]: keine Übersetzung hinterlegt`); });
+  paras.forEach((p, i) => {
+    if (p.de) E(`reading.paragraphs[${i}]: Feld "de" ist abgeschafft – einfachere Fassung gehört nach "simple"`);
+    if (!p.simple) W(`reading.paragraphs[${i}]: keine einfachere Fassung ("simple") hinterlegt`);
+  });
   (l.reading?.glossary || []).forEach((g, i) => {
+    if (!g.def) E(`reading.glossary[${i}]: "def" fehlt (einsprachige Erklärung)`);
     if (!fullText.toLowerCase().includes(String(g.term).toLowerCase()))
       E(`reading.glossary[${i}]: "${g.term}" kommt im Text gar nicht vor`);
   });
@@ -77,6 +85,10 @@ for (const l of lessons) {
     if (!TYPES.includes(t.type)) return T(`unbekannter Typ – erlaubt: ${TYPES.join(', ')}`);
     if (!t.prompt) T('prompt fehlt');
     if (t.grammar && !knownGrammar.has(t.grammar)) T(`grammar "${t.grammar}" steht nicht im Lehrplan`);
+    const SKILLS = ['verstehen', 'erkennen', 'produzieren', 'wortschatz'];
+    if (!t.skill) warns.push(`${l._file}: tasks[${i}] ohne skill – zählt nicht in die Niveau-Diagnose`);
+    else if (!SKILLS.includes(t.skill)) T(`skill "${t.skill}" unbekannt – erlaubt: ${SKILLS.join(', ')}`);
+    if (t.kind) T('"kind" ist abgeschafft – der Aufgabenname kommt aus der Sprachdatei');
     if (!t.grammar && t.type !== 'evidence' && t.type !== 'write')
       warns.push(`${l._file}: tasks[${i}] ohne grammar-Zuordnung – zählt nicht in die Wiederholungsplanung`);
 
@@ -115,20 +127,45 @@ for (const l of lessons) {
   });
 
   /* Hören */
+  const checkSource = (src, where) => {
+    if (!src.name) E(`${where}: name fehlt`);
+    if (!Number.isInteger(src.itunesId))
+      E(`${where}: itunesId fehlt – ohne die findet die App die Audiodatei nicht`);
+    if (!src.homepage || !/^https:\/\//.test(src.homepage))
+      E(`${where}: homepage (https) fehlt – der Notausgang, wenn die Folgenliste klemmt`);
+    if (src.url) E(`${where}: "url" ist abgeschafft – die App löst die Folge über itunesId auf`);
+    if (src.transcriptUrl && !/^https:\/\//.test(src.transcriptUrl))
+      E(`${where}: transcriptUrl muss https sein`);
+  };
   const src = l.listening?.source;
   if (!src) E('listening.source fehlt');
   else {
-    if (!src.name) E('listening.source.name fehlt');
-    if (!src.url) E('listening.source.url fehlt – ohne Link keine Hörstation');
-    if (src.url && !/^https:\/\//.test(src.url)) E('listening.source.url muss https sein');
-    if (!src.duration) warns.push(`${l._file}: keine Dauer bei der Hörquelle angegeben`);
+    checkSource(src, 'listening.source');
     if (!src.pick) warns.push(`${l._file}: kein Hinweis, welche Folge genommen werden soll (source.pick)`);
+    if (!src.maxMinutes) warns.push(`${l._file}: ohne maxMinutes kann eine 90-Minuten-Folge hereinrutschen`);
   }
-  (l.listening?.alternatives || []).forEach((a, i) => {
-    if (!a.url || !/^https:\/\//.test(a.url)) E(`listening.alternatives[${i}]: gültige https-URL fehlt`);
-  });
-  if (!(l.listening?.alternatives || []).length)
-    warns.push(`${l._file}: keine Ausweichquelle – wenn der Link tot ist, steht die Station still`);
+  (l.listening?.alternatives || []).forEach((a, i) => checkSource(a, `listening.alternatives[${i}]`));
+  if ((l.listening?.alternatives || []).length < 2)
+    warns.push(`${l._file}: weniger als zwei Ausweichquellen`);
+}
+
+/* Kein deutsches Wort in den Sprachblöcken – das war eine ausdrückliche Ansage. */
+const GERMAN = /(^|[^a-zà-ÿ])(der|die|und|nicht|ist|sind|wird|werden|nach|auch|aber|kann|man|sich|dass|eine|einen|einem|mit|für|von|wenn|weil|schon|immer|nur|noch|sehr|dann|beim|zum|zur)([^a-zà-ÿ]|$)/i;
+for (const l of lessons) {
+  const hits = [];
+  const scan = (val, path) => {
+    if (typeof val === 'string') { if (GERMAN.test(val)) hits.push(`${path}: "${val.slice(0, 60)}…"`); }
+    else if (Array.isArray(val)) val.forEach((x, i) => scan(x, `${path}[${i}]`));
+    else if (val && typeof val === 'object') {
+      for (const k of Object.keys(val)) {
+        if (k === '_file' || k === 'id' || k === 'lang' || k === 'grammar') continue;
+        scan(val[k], `${path}.${k}`);
+      }
+    }
+  };
+  for (const field of ['title', 'subtitle', 'intro', 'reading', 'tasks', 'listening', 'outro']) scan(l[field], field);
+  for (const hh of hits.slice(0, 6)) errors.push(`${l._file}: deutsches Wort gefunden – ${hh}`);
+  if (hits.length > 6) errors.push(`${l._file}: … und ${hits.length - 6} weitere deutsche Stellen`);
 }
 
 console.log('');

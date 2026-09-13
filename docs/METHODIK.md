@@ -1,6 +1,20 @@
 # Warum die Einheit so gebaut ist
 
-Kein Zufall, sondern sechs Entscheidungen.
+Kein Zufall, sondern sieben Entscheidungen.
+
+## 0. Sobald man drin ist, gibt es kein Deutsch mehr
+Startseite deutsch, alles danach einsprachig: Erklärungen, Aufgaben, Knöpfe,
+Rückmeldungen. Auch die Wortbedeutungen – die werden erklärt wie in einem
+Lernerwörterbuch (*el taller: local donde se arreglan coches*), nicht übersetzt.
+
+Das ist kein Purismus, sondern das Verfahren mit der besten Belegdecke: Wer die
+Bedeutung über eine Umschreibung in der Zielsprache erschliesst, verarbeitet sie
+tiefer als beim Ablesen eines deutschen Wortes – und lernt die Umschreibung
+gleich mit. Nebeneffekt: Man gewöhnt sich daran, Bedeutung aus Kontext zu bauen,
+statt auf eine Übersetzung zu warten. Genau das braucht man beim Hören.
+
+Wer trotzdem hängt, hat zwei Netze: das Glossar im Text und die einfachere
+Fassung jedes Absatzes auf Knopfdruck – beide in derselben Sprache.
 
 ## 1. Erklärung vor dem Text, nicht danach
 Wer eine Struktur kennt, bevor er ihr begegnet, erkennt sie beim Lesen wieder –
@@ -13,10 +27,13 @@ Ratens ist der Grund, warum sie hängen bleibt – ein abgerufenes Wort sitzt
 deutlich besser als ein gelesenes. Deshalb sind die Karten verschleiert und
 nicht einfach eine Liste.
 
-## 3. Lesen ohne Wörterbuch
-Nur ein Dutzend Wörter sind unterstrichen. Der Rest wird erraten. Wer bei jedem
-unbekannten Wort nachschlägt, liest nicht – er entschlüsselt. Die Übersetzung
-liegt daneben, aber auf Knopfdruck, nicht daneben im Blickfeld.
+## 3. Lesen ohne Wörterbuch, und zwar lange
+Der Text ist rund zwei A4-Seiten lang. Das ist Absicht: Bei kurzen Texten bleibt
+man im Entschlüsselungsmodus. Erst nach ein paar hundert Wörtern kippt das Lesen
+in echtes Lesen – man hört auf, Wörter einzeln zu prüfen, und folgt der Geschichte.
+
+Nur ein Dutzend Wörter sind unterstrichen. Der Rest wird erraten. Die einfachere
+Fassung liegt daneben, aber auf Knopfdruck, nicht im Blickfeld.
 
 ## 4. Aufgaben, die nicht nach Schule riechen
 Sechs Formen, bewusst verschieden:
@@ -36,9 +53,14 @@ Sechs Formen, bewusst verschieden:
 Nach jedem Fehler kommt sofort die Erklärung, am Ende nochmal das ganze
 Fehlerprotokoll. Nichts bleibt unkommentiert.
 
-## 5. Hören zum Schluss, mit echtem Material
+## 5. Hören zum Schluss, mit echtem Material – und ohne Hindernislauf
 Ein Podcast von Muttersprachlern für Muttersprachler. Nicht alles zu verstehen
 ist der Normalzustand, nicht das Scheitern.
+
+Die App sucht die neueste Folge selbst und spielt sie direkt ab, mit Titel und
+Datum auf dem Schirm. Kein Link auf eine Website, keine Abo-Schranke, keine
+Frage, welche Folge gemeint ist. Jede Sekunde Reibung vor dem Play-Knopf ist
+eine Sekunde, in der man es doch sein lässt.
 
 Drei Durchgänge statt Verständnisfragen:
 1. **einmal ganz durch** – nur das Thema erfassen

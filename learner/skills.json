@@ -1,0 +1,6 @@
+{
+  "_doc": "Was er tatsaechlich kann - aus seinen Antworten abgeleitet, nicht aus seiner Selbsteinschaetzung. Wird von tools/report.mjs fortgeschrieben, von tools/profil.mjs gelesen.",
+  "updatedAt": null,
+  "es": { "verstehen": null, "erkennen": null, "produzieren": null, "wortschatz": null, "hoeren": null },
+  "fr": { "verstehen": null, "erkennen": null, "produzieren": null, "wortschatz": null, "hoeren": null }
+}

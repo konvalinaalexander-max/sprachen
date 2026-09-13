@@ -25,12 +25,20 @@ npm run serve        # lokaler Server auf http://localhost:4321
 
 | | | |
 |---|---|---|
-| **Einstieg** | Grammatik, zugeschnitten auf den Text, der gleich kommt | 6 Min |
+| **Einstieg** | Grammatik, zugeschnitten auf den Text, der gleich kommt | 7 Min |
 | **Wörter** | Vokabeln zum Aufdecken statt Liste | 4 Min |
-| **Lesen** | der Text, Glossar im Antippen, Übersetzung auf Knopfdruck | 6 Min |
-| **Training** | Textdetektiv, Blitzrunde, Satzschmiede, Verwandler, Paarjagd, Freischreiben | 10 Min |
-| **Hören** | echter Podcast, drei Durchgänge | 10 Min |
+| **Lesen** | zwei A4-Seiten, Glossar im Antippen, einfachere Fassung auf Knopfdruck | 10 Min |
+| **Training** | Textdetektiv, Blitzrunde, Satzschmiede, Verwandler, Paarjagd, Freischreiben | 12 Min |
+| **Hören** | echter Podcast, direkt im Player, drei Durchgänge | 10 Min |
 | **Feedback** | Umfrage, Fehlerprotokoll, Bericht für Claude | 3 Min |
+
+Ab der Sprachwahl gibt es **kein deutsches Wort mehr** – Erklärungen, Aufgaben und
+Knöpfe stehen in der Zielsprache, Wortbedeutungen werden einsprachig umschrieben.
+
+Die Hörstation **spielt die Folge direkt ab**: Die App holt die Folgenliste über
+die iTunes-Schnittstelle, nimmt die neueste Folge in passender Länge und hängt
+die Audiodatei in den Player. Kein Link auf eine Website, kein Abo, keine Frage,
+welche Folge gemeint war.
 
 ## Der Kreislauf
 
@@ -73,6 +81,8 @@ node tools/new-lesson.mjs fr <kurzname>   # Gerüst anlegen
 sprachen.html           die Einzeldatei zum Weitergeben (erzeugt)
 index.html              Gerüst der App im Ordnerbetrieb
 assets/js/core.js       Registry, Zustand, Klang, Textvergleich
+assets/js/i18n.js       Oberflächentexte auf Deutsch, Spanisch, Französisch
+assets/js/audio.js      Folgen auflösen und abspielen
 assets/js/tasks.js      die sechs Aufgabentypen
 assets/js/stations.js   die sechs Stationen
 assets/js/app.js        Router und Rahmen

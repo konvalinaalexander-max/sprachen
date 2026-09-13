@@ -27,6 +27,7 @@
     if (!m) {
       current = { id: null, station: null };
       L.session = null;
+      L.uiLang = 'de';
       document.body.dataset.view = 'home';
       document.body.dataset.lang = 'es';
       draw(L.views.home());
@@ -38,6 +39,7 @@
 
     document.body.dataset.view = 'lesson';
     document.body.dataset.lang = entry.lang;
+    L.uiLang = entry.lang;          // ab hier keine deutsche Silbe mehr
 
     L.load(entry).then(function (lesson) {
       if (!L.session || L.session.lessonId !== lesson.id) {
@@ -65,10 +67,10 @@
   function missing(id, why) {
     return h('div', { class: 'view wrap empty' }, [
       h('div', { class: 'big', text: '🗺️' }),
-      h('h2', { text: 'Diese Einheit finde ich nicht' }),
-      h('p', { class: 'lead', style: 'margin-top:10px', text: why || ('Unbekannte Lektion: ' + id) }),
+      h('h2', { text: L.t('err.title') }),
+      h('p', { class: 'lead', style: 'margin-top:10px', text: why || id }),
       h('div', { class: 'row', style: 'justify-content:center;margin-top:22px' }, [
-        h('button', { class: 'btn btn-primary', type: 'button', text: 'Zur Übersicht', onclick: function () { L.go('#/'); } })
+        h('button', { class: 'btn btn-primary', type: 'button', text: L.t('err.home'), onclick: function () { L.go('#/'); } })
       ])
     ]);
   }
@@ -94,7 +96,7 @@
       var b = h('button', { class: 'rail-step', 'data-state': state, type: 'button',
         disabled: i > cur + 1 ? 'disabled' : null }, [
         h('span', { class: 'bar' }, [h('i')]),
-        h('span', { text: s.label })
+        h('span', { text: L.stationLabel(s.id) })
       ]);
       b.addEventListener('click', function () { L.go('#/lektion/' + lesson.id + '/' + s.id); });
       inner.appendChild(b);
@@ -117,7 +119,7 @@
 
     footEl.style.display = '';
     var inner = h('div', { class: 'footbar-inner' });
-    inner.appendChild(h('div', { class: 'hint', text: hintFor(station, lesson) }));
+    inner.appendChild(h('div', { class: 'hint', text: hintFor(station) }));
     var b = h('button', { class: 'btn btn-primary', type: 'button', text: labelFor(station) });
     b.addEventListener('click', function () {
       L.fx.tap();
@@ -128,17 +130,11 @@
   }
 
   function labelFor(station) {
-    return { intro: 'Wörter ansehen', vocab: 'Text lesen', read: 'Los, testen',
-             train: 'Weiter zum Hören', listen: 'Abschliessen' }[station] || 'Weiter';
+    return L.t('foot.' + station) === 'foot.' + station ? L.t('foot.next') : L.t('foot.' + station);
   }
-  function hintFor(station, lesson) {
-    return {
-      intro: 'Erst verstehen, dann üben.',
-      vocab: 'Tipp: nicht auswendig lernen - nur einmal kurz begegnen.',
-      read: 'Zweimal lesen ist besser als einmal nachschlagen.',
-      train: 'Fehler sind hier gratis.',
-      listen: 'Echtes Material. Unverstandenes ist normal.'
-    }[station] || '';
+  function hintFor(station) {
+    var k = 'hint.' + station;
+    return L.t(k) === k ? '' : L.t(k);
   }
 
   /* ---------------- Kopfzeile ---------------- */
@@ -157,25 +153,27 @@
     var sheet = document.getElementById('sheet');
     var box = sheet.querySelector('.sheet-inner');
     box.innerHTML = '';
-    box.appendChild(h('h3', { text: 'Menü', style: 'margin-bottom:14px' }));
+    box.appendChild(h('h3', { text: L.t('menu.title'), style: 'margin-bottom:14px' }));
 
     var items = [];
     if (L.session) {
-      items.push(['🏠', 'Einheit verlassen (Stand bleibt gespeichert)', function () { close(); L.go('#/'); }]);
-      items.push(['↺', 'Diese Einheit neu starten', function () {
+      items.push(['🏠', L.t('menu.leave'), function () { close(); L.go('#/'); }]);
+      items.push(['↺', L.t('menu.restart'), function () {
         delete L.state.progress[L.session.lessonId];
         L.session = null; L.save(); close(); route();
       }, 'danger']);
     }
-    items.push([L.state.settings.sound ? '🔊' : '🔇', L.state.settings.sound ? 'Töne ausschalten' : 'Töne einschalten', function () {
-      L.state.settings.sound = !L.state.settings.sound; L.save(); close(); L.toast(L.state.settings.sound ? 'Töne an' : 'Töne aus');
-    }]);
+    items.push([L.state.settings.sound ? '🔊' : '🔇',
+      L.state.settings.sound ? L.t('menu.soundOff') : L.t('menu.soundOn'), function () {
+        L.state.settings.sound = !L.state.settings.sound; L.save(); close();
+        L.toast(L.state.settings.sound ? L.t('toast.soundOn') : L.t('toast.soundOff'));
+      }]);
     if (!L.standalone) {
-      items.push(['📖', 'Quellen & Methode', function () { close(); window.open('docs/QUELLEN.md', '_blank'); }]);
+      items.push(['📖', L.t('menu.docs'), function () { close(); window.open('docs/QUELLEN.md', '_blank'); }]);
     }
-    items.push(['🧹', 'Allen Fortschritt löschen', function () {
-      if (confirm('Wirklich alles zurücksetzen? XP, Serie und alle Zwischenstände sind dann weg.')) {
-        L.resetAll(); L.session = null; close(); L.go('#/'); L.toast('Alles zurückgesetzt.');
+    items.push(['🧹', L.t('menu.reset'), function () {
+      if (confirm(L.t('menu.confirm'))) {
+        L.resetAll(); L.session = null; close(); L.go('#/'); L.toast(L.t('toast.reset'));
       }
     }, 'danger']);
 
@@ -187,7 +185,7 @@
       ]));
     });
     box.appendChild(h('div', { class: 'menu-sep' }));
-    box.appendChild(h('button', { class: 'btn btn-ghost btn-block', type: 'button', text: 'Schliessen', onclick: close }));
+    box.appendChild(h('button', { class: 'btn btn-ghost btn-block', type: 'button', text: L.t('menu.close'), onclick: close }));
     sheet.classList.add('open');
     function close() { sheet.classList.remove('open'); }
   }
