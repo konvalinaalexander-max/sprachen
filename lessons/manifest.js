@@ -11,7 +11,8 @@ LEKTION.manifest([
     "grammar": [
       "es-subjuntivo-presente"
     ],
-    "file": "lessons/es/2026-09-14-la-noche.js"
+    "file": "lessons/es/2026-09-14-la-noche.js",
+    "rev": "1dbc91ee63"
   },
   {
     "id": "fr-2026-09-14-affaire-lepic",
@@ -24,7 +25,8 @@ LEKTION.manifest([
     "grammar": [
       "fr-passe-compose-etre"
     ],
-    "file": "lessons/fr/2026-09-14-affaire-lepic.js"
+    "file": "lessons/fr/2026-09-14-affaire-lepic.js",
+    "rev": "71340d3bd6"
   },
   {
     "id": "es-2026-09-13-moto",
@@ -37,7 +39,8 @@ LEKTION.manifest([
     "grammar": [
       "es-indefinido-imperfecto"
     ],
-    "file": "lessons/es/2026-09-13-moto.js"
+    "file": "lessons/es/2026-09-13-moto.js",
+    "rev": "174cf9381a"
   },
   {
     "id": "fr-2026-09-13-soiree-ratee",
@@ -50,6 +53,7 @@ LEKTION.manifest([
     "grammar": [
       "fr-passe-compose-avoir"
     ],
-    "file": "lessons/fr/2026-09-13-soiree-ratee.js"
+    "file": "lessons/fr/2026-09-13-soiree-ratee.js",
+    "rev": "18f3a6207a"
   }
 ]);

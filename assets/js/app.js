@@ -10,8 +10,8 @@
   };
 
   /* ---------------- Sitzung ---------------- */
-  function newSession(lesson) {
-    return { lessonId: lesson.id, startedAt: Date.now(), results: [], taskIndex: 0, streak: 0,
+  function newSession(lesson, entry) {
+    return { lessonId: lesson.id, rev: entry && entry.rev, startedAt: Date.now(), results: [], taskIndex: 0, streak: 0,
              listening: { notes: {}, passes: {}, selfRating: null }, survey: {}, station: 'intro' };
   }
   L.persistProgress = function () {
@@ -45,7 +45,10 @@
     L.load(entry).then(function (lesson) {
       if (!L.session || L.session.lessonId !== lesson.id) {
         var saved = L.state.progress[lesson.id];
-        L.session = (saved && saved.results) ? saved : newSession(lesson);
+        var brauchbar = saved && saved.results
+          && (!entry.rev || saved.rev === entry.rev)          // Spielstand aus einer anderen Fassung? weg damit
+          && !(!m[2] && (saved.station === 'wrap' || L.state.done[lesson.id]));  // fertig und neu geöffnet? von vorn
+        L.session = brauchbar ? saved : newSession(lesson, entry);
         L.session.startedAt = L.session.startedAt || Date.now();
       }
       var erste = lesson.format === 'stage' ? 'stage' : 'intro';

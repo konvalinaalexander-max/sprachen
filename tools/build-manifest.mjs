@@ -5,6 +5,7 @@
      sw.js                   – Vorladeliste des Service Workers
    Mit --check wird nur verglichen (für CI), ohne zu schreiben. */
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { loadLessons, readJson, p, col, rule } from './lib.mjs';
 
 const checkOnly = process.argv.includes('--check');
@@ -25,7 +26,9 @@ const entries = lessons.map((l) => ({
   title: l.title, subtitle: l.subtitle || '',
   minutes: l.minutes || 35,
   grammar: (l.intro?.grammar || []).map((g) => g.id),
-  file: l._file
+  file: l._file,
+  /* Ändert sich mit jeder Bearbeitung der Datei – ein alter Spielstand passt dann nicht mehr */
+  rev: createHash('sha1').update(readFileSync(p(l._file))).digest('hex').slice(0, 10)
 }));
 
 put('lessons/manifest.js',
