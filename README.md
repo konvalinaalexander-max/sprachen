@@ -21,7 +21,23 @@ Ab dann läuft alles offline, inklusive aller Lektionen.
 npm run serve        # lokaler Server auf http://localhost:4321
 ```
 
-## Eine Einheit
+## Zwei Sorten Einheit
+
+Es wechselt sich ab. Eine **normale** Einheit bringt Wortschatz und Grammatik
+sauber bei, in sechs Stationen. Die nächste ist eine **Bühne**: ein eigenes
+Format mit eigener Grafik und eigener Logik.
+
+Bisher gebaut:
+- **La noche** (Spanisch) – ein Abend in Madrid, Stunde für Stunde. Der Himmel
+  wandert vom Sonnenuntergang bis zum Morgengrauen mit, die Fenster gehen an,
+  und jede Person, die dich anspricht, will eine Antwort im Subjuntivo.
+- **L'affaire du 12 rue Lepic** (Französisch) – ein Escape Room in einer
+  Haussmann-Wohnung. Fünf Gegenstände, fünf Rätsel, eine Zeitleiste. Die Tür
+  öffnet sich nur, wenn die Chronologie stimmt.
+
+Beide ohne eine einzige Bilddatei: alles CSS und SVG, der Klang synthetisiert.
+
+## Eine normale Einheit
 
 | | | |
 |---|---|---|
@@ -83,6 +99,9 @@ index.html              Gerüst der App im Ordnerbetrieb
 assets/js/core.js       Registry, Zustand, Klang, Textvergleich
 assets/js/i18n.js       Oberflächentexte auf Deutsch, Spanisch, Französisch
 assets/js/audio.js      Folgen auflösen und abspielen
+assets/js/stage.js      Bühnen-Grundlagen: Klang, Farbverläufe, Spickzettel
+assets/js/stage-*.js    je eine Bühne
+assets/css/stage-*.css  je eine Optik
 assets/js/tasks.js      die sechs Aufgabentypen
 assets/js/stations.js   die sechs Stationen
 assets/js/app.js        Router und Rahmen

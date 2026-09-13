@@ -15,6 +15,18 @@
 
   L.views = {};
 
+  /* Eigenständige Formate bringen ihre Darstellung selbst mit. */
+  L.views.stage = function (lesson) {
+    var render = L.stages && L.stages[lesson.stage];
+    if (!render) {
+      return h('div', { class: 'view wrap empty' }, [
+        h('div', { class: 'big', text: '🎭' }),
+        h('h2', { text: 'Unbekanntes Format: ' + lesson.stage })
+      ]);
+    }
+    return render(lesson);
+  };
+
   /* ---------------- Startseite (bleibt deutsch: hier wird erst gewählt) ---------------- */
   function flagSvg(code) {
     if (code === 'fr') {
@@ -748,6 +760,7 @@
      Wird auch in den Bericht geschrieben und landet so im Lernstand. */
   var SKILLS = ['verstehen', 'erkennen', 'produzieren', 'wortschatz'];
   function skillOf(task, res) {
+    if (res && res.skill) return res.skill;
     if (task && task.skill) return task.skill;
     return { evidence: 'verstehen', choice: 'erkennen', pairs: 'wortschatz',
              transform: 'produzieren', forge: 'produzieren', write: 'produzieren' }[res.type] || 'erkennen';

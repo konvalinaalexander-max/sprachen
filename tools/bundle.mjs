@@ -7,7 +7,8 @@ import { loadLessons, p, col, rule } from './lib.mjs';
 
 const esc = (js) => String(js).replace(/<\/script/gi, '<\\/script');
 
-const css = readFileSync(p('assets/css/app.css'), 'utf8');
+const css = ['assets/css/app.css', 'assets/css/stage-noche.css', 'assets/css/stage-enquete.css']
+  .map((f) => readFileSync(p(f), 'utf8')).join('\n');
 const icon = readFileSync(p('assets/icons/icon.svg'), 'utf8');
 const iconUri = 'data:image/svg+xml;base64,' + Buffer.from(icon, 'utf8').toString('base64');
 
@@ -16,6 +17,9 @@ const scripts = [
   'assets/js/i18n.js',
   'assets/js/audio.js',
   'assets/js/tasks.js',
+  'assets/js/stage.js',
+  'assets/js/stage-noche.js',
+  'assets/js/stage-enquete.js',
   'assets/js/stations.js',
   'learner/profile.js',
   'lessons/manifest.js'
@@ -29,8 +33,8 @@ let html = readFileSync(p('index.html'), 'utf8');
 html = html.replace(/[ \t]*<link rel="manifest"[^>]*>\n?/, '');
 html = html.replace(/[ \t]*<link rel="icon"[^>]*>\n?/, `<link rel="icon" href="${iconUri}" type="image/svg+xml">\n`);
 html = html.replace(/[ \t]*<link rel="apple-touch-icon"[^>]*>\n?/, '');
-html = html.replace(/[ \t]*<link rel="stylesheet" href="assets\/css\/app.css">\n?/,
-  '<style>\n' + css + '\n</style>\n');
+html = html.replace(/[ \t]*<link rel="stylesheet" href="assets\/css\/[^"]+">\n?/g, '');
+html = html.replace('</head>', '<style>\n' + css + '\n</style>\n</head>');
 
 const inlined = scripts.map((f) => {
   const body = readFileSync(p(f), 'utf8');

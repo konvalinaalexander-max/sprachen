@@ -157,7 +157,7 @@ LEKTION.register({
       prompt: 'La moto no era nueva cuando la compró.',
       verdict: 'richtig',
       evidence: 'una Vespa de segunda mano que me había costado ochocientos euros',
-      explain: 'Está en el segundo párrafo: *una Vespa de segunda mano*. Y fíjate en _había costado_: es pluscuamperfecto, lo que pasó **antes** de la noche que se cuenta.'
+      explain: 'Está en el segundo párrafo: *una Vespa de segunda mano*. Y fíjate en _había costado_: es pluscuamperfecto, lo que pasó *antes* de la noche que se cuenta.'
     },
     {
       type: 'evidence', skill: 'verstehen',
@@ -232,7 +232,7 @@ LEKTION.register({
         { text: 'Se convertiría en una rutina repetida, no en una sola noche.',
           why: 'Justo. El imperfecto abre las acciones y las repite. Y entonces *aquella noche* ya no encajaría en la frase.' },
         { text: 'No cambiaría nada, solo suena más literario.',
-          why: 'Cambia bastante. El indefinido cierra los hechos; el imperfecto los deja abiertos. Aquí el texto habla de **una** noche concreta.' },
+          why: 'Cambia bastante. El indefinido cierra los hechos; el imperfecto los deja abiertos. Aquí el texto habla de *una* noche concreta.' },
         { text: 'Sería incorrecto: *conocer* no tiene imperfecto.',
           why: 'Sí lo tiene: _conocía_. Lo que pasa es que significa otra cosa, "ya la conocía de antes", y eso contradice la historia.' },
         { text: 'Se entendería como una suposición sobre el futuro.',

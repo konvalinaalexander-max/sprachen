@@ -693,6 +693,605 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
 .diag-item.no .di-v{ color:var(--no); }
 .diag-item .di-q{ font-size:12px; color:var(--ink-3); font-variant-numeric:tabular-nums; }
 
+/* Bühnen übernehmen den ganzen Schirm – Kopfleiste bleibt für das Menü sichtbar */
+body[data-view="stage"] main{ padding:0; }
+body[data-view="stage"] .topbar{
+  background:linear-gradient(to bottom, rgba(6,6,10,.45), transparent);
+  border-bottom:0; backdrop-filter:blur(3px);
+}
+body[data-view="stage"] .topbar .brand span:last-child,
+body[data-view="stage"] #xp-badge{ opacity:.55; }
+body[data-view="stage"] .aura, body[data-view="stage"] .grain{ display:none; }
+
+/* ---------- Spickzettel in den Bühnen ---------- */
+.hud-d, .bd-d{ display:flex; flex-direction:column; align-items:flex-end; gap:10px; }
+.chuleta-btn{
+  display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:999px;
+  background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.22); color:#fff;
+  font-family:var(--sans); font-size:11.5px; letter-spacing:.09em; text-transform:uppercase;
+  cursor:pointer; backdrop-filter:blur(8px); transition:.2s var(--ease);
+}
+.chuleta-btn:hover{ background:rgba(255,255,255,.2); transform:translateY(-1px); }
+.chuleta-fond{
+  position:fixed; inset:0; z-index:40; display:none; align-items:center; justify-content:center;
+  padding:18px; background:rgba(5,6,10,.78); backdrop-filter:blur(10px);
+}
+.chuleta-fond.ouvert{ display:flex; animation:fade .25s ease both; }
+.chuleta{
+  position:relative; width:100%; max-width:600px; max-height:86vh; overflow-y:auto;
+  background:linear-gradient(160deg,#181420,#0e0b14); border:1px solid rgba(255,255,255,.15);
+  border-radius:20px; padding:clamp(22px,4vw,30px);
+  box-shadow:0 40px 90px -28px rgba(0,0,0,.95);
+  animation:pop .35s var(--ease-back) both;
+}
+.ch-x{
+  position:absolute; top:14px; right:14px; width:30px; height:30px; border-radius:50%;
+  background:rgba(255,255,255,.08); border:0; color:rgba(255,255,255,.7); cursor:pointer;
+}
+.ch-x:hover{ background:rgba(255,255,255,.16); color:#fff; }
+.ch-k{ font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--a1); font-weight:700; margin-bottom:10px; }
+.ch-x2 p{ color:rgba(255,255,255,.78); }
+.chuleta .gtable{ margin:14px 0; }
+.chuleta .gtable th{ color:rgba(255,255,255,.42); }
+.chuleta .gtable td{ color:rgba(255,255,255,.8); border-top-color:rgba(255,255,255,.09); }
+.ch-ex{ padding:11px 14px; border-radius:10px; background:rgba(255,255,255,.04); border-left:2px solid var(--a1); margin-top:9px; }
+.ch-s{ font-size:15.5px; color:#fff; line-height:1.5; }
+.ch-n{ font-size:12.5px; color:rgba(255,255,255,.55); margin-top:4px; line-height:1.5; }
+.ch-p{ font-size:13px; line-height:1.6; color:rgba(255,200,87,.9); background:rgba(255,200,87,.07);
+  border:1px solid rgba(255,200,87,.2); border-radius:10px; padding:11px 14px; margin-top:10px; }
+.ch-voc{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:8px; }
+.ch-v{ padding:10px 12px; border-radius:9px; background:rgba(255,255,255,.04); font-size:13px; line-height:1.5; }
+.ch-v b{ color:#fff; display:block; margin-bottom:2px; }
+.ch-v span{ color:rgba(255,255,255,.6); }
+
+/* ============================================================
+   Bühne "La noche" – Madrid zwischen Sonnenuntergang und Morgen
+   ============================================================ */
+.noche{
+  position:fixed; inset:0; overflow:hidden; z-index:5;
+  --glow:#ff8a5c;
+  font-family:var(--sans);
+}
+.noche-sky{
+  position:absolute; inset:0;
+  --sky-top:#4a5fa8; --sky-mid:#e8814a; --sky-low:#ffc46b;
+  background:linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-mid) 52%, var(--sky-low) 78%);
+  transition:background 1600ms cubic-bezier(.4,0,.2,1);
+}
+.stars{ position:absolute; inset:0; transition:opacity 1600ms ease; }
+.stars i{
+  position:absolute; width:2px; height:2px; border-radius:50%; background:#fff;
+  transform:scale(var(--s,1)); animation:tw 4.5s ease-in-out infinite;
+}
+@keyframes tw{ 0%,100%{opacity:.25} 50%{opacity:.95} }
+
+.astro{
+  position:absolute; left:50%; border-radius:50%;
+  transition:opacity 1600ms ease, transform 1600ms cubic-bezier(.4,0,.2,1);
+}
+.sol{
+  top:44%; width:112px; height:112px;
+  background:radial-gradient(circle at 50% 50%, #fff3c4, #ffb347 58%, #ff7a3d);
+  box-shadow:0 0 120px 50px rgba(255,150,80,.42);
+}
+.luna{
+  top:12%; width:58px; height:58px; margin-left:180px;
+  background:radial-gradient(circle at 36% 34%, #fdfbf2, #cfd4e0 70%);
+  box-shadow:0 0 60px 14px rgba(220,230,255,.20);
+}
+
+.noche .layer{ position:absolute; left:0; right:0; bottom:0; pointer-events:none; }
+.noche .layer svg{ display:block; width:100%; }
+.layer.far{ height:42%; opacity:.62; }
+.layer.far path{ fill:#1a1524; }
+.layer.near{ height:34%; }
+.layer.near path{ fill:#100c18; }
+.layer.near .antennas path{ stroke:#100c18; stroke-width:3; fill:none; }
+.layer.near .dish{ fill:none; stroke:#100c18; stroke-width:3; }
+.layer.near .tendedero path{ stroke:#100c18; stroke-width:2; fill:none; }
+.layer.near .tendedero rect{ fill:#1c1626; }
+.layer.near .win{ fill:#2a2135; transition:fill .9s ease, filter .9s ease; }
+.layer.near .win.lit{ fill:#ffcf82; filter:drop-shadow(0 0 6px rgba(255,190,110,.55)); }
+.layer.bal{ height:15%; z-index:3; }
+.layer.bal .rail path{ stroke:#0a0710; stroke-width:5; fill:none; }
+.layer.bal .maceta path{ fill:#0a0710; }
+.noche-vig{
+  position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(120% 78% at 50% 24%, transparent 40%, rgba(4,3,8,.62) 100%);
+}
+
+/* Kopfleiste */
+.noche .hud{
+  position:absolute; top:0; left:0; right:0; z-index:6;
+  display:flex; align-items:flex-start; justify-content:space-between;
+  padding:74px clamp(16px,4vw,34px) 18px; transition:opacity .6s ease; pointer-events:none;
+  text-shadow:0 2px 20px rgba(0,0,0,.6);
+}
+.noche .hud button{ pointer-events:auto; }
+.hud-hora{ font-family:var(--serif); font-size:30px; font-weight:600; color:#fff; letter-spacing:-.02em; line-height:1; }
+.hud-lugar{ font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.68); margin-top:6px; }
+.onda{ display:flex; align-items:center; gap:6px; }
+.onda-l{ font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.6); margin-right:4px; }
+.onda i{
+  width:9px; height:9px; border-radius:50%; background:rgba(255,255,255,.22);
+  transition:.45s var(--ease-back);
+}
+.onda i.on{ background:var(--glow); box-shadow:0 0 12px var(--glow); transform:scale(1.25); }
+.onda.big{ justify-content:center; margin-top:20px; }
+.onda.big i{ width:13px; height:13px; }
+
+/* Panel */
+.noche-panel{
+  position:absolute; left:0; right:0; bottom:0; z-index:7;
+  display:flex; justify-content:center; padding:0 clamp(12px,3vw,28px) clamp(16px,3vw,30px);
+  max-height:80vh; overflow-y:auto; overscroll-behavior:contain;
+}
+.noche-panel::-webkit-scrollbar{ width:5px; }
+.noche-panel::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.18); border-radius:3px; }
+
+.portada, .escena{
+  width:100%; max-width:620px; border-radius:26px;
+  background:linear-gradient(165deg, rgba(28,20,34,.90), rgba(14,10,20,.94));
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 30px 80px -30px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.07);
+  backdrop-filter:blur(18px) saturate(130%);
+  padding:clamp(22px,4vw,32px);
+  animation:subir .6s var(--ease) both;
+}
+@keyframes subir{ from{opacity:0; transform:translateY(26px)} to{opacity:1; transform:none} }
+
+/* Azulejo als feine Textur auf dem Panel */
+.portada::before, .escena::before{
+  content:""; position:absolute; inset:0; border-radius:26px; pointer-events:none; opacity:.055;
+  background-image:
+    radial-gradient(circle at 0 0, var(--glow) 2px, transparent 2.5px),
+    radial-gradient(circle at 14px 14px, var(--glow) 2px, transparent 2.5px);
+  background-size:28px 28px;
+}
+.portada, .escena{ position:relative; }
+
+.portada{ text-align:center; }
+.p-kicker{ font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:var(--glow); font-weight:700; }
+.p-title{ font-family:var(--serif); font-size:clamp(34px,7vw,58px); font-weight:600; color:#fff; margin-top:12px; line-height:1.02; letter-spacing:-.03em; }
+.p-sub{ font-size:15.5px; line-height:1.62; color:rgba(255,255,255,.76); margin-top:14px; max-width:46ch; margin-inline:auto; }
+.p-meta{ display:flex; gap:7px; justify-content:center; flex-wrap:wrap; margin-top:18px; }
+.p-note{ font-size:12.5px; color:rgba(255,255,255,.46); margin-top:14px; line-height:1.6; }
+
+.btn-noche{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  margin-top:20px; padding:15px 34px; border-radius:999px; border:0; cursor:pointer;
+  font-family:var(--sans); font-size:15px; font-weight:650; letter-spacing:.01em; color:#1a0f06;
+  background:linear-gradient(135deg,#ffc46b,#ff8a5c 55%,#e5574d);
+  box-shadow:0 14px 34px -12px rgba(255,140,90,.75);
+  transition:.25s var(--ease);
+}
+.btn-noche:hover{ transform:translateY(-2px); box-shadow:0 20px 44px -14px rgba(255,140,90,.85); filter:brightness(1.05); }
+.btn-noche:active{ transform:translateY(0) scale(.98); }
+.btn-noche.mini{ margin-top:0; padding:13px 24px; font-size:14px; }
+.escena .btn-noche{ width:100%; }
+
+.esc-n{ font-size:11px; letter-spacing:.2em; color:rgba(255,255,255,.32); margin-bottom:12px; }
+.esc-narr{ font-family:var(--serif); font-size:17.5px; line-height:1.62; color:rgba(255,255,255,.9); min-height:1.6em; }
+.esc-cuerpo{ display:flex; flex-direction:column; gap:14px; margin-top:18px; }
+
+.burbuja{
+  padding:15px 18px; border-radius:18px 18px 18px 5px;
+  background:linear-gradient(140deg, rgba(255,196,107,.16), rgba(229,87,77,.10));
+  border:1px solid rgba(255,196,107,.24);
+}
+.b-quien{ font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--glow); font-weight:700; }
+.b-dice{ font-size:17px; line-height:1.5; color:#fff; margin-top:7px; font-family:var(--serif); font-style:italic; }
+.esc-reto{ font-size:14.5px; line-height:1.55; color:rgba(255,255,255,.74); }
+/* Hervorhebung darf auf dunklem Grund nicht wie durchgestrichen wirken */
+.escena .hl-word, .portada .hl-word{
+  background:none; color:var(--glow); font-weight:650;
+  border-bottom:1px solid rgba(255,160,100,.45); border-radius:0; padding:0;
+}
+.escena b, .portada b{ color:#fff !important; }
+
+.opciones{ display:flex; flex-direction:column; gap:9px; }
+.opcion{
+  text-align:left; padding:14px 18px; border-radius:15px; cursor:pointer;
+  background:rgba(255,255,255,.055); border:1px solid rgba(255,255,255,.12);
+  color:#fff; font-family:var(--sans); font-size:15.5px; line-height:1.45; transition:.2s var(--ease);
+}
+.opcion:hover:not(:disabled){ background:rgba(255,255,255,.11); transform:translateX(4px); border-color:rgba(255,255,255,.24); }
+.opcion:disabled{ cursor:default; }
+.opcion.bien{ background:rgba(61,220,151,.16); border-color:rgba(61,220,151,.5); }
+.opcion.mal{ background:rgba(255,107,107,.15); border-color:rgba(255,107,107,.5); }
+.opcion.gris{ opacity:.34; }
+
+.frase{
+  font-family:var(--serif); font-size:19px; line-height:1.6; color:#fff;
+  padding:16px 18px; border-radius:15px; background:rgba(0,0,0,.26); border:1px solid rgba(255,255,255,.09);
+}
+.hueco{
+  display:inline-block; min-width:96px; text-align:center; padding:1px 10px; margin:0 3px;
+  border-bottom:2px dashed rgba(255,255,255,.4); color:var(--glow); font-style:normal; font-weight:600;
+  transition:.3s var(--ease);
+}
+.hueco.bien{ color:var(--ok); border-bottom-color:var(--ok); border-bottom-style:solid; }
+.hueco.mal{ color:var(--no); border-bottom-color:var(--no); border-bottom-style:solid; }
+.chips{ display:flex; flex-wrap:wrap; gap:8px; }
+.chip-f{
+  padding:11px 18px; border-radius:12px; cursor:pointer; font-size:15.5px;
+  background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.16); color:#fff;
+  font-family:var(--serif); transition:.18s var(--ease-back);
+}
+.chip-f:hover:not(:disabled){ background:rgba(255,255,255,.14); transform:translateY(-3px); }
+.chip-f:disabled{ opacity:.4; cursor:default; }
+
+.fila{ display:flex; gap:9px; flex-wrap:wrap; }
+.campo{
+  flex:1; min-width:200px; padding:14px 17px; border-radius:14px;
+  background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.17); color:#fff;
+  font-family:var(--sans); font-size:16px; outline:none; transition:.2s var(--ease);
+}
+.campo:focus{ border-color:var(--glow); box-shadow:0 0 0 3px rgba(255,140,90,.22); }
+.campo::placeholder{ color:rgba(255,255,255,.34); }
+.pista{
+  align-self:flex-start; background:none; border:0; cursor:pointer;
+  color:rgba(255,255,255,.5); font-size:13px; font-family:var(--sans); text-decoration:underline dotted; padding:0;
+}
+.pista:hover{ color:#fff; }
+.porque{ font-size:13.5px; line-height:1.6; color:rgba(255,255,255,.62); }
+
+.reaccion{ padding:15px 17px; border-radius:15px; animation:subir .4s var(--ease) both; }
+.reaccion.si{ background:rgba(61,220,151,.11); border:1px solid rgba(61,220,151,.28); }
+.reaccion.no{ background:rgba(255,107,107,.10); border:1px solid rgba(255,107,107,.26); }
+.r-t{ font-family:var(--serif); font-size:19px; color:#fff; }
+.r-c{ font-size:15px; color:var(--ok); margin-top:6px; }
+.r-x{ font-size:13.5px; line-height:1.62; color:rgba(255,255,255,.7); margin-top:8px; }
+
+.radio{ padding:16px; border-radius:16px; background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.12); }
+.radio-n{ font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--glow); font-weight:700; margin-bottom:6px; }
+.radio .player{ padding:0; }
+.onda-scale{ display:flex; gap:7px; }
+.onda-scale button{
+  flex:1; padding:13px 4px; border-radius:13px; cursor:pointer; font-size:21px;
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); transition:.22s var(--ease-back);
+}
+.onda-scale button:hover{ transform:translateY(-3px); background:rgba(255,255,255,.12); }
+.onda-scale button.on{
+  background:linear-gradient(135deg,#ffc46b,#e5574d); border-color:transparent;
+  transform:translateY(-3px) scale(1.06);
+}
+
+@media(max-width:640px){
+  .layer.far{ height:36%; } .layer.near{ height:30%; } .layer.bal{ height:11%; }
+  .noche-panel{ max-height:86vh; }
+  .hud-hora{ font-size:24px; }
+  .sol{ width:84px; height:84px; }
+}
+.escena.tecleando{ cursor:pointer; }
+.escena.tecleando .esc-narr::after{
+  content:"▌"; color:var(--glow); animation:cursorBlink .75s steps(2) infinite; margin-left:2px;
+}
+@keyframes cursorBlink{ 50%{ opacity:0 } }
+/* Titel- und Schlussbild stehen mittig, damit die Sonne frei bleibt */
+.noche-panel.centro{
+  top:0; align-items:center; padding-bottom:clamp(16px,3vw,30px);
+  max-height:none; pointer-events:none;
+}
+.noche-panel.centro > *{ pointer-events:auto; }
+.noche-panel.centro .portada{ margin-top:6vh; }
+
+/* ============================================================
+   Bühne "L'enquête" – Haussmann-Wohnung, Regen, Messing
+   ============================================================ */
+.enquete{
+  position:fixed; inset:0; overflow:hidden; z-index:5;
+  --laiton:#c9a227; --laiton-clair:#e6c766; --papier:#efe9dc;
+  --mur-h:#2b3546; --mur-b:#161c27;
+  font-family:var(--sans);
+  background:#0d1016;
+}
+.piece{ position:absolute; inset:0; }
+
+/* Wand mit Stuck */
+.mur{
+  position:absolute; inset:0 0 22% 0;
+  background:linear-gradient(175deg, var(--mur-h), var(--mur-b));
+}
+.mur::after{
+  content:""; position:absolute; inset:0;
+  background:
+    radial-gradient(120% 80% at 78% 30%, rgba(150,180,220,.17), transparent 62%),
+    linear-gradient(to bottom, transparent 55%, rgba(0,0,0,.30));
+}
+.moulure{
+  position:absolute; border-radius:3px;
+  border:2px solid rgba(255,255,255,.055);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 1px 0 rgba(0,0,0,.32);
+}
+.moulure.m1{ left:6%; top:18%; width:26%; height:52%; }
+.moulure.m2{ left:36%; top:18%; width:22%; height:52%; }
+.corniche{
+  position:absolute; left:0; right:0; top:0; height:26px;
+  background:linear-gradient(to bottom, rgba(255,255,255,.09), transparent);
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.plinthe{
+  position:absolute; left:0; right:0; bottom:0; height:22px;
+  background:linear-gradient(to top, rgba(0,0,0,.45), transparent);
+  border-top:1px solid rgba(255,255,255,.05);
+}
+
+/* Fenster */
+.fenetre{
+  position:absolute; right:6%; top:9%; width:clamp(170px,20vw,255px); height:62%;
+  border-radius:150px 150px 6px 6px; overflow:hidden;
+  box-shadow:0 0 0 9px #1b222d, 0 0 0 12px rgba(255,255,255,.07), 0 30px 70px -20px rgba(0,0,0,.85);
+}
+.fenetre .vitre{ width:100%; height:100%; display:block; }
+.fenetre .toits path{ fill:#2f3a4a; }
+.fenetre .toits path:nth-child(2){ fill:none; stroke:#2f3a4a; stroke-width:5; }
+.fenetre .lucarne{ fill:#e0c27a; opacity:.85; }
+.croisillon{ position:absolute; background:#1b222d; }
+.croisillon.v{ left:50%; top:0; bottom:0; width:7px; margin-left:-3.5px; }
+.croisillon.hh{ left:0; right:0; top:52%; height:7px; }
+.reflet{
+  position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(118deg, rgba(255,255,255,.16) 0 18%, transparent 30% 100%);
+}
+.pluie{
+  position:absolute; inset:-20%; pointer-events:none; opacity:.30;
+  background-image:
+    repeating-linear-gradient(99deg, rgba(226,238,255,.30) 0 1px, transparent 1px 13px),
+    repeating-linear-gradient(103deg, rgba(226,238,255,.16) 0 1px, transparent 1px 27px);
+  background-size:100% 180%, 100% 240%;
+  animation:pleut 1.05s linear infinite, pleut2 1.7s linear infinite;
+}
+@keyframes pleut{ to{ background-position:-34px 180%, 0 0; } }
+@keyframes pleut2{ to{ background-position:0 0, -52px 240%; } }
+.fenetre::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(60% 40% at 30% 20%, rgba(255,255,255,.10), transparent 70%);
+}
+.lumiere{
+  position:absolute; right:0; top:0; width:62%; height:78%; pointer-events:none;
+  background:linear-gradient(255deg, rgba(160,195,235,.17), transparent 58%);
+}
+
+/* Boden */
+.parquet{ position:absolute; left:0; right:0; bottom:0; height:22%; overflow:hidden; }
+.parquet-svg{ width:100%; height:100%; display:block; }
+
+/* Tür */
+.porte{
+  position:absolute; left:4%; bottom:20%; width:clamp(96px,11vw,138px); height:52%;
+  background:linear-gradient(100deg,#241c17,#2e241c 55%,#1f1813);
+  border:3px solid #15100c; border-radius:3px;
+  box-shadow:inset 0 0 40px rgba(0,0,0,.6), 0 20px 50px -18px rgba(0,0,0,.9);
+  transition:.9s cubic-bezier(.4,0,.2,1); transform-origin:left center;
+}
+.porte-p{
+  position:absolute; left:14%; right:14%; top:8%; height:38%;
+  border:2px solid rgba(255,255,255,.07); border-radius:2px;
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.5);
+}
+.porte-p.bas{ top:52%; height:38%; }
+.poignee{
+  position:absolute; right:9%; top:50%; width:12px; height:12px; margin-top:-6px;
+  border-radius:50%; background:var(--laiton); box-shadow:0 0 10px rgba(201,162,39,.5);
+}
+.porte.prete{ box-shadow:inset 0 0 40px rgba(0,0,0,.6), 0 0 0 2px var(--laiton), 0 0 44px rgba(201,162,39,.42); }
+.porte.prete .poignee{ animation:pulseP 1.8s ease-in-out infinite; }
+@keyframes pulseP{ 50%{ box-shadow:0 0 22px rgba(230,199,102,.95); } }
+.porte.ouverte{ transform:perspective(900px) rotateY(-72deg); }
+.enquete.sortie .piece::after{
+  content:""; position:absolute; left:0; bottom:20%; width:30%; height:52%;
+  background:linear-gradient(90deg, rgba(255,238,190,.55), transparent 70%);
+  animation:jour 1.4s ease forwards; pointer-events:none;
+}
+@keyframes jour{ from{opacity:0} to{opacity:1} }
+
+/* Gegenstände */
+.objet{
+  position:absolute; transform:translate(-50%,-50%);
+  background:none; border:0; cursor:pointer; padding:0;
+  display:flex; flex-direction:column; align-items:center; gap:7px;
+  font-family:var(--sans); transition:.28s var(--ease);
+}
+.objet:hover{ transform:translate(-50%,-50%) scale(1.07); }
+.ob-cercle{
+  width:58px; height:58px; border-radius:50%; display:grid; place-items:center;
+  background:radial-gradient(circle at 34% 30%, #3a4557, #1d2531);
+  border:1.5px solid var(--laiton); box-shadow:0 0 0 5px rgba(201,162,39,.10), 0 10px 26px -10px rgba(0,0,0,.85);
+  animation:respire 3.4s ease-in-out infinite;
+}
+@keyframes respire{ 50%{ box-shadow:0 0 0 10px rgba(201,162,39,.05), 0 0 26px rgba(201,162,39,.36); } }
+.ob-cercle svg{ width:28px; height:28px; fill:none; stroke:var(--laiton-clair); stroke-width:2.1; stroke-linecap:round; stroke-linejoin:round; }
+.ob-nom{
+  font-size:11px; letter-spacing:.07em; color:rgba(255,255,255,.72);
+  background:rgba(10,14,20,.72); padding:3px 9px; border-radius:999px; white-space:nowrap;
+  backdrop-filter:blur(6px);
+}
+.objet.fait .ob-cercle{ animation:none; border-color:rgba(255,255,255,.14); opacity:.42; }
+.objet.fait .ob-cercle svg{ stroke:rgba(255,255,255,.4); }
+.objet.fait{ cursor:default; }
+.objet.fait:hover{ transform:translate(-50%,-50%); }
+
+/* Kopfleiste */
+.bandeau{
+  position:absolute; top:0; left:0; right:0; z-index:6;
+  display:flex; align-items:flex-start; justify-content:space-between;
+  padding:70px clamp(14px,4vw,30px) 16px;
+  pointer-events:none;              /* sonst fängt die Leiste Klicks auf Gegenstände ab */
+}
+.bandeau button, .bandeau a{ pointer-events:auto; }
+.bd-t{ font-family:var(--serif); font-size:19px; color:#fff; letter-spacing:-.01em; }
+.bd-l{ font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.5); margin-top:4px; }
+.bd-c{ text-align:right; }
+.bd-c span{ display:block; }
+.bd-c span:first-child{ font-family:var(--serif); font-size:24px; color:var(--laiton-clair); }
+.bd-x{ font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.42); }
+
+/* Zeitleiste unten */
+.frise{
+  position:absolute; left:0; right:0; bottom:0; z-index:6;
+  display:flex; gap:6px; padding:12px clamp(10px,3vw,26px) calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(to top, rgba(8,10,14,.94), transparent);
+  overflow-x:auto; pointer-events:none;
+}
+.fr-case{
+  flex:1; min-width:108px; padding:9px 11px; border-radius:11px;
+  background:rgba(255,255,255,.04); border:1px dashed rgba(255,255,255,.14);
+  transition:.4s var(--ease);
+}
+.fr-case.plein{
+  background:linear-gradient(150deg, rgba(201,162,39,.18), rgba(201,162,39,.06));
+  border:1px solid rgba(201,162,39,.45); border-style:solid;
+}
+.fr-h{ font-family:var(--mono); font-size:12.5px; color:var(--laiton-clair); }
+.fr-case:not(.plein) .fr-h{ color:rgba(255,255,255,.3); }
+.fr-t{ font-size:11.5px; color:rgba(255,255,255,.66); margin-top:3px; line-height:1.35;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* Dossier */
+.dossier-fond{
+  position:fixed; inset:0; z-index:20; display:none;
+  align-items:center; justify-content:center; padding:18px;
+  background:rgba(6,8,12,.72); backdrop-filter:blur(8px);
+}
+.dossier-fond.ouvert{ display:flex; animation:fade .3s ease both; }
+.dossier{
+  width:100%; max-width:560px; max-height:88vh; overflow-y:auto; position:relative;
+  background:linear-gradient(160deg,#f6f1e6,#e6dfd0);
+  color:#231d16; border-radius:5px;
+  padding:clamp(22px,4vw,32px);
+  box-shadow:0 40px 90px -26px rgba(0,0,0,.95), inset 0 0 0 1px rgba(255,255,255,.5);
+  animation:dossierIn .42s var(--ease-back) both;
+}
+.dossier.large{ max-width:720px; }
+.dossier.centre{ text-align:center; }
+@keyframes dossierIn{ from{opacity:0; transform:translateY(26px) rotate(-.6deg)} to{opacity:1; transform:none} }
+.dossier::before{
+  content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
+  background:linear-gradient(to bottom,#2b4a9e 0 33%,#f2f2f2 33% 66%,#c8102e 66% 100%);
+  opacity:.85;
+}
+.ds-x{
+  position:absolute; top:12px; right:12px; width:30px; height:30px; border-radius:50%;
+  background:rgba(0,0,0,.06); border:0; cursor:pointer; color:#5a5148; font-size:14px;
+}
+.ds-x:hover{ background:rgba(0,0,0,.12); }
+.ds-k{ font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:#8a6d1f; font-weight:700; }
+.ds-titre{ font-family:var(--serif); font-size:clamp(28px,6vw,44px); color:#231d16; margin-top:10px; line-height:1.05; letter-spacing:-.025em; }
+.ds-i{ font-family:var(--serif); font-size:16.5px; line-height:1.62; color:#3b332a; margin-top:12px; }
+.ds-brief{ font-size:14px; line-height:1.68; color:#5a5148; margin-top:14px; }
+.ds-zone{ display:flex; flex-direction:column; gap:13px; margin-top:20px; }
+.ds-q{ font-size:15.5px; line-height:1.5; color:#231d16; font-weight:560; }
+.dossier .hl-word{ background:rgba(201,162,39,.28); color:#5f4a10; border-radius:2px; padding:0 2px; }
+.dossier b{ color:#231d16 !important; }
+.chuleta .hl-word{ background:none; color:var(--a1); border-bottom:1px solid rgba(255,255,255,.25); }
+
+.ds-opts{ display:flex; flex-direction:column; gap:8px; }
+.ds-opt{
+  text-align:left; padding:13px 16px; border-radius:4px; cursor:pointer;
+  background:rgba(255,255,255,.6); border:1px solid rgba(0,0,0,.14); color:#231d16;
+  font-family:var(--sans); font-size:15px; line-height:1.45; transition:.18s var(--ease);
+}
+.ds-opt:hover:not(:disabled){ background:#fff; border-color:#8a6d1f; transform:translateX(3px); }
+.ds-opt.bon{ background:rgba(46,140,90,.16); border-color:rgba(46,140,90,.55); }
+.ds-opt.faux{ background:rgba(190,50,50,.13); border-color:rgba(190,50,50,.5); }
+.ds-opt.pale{ opacity:.42; }
+.ds-phrase{
+  font-family:var(--serif); font-size:18px; line-height:1.6; color:#231d16;
+  padding:14px 16px; border-radius:4px; background:rgba(255,255,255,.55); border:1px solid rgba(0,0,0,.1);
+}
+.trou{
+  display:inline-block; min-width:92px; text-align:center; padding:0 8px; margin:0 3px;
+  border-bottom:2px dashed #8a6d1f; color:#8a6d1f; font-weight:650;
+}
+.trou.bon{ color:#2e8c5a; border-bottom-color:#2e8c5a; border-bottom-style:solid; }
+.trou.faux{ color:#be3232; border-bottom-color:#be3232; border-bottom-style:solid; }
+.ds-chips{ display:flex; flex-wrap:wrap; gap:7px; }
+.ds-chip{
+  padding:10px 16px; border-radius:4px; cursor:pointer; font-size:15px; font-family:var(--serif);
+  background:rgba(255,255,255,.65); border:1px solid rgba(0,0,0,.16); color:#231d16;
+  transition:.16s var(--ease-back);
+}
+.ds-chip:hover:not(:disabled){ background:#fff; transform:translateY(-2px); border-color:#8a6d1f; }
+.ds-chip:disabled{ opacity:.38; cursor:default; }
+.ds-fila{ display:flex; gap:8px; flex-wrap:wrap; }
+.ds-champ{
+  flex:1; min-width:200px; padding:13px 15px; border-radius:4px;
+  background:rgba(255,255,255,.75); border:1px solid rgba(0,0,0,.2); color:#231d16;
+  font-family:var(--sans); font-size:16px; outline:none;
+}
+.ds-champ:focus{ border-color:#8a6d1f; box-shadow:0 0 0 3px rgba(201,162,39,.24); }
+.dossier .accents .acc{ background:rgba(255,255,255,.6); border-color:rgba(0,0,0,.16); color:#3b332a; }
+.dossier .accents .acc:hover{ background:#fff; color:#231d16; }
+.ds-aide{ align-self:flex-start; background:none; border:0; cursor:pointer; color:#8a6d1f; font-size:13px; text-decoration:underline dotted; padding:0; }
+.ds-w{ font-size:13.5px; line-height:1.6; color:#5a5148; }
+.ds-w .keep{ color:#5a5148; } .ds-w .add{ background:rgba(46,140,90,.2); color:#1d6b42; border-radius:2px; }
+.ds-w .del{ background:rgba(190,50,50,.16); color:#9d2828; text-decoration:line-through; border-radius:2px; }
+
+.ds-r{ padding:14px 16px; border-radius:4px; animation:fade .3s ease both; }
+.ds-r.oui{ background:rgba(46,140,90,.13); border-left:3px solid #2e8c5a; }
+.ds-r.non{ background:rgba(190,50,50,.10); border-left:3px solid #be3232; }
+.ds-rt{ font-family:var(--serif); font-size:18px; color:#231d16; }
+.ds-rc{ font-size:15px; color:#1d6b42; margin-top:5px; }
+.ds-rx{ font-size:13.5px; line-height:1.62; color:#4a423a; margin-top:7px; }
+
+.ds-frag{
+  padding:13px 16px; border-radius:4px; border:1px dashed #8a6d1f;
+  background:rgba(201,162,39,.09); animation:fade .5s ease both;
+}
+.ds-fh{ font-family:var(--mono); font-size:13px; color:#8a6d1f; }
+.ds-ft{ font-size:15px; color:#231d16; margin-top:4px; line-height:1.45; }
+
+.btn-enq{
+  padding:14px 28px; border-radius:4px; border:0; cursor:pointer; width:100%;
+  font-family:var(--sans); font-size:15px; font-weight:650; color:#1a1610;
+  background:linear-gradient(135deg,var(--laiton-clair),var(--laiton));
+  box-shadow:0 10px 26px -10px rgba(201,162,39,.7); transition:.22s var(--ease);
+}
+.btn-enq:hover{ transform:translateY(-2px); filter:brightness(1.06); }
+.btn-enq.mini{ width:auto; padding:13px 22px; }
+
+/* Finale */
+.timeline{
+  display:flex; gap:7px; flex-wrap:wrap; min-height:64px; padding:11px;
+  border-radius:4px; border:1px dashed rgba(0,0,0,.22); background:rgba(255,255,255,.4);
+}
+.stock{ display:flex; gap:7px; flex-wrap:wrap; }
+.tl-carte{
+  display:flex; flex-direction:column; gap:2px; text-align:left; cursor:pointer;
+  padding:10px 13px; border-radius:4px; background:rgba(255,255,255,.75);
+  border:1px solid rgba(0,0,0,.16); color:#231d16; font-family:var(--sans);
+  max-width:180px; transition:.18s var(--ease);
+}
+.tl-carte:hover:not(:disabled){ background:#fff; border-color:#8a6d1f; transform:translateY(-2px); }
+.tl-carte.pris{ opacity:.22; }
+.tl-carte.place{ background:rgba(201,162,39,.16); border-color:#8a6d1f; opacity:1; cursor:default; }
+.tl-h{ font-family:var(--mono); font-size:11.5px; color:#8a6d1f; }
+.tl-t{ font-size:12.5px; line-height:1.35; }
+.tl-carte.secoue{ animation:shake .42s; }
+.ds-radio{ padding:14px; border-radius:4px; background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.12); }
+.ds-radio .player{ padding:0; }
+.ds-radio .ep-title, .ds-radio .ep-item-t{ color:#231d16; }
+.ds-radio .ep-meta .tag{ background:rgba(0,0,0,.06); border-color:rgba(0,0,0,.14); color:#4a423a; }
+.ds-radio .player-audio{ color-scheme:light; background:rgba(255,255,255,.6); border-color:rgba(0,0,0,.14); }
+.ds-radio .ep-live{ color:#2e8c5a; }
+.ds-radio .ep-live::before{ background:#2e8c5a; }
+.ds-radio .onda-scale button{ background:rgba(255,255,255,.65); border-color:rgba(0,0,0,.14); }
+.ds-radio .onda-scale button.on{ background:linear-gradient(135deg,var(--laiton-clair),var(--laiton)); }
+.ds-radio .ep-more summary{ color:#4a423a; }
+.ds-radio .ep-more summary::before{ color:#8a6d1f; }
+.ds-radio .ep-item{ color:#4a423a; }
+.ds-radio .ep-item.on{ background:rgba(201,162,39,.14); border-color:rgba(0,0,0,.14); }
+
+@media(max-width:680px){
+  .fenetre{ right:4%; top:7%; width:140px; height:44%; }
+  .porte{ left:3%; bottom:24%; width:86px; height:40%; }
+  .moulure{ display:none; }
+  .ob-cercle{ width:48px; height:48px; }
+  .ob-cercle svg{ width:23px; height:23px; }
+  .fr-case{ min-width:92px; }
+}
+
 </style>
 </head>
 <body data-lang="es" data-view="home">
@@ -919,6 +1518,7 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
      wo Lektionstexte gerendert werden – Erklärungen, Notizen, Rückmeldungen. */
   LEKTION.markup = function (s) {
     return LEKTION.esc(s)
+      .replace(/\*\*([^*]+)\*\*/g, '<b style="color:var(--ink)">$1</b>')   // **auch so** verzeihen
       .replace(/\*([^*]+)\*/g, '<b style="color:var(--ink)">$1</b>')
       .replace(/_([^_]+)_/g, '<span class="hl-word">$1</span>');
   };
@@ -2015,6 +2615,1076 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
 
 })(window.LEKTION);
 </script>
+<script>/* assets/js/stage.js */
+/* Sprachen - Bühne.
+   Manche Einheiten sind keine sechs Stationen, sondern ein eigenes Stück:
+   ein Simulator, ein Escape Room. Sie bringen ihre eigene Darstellung mit,
+   liefern aber dieselben Daten zurück wie eine normale Einheit, damit
+   Diagnose, Bericht und Lernstand unverändert weiterlaufen. */
+(function (L) {
+  'use strict';
+  var h = L.h;
+
+  L.stages = {};
+
+  /* Ein Ergebnis in die laufende Sitzung schreiben – gleiche Form wie bei
+     den normalen Aufgaben, damit L.skillScores und der Bericht es verstehen. */
+  L.stageAnswer = function (res) {
+    var S = L.session;
+    S.results = S.results || [];
+    S.results.push({
+      type: res.type || 'stage',
+      prompt: res.prompt || '',
+      correct: !!res.correct,
+      yours: res.yours || '',
+      right: res.right || '',
+      explain: res.explain || '',
+      skill: res.skill || 'erkennen',
+      grammar: res.grammar || null,
+      freeform: !!res.freeform
+    });
+    if (res.correct) {
+      S.streak = (S.streak || 0) + 1;
+      L.addXp(12 + Math.min(S.streak, 6) * 3);
+    } else {
+      S.streak = 0;
+    }
+    L.persistProgress();
+  };
+
+  L.stageDone = function (lesson) {
+    L.persistProgress();
+    L.go('#/lektion/' + lesson.id + '/wrap');
+  };
+
+  /* Farbverlauf zwischen Stützstellen – für Himmel, Licht, Stimmung. */
+  L.mixHex = function (a, b, t) {
+    var pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
+    var r = Math.round((pa >> 16) + ((pb >> 16) - (pa >> 16)) * t);
+    var g = Math.round(((pa >> 8) & 255) + (((pb >> 8) & 255) - ((pa >> 8) & 255)) * t);
+    var bl = Math.round((pa & 255) + ((pb & 255) - (pa & 255)) * t);
+    return '#' + ((1 << 24) + (r << 16) + (g << 8) + bl).toString(16).slice(1);
+  };
+  L.ramp = function (stops, t) {
+    t = Math.max(0, Math.min(1, t));
+    var n = stops.length - 1;
+    var i = Math.min(Math.floor(t * n), n - 1);
+    return L.mixHex(stops[i], stops[i + 1], t * n - i);
+  };
+
+  /* ---------------- Klang für die Bühnen ----------------
+     Alles synthetisiert: keine Dateien, funktioniert offline. */
+  /* Klang ist Beiwerk: ein Audiofehler darf niemals eine Aufgabe blockieren. */
+  function safe(fn) {
+    return function () {
+      try { return fn.apply(null, arguments); }
+      catch (e) { if (window.console) console.warn('Klang aus:', e.message); }
+    };
+  }
+
+  function ac() {
+    if (!L.state.settings.sound) return null;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    if (!L._ac) L._ac = new AC();
+    if (L._ac.state === 'suspended') L._ac.resume();
+    return L._ac;
+  }
+
+  /* Karplus-Strong: eine gezupfte Nylonsaite aus Rauschen und Verzögerung. */
+  L.pluck = safe(function (freq, dur, vol) {
+    var c = ac(); if (!c) return;
+    var sr = c.sampleRate, n = Math.floor(sr * (dur || 1.1));
+    var N = Math.round(sr / freq);
+    var buf = c.createBuffer(1, n, sr), d = buf.getChannelData(0);
+    var ring = new Float32Array(N);
+    for (var i = 0; i < N; i++) ring[i] = Math.random() * 2 - 1;
+    var p = 0, last = 0;
+    for (var j = 0; j < n; j++) {
+      var cur = ring[p];
+      var out = (cur + last) * 0.498;      // leichte Dämpfung = weicher Nylonklang
+      ring[p] = out; last = cur;
+      p = (p + 1) % N;
+      d[j] = out * Math.exp(-2.2 * j / n);
+    }
+    var s = c.createBufferSource(); s.buffer = buf;
+    var g = c.createGain(); g.gain.value = vol || 0.22;
+    var f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 3200;
+    s.connect(f); f.connect(g); g.connect(c.destination);
+    s.start();
+  });
+
+  /* Palmas: trockenes Händeklatschen aus gefiltertem Rauschen. */
+  L.clap = safe(function (times, vol) {
+    var c = ac(); if (!c) return;
+    (times || [0]).forEach(function (t) {
+      var n = Math.floor(c.sampleRate * 0.06);
+      var buf = c.createBuffer(1, n, c.sampleRate), d = buf.getChannelData(0);
+      for (var i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3);
+      var s = c.createBufferSource(); s.buffer = buf;
+      var f = c.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1600; f.Q.value = 1.1;
+      var g = c.createGain(); g.gain.value = vol || 0.16;
+      s.connect(f); f.connect(g); g.connect(c.destination);
+      s.start(c.currentTime + t);
+    });
+  });
+
+  /* Akkordeon: zwei leicht verstimmte Sägezähne mit Vibrato. */
+  L.accordion = safe(function (freqs, dur, vol) {
+    var c = ac(); if (!c) return;
+    var t0 = c.currentTime, d = dur || 1.4;
+    var master = c.createGain();
+    master.gain.setValueAtTime(0, t0);
+    master.gain.linearRampToValueAtTime(vol || 0.07, t0 + 0.12);
+    master.gain.setValueAtTime(vol || 0.07, t0 + d - 0.25);
+    master.gain.exponentialRampToValueAtTime(0.0001, t0 + d);
+    var lfo = c.createOscillator(), lg = c.createGain();
+    lfo.frequency.value = 5.2; lg.gain.value = 3.4;
+    lfo.connect(lg); lfo.start(t0); lfo.stop(t0 + d);
+    (freqs || [220]).forEach(function (f) {
+      [-3.5, 3.5].forEach(function (det) {
+        var o = c.createOscillator();
+        o.type = 'sawtooth';
+        o.frequency.value = f;
+        o.detune.value = det;
+        lg.connect(o.detune);
+        var fil = c.createBiquadFilter();
+        fil.type = 'lowpass'; fil.frequency.value = 2000;
+        o.connect(fil); fil.connect(master);
+        o.start(t0); o.stop(t0 + d);
+      });
+    });
+    master.connect(c.destination);
+  });
+
+  /* Schloss, Klicken, Ticken. */
+  L.thunk = safe(function (kind) {
+    var c = ac(); if (!c) return;
+    var t0 = c.currentTime;
+    var n = Math.floor(c.sampleRate * 0.09);
+    var buf = c.createBuffer(1, n, c.sampleRate), d = buf.getChannelData(0);
+    for (var i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 6);
+    var s = c.createBufferSource(); s.buffer = buf;
+    var f = c.createBiquadFilter();
+    f.type = 'bandpass';
+    f.frequency.value = kind === 'tick' ? 4200 : kind === 'open' ? 900 : 300;
+    f.Q.value = 2.4;
+    var g = c.createGain(); g.gain.value = kind === 'tick' ? 0.05 : 0.2;
+    s.connect(f); f.connect(g); g.connect(c.destination);
+    s.start(t0);
+    if (kind !== 'tick') {
+      var o = c.createOscillator(), og = c.createGain();
+      o.frequency.setValueAtTime(kind === 'open' ? 180 : 90, t0);
+      o.frequency.exponentialRampToValueAtTime(kind === 'open' ? 90 : 45, t0 + 0.2);
+      og.gain.setValueAtTime(0.14, t0);
+      og.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.25);
+      o.connect(og); og.connect(c.destination);
+      o.start(t0); o.stop(t0 + 0.26);
+    }
+  });
+
+  /* Spickzettel: die Grammatik der Einheit, jederzeit aufklappbar.
+     Ohne das müsste man raten – eine Bühne ersetzt die Erklärung nicht. */
+  L.chuleta = function (lesson, label) {
+    var fond = h('div', { class: 'chuleta-fond' });
+    var btn = h('button', { class: 'chuleta-btn', type: 'button' }, [
+      h('span', { text: '✦' }), h('span', { text: label || 'la regla' })
+    ]);
+    btn.addEventListener('click', function () {
+      if (!fond.childNodes.length) {
+        var card = h('div', { class: 'chuleta' });
+        card.appendChild(h('button', { class: 'ch-x', type: 'button', text: '✕',
+          onclick: function () { fond.classList.remove('ouvert'); } }));
+        (lesson.intro.grammar || []).forEach(function (g) {
+          card.appendChild(h('div', { class: 'ch-k', text: g.name }));
+          if (g.explain) card.appendChild(h('div', { class: 'prose ch-x2', html: L.rich(g.explain, 14.5) }));
+          if (g.table && g.table.rows) {
+            var t = h('table', { class: 'gtable' });
+            if (g.table.head) {
+              var tr = h('tr');
+              g.table.head.forEach(function (c) { tr.appendChild(h('th', { text: c })); });
+              t.appendChild(h('thead', {}, [tr]));
+            }
+            var tb = h('tbody');
+            g.table.rows.forEach(function (r) {
+              var tr2 = h('tr');
+              r.forEach(function (c) { tr2.appendChild(h('td', { html: L.markup(c) })); });
+              tb.appendChild(tr2);
+            });
+            t.appendChild(tb);
+            card.appendChild(h('div', { class: 'scroll-x' }, [t]));
+          }
+          (g.examples || []).forEach(function (ex) {
+            card.appendChild(h('div', { class: 'ch-ex' }, [
+              h('div', { class: 'ch-s', html: L.markup(ex.src) }),
+              ex.note ? h('div', { class: 'ch-n', html: L.markup(ex.note) }) : null
+            ]));
+          });
+          (g.pitfalls || []).forEach(function (pf) {
+            card.appendChild(h('div', { class: 'ch-p', html: '⚠ ' + L.markup(pf) }));
+          });
+        });
+        if ((lesson.intro.vocab || []).length) {
+          card.appendChild(h('div', { class: 'ch-k', style: 'margin-top:18px', text: lesson.vocabTitle || '·' }));
+          var vg = h('div', { class: 'ch-voc' });
+          lesson.intro.vocab.forEach(function (v) {
+            vg.appendChild(h('div', { class: 'ch-v' }, [
+              h('b', { text: v.term }),
+              h('span', { html: L.markup(v.def) })
+            ]));
+          });
+          card.appendChild(vg);
+        }
+        fond.appendChild(card);
+        fond.addEventListener('click', function (ev) {
+          if (ev.target === fond) fond.classList.remove('ouvert');
+        });
+      }
+      fond.classList.add('ouvert');
+    });
+    return { btn: btn, fond: fond };
+  };
+
+  /* Kleine Helfer, die beide Bühnen brauchen */
+  L.typeOut = function (el, text, speed, done) {
+    el.textContent = '';
+    var fertig = false;
+    function ende() { if (fertig) return; fertig = true; el.textContent = text; if (done) done(); }
+    if (window.matchMedia('(prefers-reduced-motion:reduce)').matches) {
+      ende(); return { stop: ende };
+    }
+    var i = 0, stopped = false;
+    (function step() {
+      if (stopped || fertig) return;
+      el.textContent = text.slice(0, ++i);
+      if (i < text.length) setTimeout(step, speed || 18);
+      else ende();
+    })();
+    return { stop: function () { stopped = true; ende(); } };
+  };
+
+  L.accentRow = function (lang, field) {
+    var sets = { es: ['á', 'é', 'í', 'ó', 'ú', 'ñ'], fr: ['é', 'è', 'ê', 'à', 'ç', 'û'] };
+    var bar = h('div', { class: 'accents' });
+    (sets[lang] || []).forEach(function (ch) {
+      bar.appendChild(h('button', { class: 'acc', type: 'button', text: ch, tabindex: '-1',
+        onclick: function (e) {
+          e.preventDefault();
+          var s = field.selectionStart, en = field.selectionEnd;
+          field.value = field.value.slice(0, s) + ch + field.value.slice(en);
+          field.focus(); field.selectionStart = field.selectionEnd = s + ch.length;
+        } }));
+    });
+    return bar;
+  };
+
+})(window.LEKTION);
+</script>
+<script>/* assets/js/stage-noche.js */
+/* Bühne "La noche" – ein Abend in Madrid, Stunde für Stunde.
+   Der Himmel wandert mit der Uhrzeit, die Fenster gehen an, und man muss
+   den Leuten das Richtige sagen. Alles CSS und SVG, kein einziges Bild. */
+(function (L) {
+  'use strict';
+  var h = L.h, esc = L.esc;
+
+  var SKY = {
+    top: ['#4a5fa8', '#2a2a5c', '#141a3a', '#080a16'],
+    mid: ['#e8814a', '#7a4a72', '#2a2450', '#0e1228'],
+    low: ['#ffc46b', '#d9694f', '#4a3355', '#171a32']
+  };
+
+  function skylineFar() {
+    return '<svg class="sky-far" viewBox="0 0 1200 240" preserveAspectRatio="none" aria-hidden="true">' +
+      '<path d="M0,240 L0,168 L48,168 L48,150 L74,150 L74,168 L128,168 L128,120 L142,120 L142,104 ' +
+      'L156,104 L156,120 L170,120 L170,168 L232,168 L232,140 L300,140 L300,158 L352,158 L352,112 ' +
+      'L366,112 L366,92 L380,92 L380,112 L394,112 L394,158 L452,158 L452,176 L520,176 L520,132 ' +
+      'L548,132 Q562,96 576,132 L604,132 L604,176 L668,176 L668,146 L736,146 L736,164 L790,164 ' +
+      'L790,118 L804,118 L804,98 L818,98 L818,118 L832,118 L832,164 L900,164 L900,180 L968,180 ' +
+      'L968,138 L1036,138 L1036,160 L1104,160 L1104,150 L1140,150 L1140,168 L1200,168 L1200,240 Z"/>' +
+      '</svg>';
+  }
+
+  function skylineNear() {
+    var win = '';
+    for (var r = 0; r < 3; r++) {
+      for (var c = 0; c < 26; c++) {
+        var x = 40 + c * 44, y = 96 + r * 40;
+        win += '<rect class="win" data-i="' + (r * 26 + c) + '" x="' + x + '" y="' + y + '" width="17" height="23" rx="2"/>';
+      }
+    }
+    return '<svg class="sky-near" viewBox="0 0 1200 260" preserveAspectRatio="none" aria-hidden="true">' +
+      '<path d="M0,260 L0,84 L200,84 L200,64 L214,64 L214,84 L470,84 L470,58 L484,58 L484,84 ' +
+      'L760,84 L760,70 L774,70 L774,84 L1010,84 L1010,62 L1024,62 L1024,84 L1200,84 L1200,260 Z"/>' +
+      '<g class="antennas">' +
+      '<path d="M300,84 L300,44 M292,54 L308,54 M294,64 L306,64"/>' +
+      '<path d="M880,84 L880,38 M872,48 L888,48"/>' +
+      '<circle cx="600" cy="66" r="13" class="dish"/><path d="M600,79 L600,84"/>' +
+      '</g>' +
+      '<g class="tendedero"><path d="M120,92 Q300,116 480,92"/>' +
+      '<rect x="196" y="104" width="20" height="26" rx="2"/>' +
+      '<rect x="248" y="108" width="26" height="20" rx="2"/>' +
+      '<rect x="320" y="110" width="18" height="28" rx="2"/>' +
+      '<rect x="388" y="106" width="24" height="22" rx="2"/></g>' +
+      '<g class="wins">' + win + '</g>' +
+      '</svg>';
+  }
+
+  function balcony() {
+    var bars = '';
+    for (var i = 0; i < 44; i++) bars += '<path d="M' + (18 + i * 27) + ',0 L' + (18 + i * 27) + ',96"/>';
+    return '<svg class="balcon" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">' +
+      '<g class="rail">' + bars +
+      '<path d="M0,8 L1200,8"/><path d="M0,52 L1200,52"/><path d="M0,96 L1200,96"/></g>' +
+      '<g class="maceta"><path d="M980,96 L980,58 L1052,58 L1046,96 Z"/>' +
+      '<path d="M990,58 q6,-34 26,-30 q-4,20 -26,30 Z"/>' +
+      '<path d="M1020,58 q-2,-30 22,-26 q0,20 -22,26 Z"/></g>' +
+      '</svg>';
+  }
+
+  L.stages.noche = function (lesson) {
+    var S = L.session;
+    S.stage = S.stage || { i: 0, onda: 3 };
+    var escenas = lesson.escenas || [];
+
+    var root = h('div', { class: 'noche' });
+    var sky = h('div', { class: 'noche-sky' });
+    var sun = h('div', { class: 'astro sol' });
+    var moon = h('div', { class: 'astro luna' });
+    var stars = h('div', { class: 'stars' });
+    for (var s = 0; s < 60; s++) {
+      stars.appendChild(h('i', {
+        style: 'left:' + (Math.random() * 100).toFixed(2) + '%;top:' + (Math.random() * 62).toFixed(2) +
+          '%;animation-delay:' + (Math.random() * 4).toFixed(2) + 's;--s:' + (Math.random() * 0.6 + 0.5).toFixed(2)
+      }));
+    }
+    var far = h('div', { class: 'layer far', html: skylineFar() });
+    var near = h('div', { class: 'layer near', html: skylineNear() });
+    var bal = h('div', { class: 'layer bal', html: balcony() });
+    sky.appendChild(stars); sky.appendChild(sun); sky.appendChild(moon);
+    root.appendChild(sky); root.appendChild(far); root.appendChild(near); root.appendChild(bal);
+    root.appendChild(h('div', { class: 'noche-vig' }));
+
+    /* Kopfleiste: Uhrzeit, Ort, Stimmung */
+    var hud = h('div', { class: 'hud' });
+    var hHora = h('div', { class: 'hud-hora' });
+    var hLugar = h('div', { class: 'hud-lugar' });
+    var hOnda = h('div', { class: 'onda' });
+    hud.appendChild(h('div', {}, [hHora, hLugar]));
+    var ch = L.chuleta(lesson, lesson.chuletaLabel || 'la regla');
+    hud.appendChild(h('div', { class: 'hud-d' }, [hOnda, ch.btn]));
+    root.appendChild(hud);
+    root.appendChild(ch.fond);
+
+    var panel = h('div', { class: 'noche-panel' });
+    root.appendChild(panel);
+
+    function pintarOnda() {
+      hOnda.innerHTML = '';
+      hOnda.appendChild(h('span', { class: 'onda-l', text: 'buena onda' }));
+      for (var i = 0; i < 5; i++) {
+        hOnda.appendChild(h('i', { class: i < S.stage.onda ? 'on' : '' }));
+      }
+    }
+
+    function ambiente(t) {
+      sky.style.setProperty('--sky-top', L.ramp(SKY.top, t));
+      sky.style.setProperty('--sky-mid', L.ramp(SKY.mid, t));
+      sky.style.setProperty('--sky-low', L.ramp(SKY.low, t));
+      stars.style.opacity = Math.max(0, Math.min(1, (t - 0.22) / 0.45));
+      sun.style.opacity = t < 0.42 ? String(1 - t / 0.42) : '0';
+      sun.style.transform = 'translate(-50%,0) translateY(' + (t * 190).toFixed(0) + 'px)';
+      moon.style.opacity = t > 0.5 ? String(Math.min(1, (t - 0.5) / 0.3)) : '0';
+      moon.style.transform = 'translate(-50%,0) translateY(' + (60 - t * 46).toFixed(0) + 'px)';
+      var lit = Math.round(t * 62);
+      near.querySelectorAll('.win').forEach(function (w, i) {
+        w.classList.toggle('lit', (i * 7 + 3) % 78 < lit);
+      });
+      root.style.setProperty('--glow', L.ramp(['#ffb066', '#ff8a5c', '#b06a8a', '#5b6ba8'], t));
+    }
+
+    /* ---------------- Titelbild ---------------- */
+    function portada() {
+      ambiente(0);
+      hud.style.opacity = '0';
+      panel.classList.add('centro');
+      panel.innerHTML = '';
+      var card = h('div', { class: 'portada' }, [
+        h('div', { class: 'p-kicker', text: lesson.stageKicker || 'Simulador' }),
+        h('h1', { class: 'p-title', text: lesson.title }),
+        h('p', { class: 'p-sub', text: lesson.subtitle || '' }),
+        h('div', { class: 'p-meta' }, [
+          h('span', { class: 'tag', text: lesson.level }),
+          h('span', { class: 'tag', text: escenas.length + ' escenas' }),
+          h('span', { class: 'tag', text: '~' + (lesson.minutes || 40) + ' min' })
+        ])
+      ]);
+      var go = h('button', { class: 'btn-noche', type: 'button', text: lesson.stageStart || 'Salir de casa' });
+      go.addEventListener('click', function () {
+        L.pluck(196, 1.4); L.pluck(293.66, 1.4, 0.16);
+        hud.style.opacity = '1';
+        S.stage.i = 0; pintar();
+      });
+      card.appendChild(go);
+      if (lesson.stageIntro) card.appendChild(h('p', { class: 'p-note', text: lesson.stageIntro }));
+      panel.appendChild(card);
+    }
+
+    /* ---------------- Eine Szene ---------------- */
+    function pintar() {
+      var i = S.stage.i;
+      if (i >= escenas.length) return final();
+      panel.classList.remove('centro');
+      var e = escenas[i];
+      var t = escenas.length > 1 ? i / (escenas.length - 1) : 0;
+      ambiente(t);
+      pintarOnda();
+      hHora.textContent = e.hora || '';
+      hLugar.textContent = e.lugar || '';
+      L.persistProgress();
+
+      panel.innerHTML = '';
+      var card = h('div', { class: 'escena' });
+      card.appendChild(h('div', { class: 'esc-n', text: (i + 1) + '/' + escenas.length }));
+
+      var narr = h('p', { class: 'esc-narr' });
+      card.appendChild(narr);
+      var cuerpo = h('div', { class: 'esc-cuerpo' });
+      card.appendChild(cuerpo);
+      panel.appendChild(card);
+
+      /* Tippen lässt sich überspringen – wer schnell liest, wartet nicht. */
+      var tecleo = L.typeOut(narr, e.narracion || '', 11, function () {
+        card.classList.remove('tecleando');
+        if (e.escucha) return escucha(e, cuerpo);
+        if (e.quien) {
+          cuerpo.appendChild(h('div', { class: 'burbuja' }, [
+            h('div', { class: 'b-quien', text: e.quien }),
+            h('div', { class: 'b-dice', html: L.markup(e.dice || '') })
+          ]));
+        }
+        if (e.reto) cuerpo.appendChild(h('div', { class: 'esc-reto', html: L.markup(e.reto) }));
+        (e.tipo === 'escribir' ? escribir : e.tipo === 'formas' ? formas : elegir)(e, cuerpo);
+      });
+      card.classList.add('tecleando');
+      card.addEventListener('click', function (ev) {
+        if (card.classList.contains('tecleando') && !ev.target.closest('button, input, textarea')) tecleo.stop();
+      });
+    }
+
+    function marcar(e, ok, mio, correcto) {
+      S.stage.onda = Math.max(0, Math.min(5, S.stage.onda + (ok ? 1 : -1)));
+      pintarOnda();
+      if (ok) { L.pluck(329.63, 1.2); L.clap([0, 0.13, 0.24], 0.1); }
+      else { L.pluck(146.83, 0.9, 0.18); }
+      L.stageAnswer({
+        type: e.tipo || 'elegir', prompt: e.reto || e.narracion, correct: ok,
+        yours: mio, right: correcto, explain: e.explica || '',
+        skill: e.skill || 'produzieren', grammar: e.grammar || null
+      });
+    }
+
+    function reaccion(cuerpo, ok, e, mio, correcto) {
+      var box = h('div', { class: 'reaccion ' + (ok ? 'si' : 'no') });
+      box.appendChild(h('div', { class: 'r-t', text: ok ? (e.gana || '¡Eso!') : (e.pierde || 'Uf.') }));
+      if (!ok && correcto) box.appendChild(h('div', { class: 'r-c', html: '→ <b>' + esc(correcto) + '</b>' }));
+      if (e.explica) box.appendChild(h('p', { class: 'r-x', html: L.markup(e.explica) }));
+      cuerpo.appendChild(box);
+      var sig = h('button', { class: 'btn-noche', type: 'button',
+        text: S.stage.i + 1 < escenas.length ? (e.siguiente || 'Seguir') : 'Volver a casa' });
+      sig.addEventListener('click', function () {
+        S.stage.i++; L.persistProgress(); pintar();
+      });
+      cuerpo.appendChild(sig);
+      setTimeout(function () { sig.focus(); }, 40);
+    }
+
+    function elegir(e, cuerpo) {
+      var caja = h('div', { class: 'opciones' });
+      L.shuffle(e.opciones.map(function (_, k) { return k; })).forEach(function (k) {
+        var o = e.opciones[k];
+        var b = h('button', { class: 'opcion', type: 'button', html: L.markup(o.t) });
+        b.addEventListener('click', function () {
+          caja.querySelectorAll('.opcion').forEach(function (x) { x.disabled = true; });
+          var correcta = e.opciones.filter(function (z) { return z.ok; })[0];
+          [].slice.call(caja.children).forEach(function (x) {
+            if (x.__ok) x.classList.add('bien');
+            else if (x === b) x.classList.add('mal');
+            else x.classList.add('gris');
+          });
+          if (o.why) cuerpo.appendChild(h('p', { class: 'porque', html: L.markup(o.why) }));
+          marcar(e, !!o.ok, o.t, correcta ? correcta.t : '');
+          reaccion(cuerpo, !!o.ok, e, o.t, o.ok ? '' : (correcta ? correcta.t : ''));
+        });
+        b.__ok = !!o.ok;
+        caja.appendChild(b);
+      });
+      cuerpo.appendChild(caja);
+    }
+
+    function formas(e, cuerpo) {
+      var hueco = h('span', { class: 'hueco', text: '·····' });
+      var frase = h('div', { class: 'frase' });
+      var partes = (e.frase || '').split('___');
+      frase.appendChild(document.createTextNode(partes[0] || ''));
+      frase.appendChild(hueco);
+      frase.appendChild(document.createTextNode(partes[1] || ''));
+      cuerpo.appendChild(frase);
+
+      var caja = h('div', { class: 'chips' });
+      L.shuffle(e.formas.slice()).forEach(function (f) {
+        var b = h('button', { class: 'chip-f', type: 'button', text: f.t });
+        b.addEventListener('click', function () {
+          caja.querySelectorAll('.chip-f').forEach(function (x) { x.disabled = true; });
+          hueco.textContent = f.t;
+          hueco.classList.add(f.ok ? 'bien' : 'mal');
+          var correcta = e.formas.filter(function (z) { return z.ok; })[0];
+          if (!f.ok && correcta) {
+            setTimeout(function () { hueco.textContent = correcta.t; hueco.classList.remove('mal'); hueco.classList.add('bien'); }, 900);
+          }
+          if (f.why) cuerpo.appendChild(h('p', { class: 'porque', html: L.markup(f.why) }));
+          marcar(e, !!f.ok, f.t, correcta ? correcta.t : '');
+          reaccion(cuerpo, !!f.ok, e, f.t, f.ok ? '' : (correcta ? correcta.t : ''));
+        });
+        caja.appendChild(b);
+      });
+      cuerpo.appendChild(caja);
+    }
+
+    function escribir(e, cuerpo) {
+      var campo = h('input', { class: 'campo', type: 'text', placeholder: e.placeholder || 'Escríbelo …',
+        autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false' });
+      var ok = h('button', { class: 'btn-noche mini', type: 'button', text: 'Decirlo' });
+      cuerpo.appendChild(h('div', { class: 'fila' }, [campo, ok]));
+      cuerpo.appendChild(L.accentRow('es', campo));
+      if (e.pista) {
+        var p = h('button', { class: 'pista', type: 'button', text: '¿Una pista?' });
+        p.addEventListener('click', function () { p.replaceWith(h('p', { class: 'porque', html: '💡 ' + L.markup(e.pista) })); });
+        cuerpo.appendChild(p);
+      }
+      function enviar() {
+        var mio = campo.value.trim();
+        if (!mio) { campo.focus(); return; }
+        var r = L.matches(mio, [].concat(e.respuesta));
+        campo.disabled = true; ok.disabled = true;
+        if (!r.ok) {
+          var d = L.diff(mio, [].concat(e.respuesta)[0]);
+          cuerpo.appendChild(h('div', { class: 'diff porque', html: d.map(function (x) {
+            return '<span class="' + x[0] + '">' + esc(x[1]) + '</span>';
+          }).join('') }));
+        } else if (!r.exact) {
+          cuerpo.appendChild(h('p', { class: 'porque', html: 'Bien, pero faltan las tildes: <b>' + esc(r.target) + '</b>' }));
+        }
+        marcar(e, r.ok, mio, [].concat(e.respuesta)[0]);
+        reaccion(cuerpo, r.ok, e, mio, r.ok ? '' : [].concat(e.respuesta)[0]);
+      }
+      ok.addEventListener('click', enviar);
+      campo.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') enviar(); });
+      setTimeout(function () { campo.focus(); }, 120);
+    }
+
+    /* Hörszene: der echte Podcast, in die Nacht eingebaut */
+    function escucha(e, cuerpo) {
+      S.listening = S.listening || { notes: {}, passes: {}, selfRating: null };
+      var src = (lesson.listening && lesson.listening.source) || null;
+      if (src) {
+        cuerpo.appendChild(h('div', { class: 'radio' }, [
+          h('div', { class: 'radio-n', text: src.name }),
+          L.player(src, 'es', function (ep) {
+            S.listening.episode = { titel: ep.title, datum: ep.date, quelle: src.name, url: ep.url };
+            L.persistProgress();
+          })
+        ]));
+      }
+      var ta = h('textarea', { class: 'campo', placeholder: e.placeholder || 'Dos frases: ¿de qué va?', style: 'min-height:84px' });
+      ta.value = S.listening.notes[0] || '';
+      ta.addEventListener('input', function () { S.listening.notes[0] = ta.value; L.persistProgress(); });
+      cuerpo.appendChild(ta);
+
+      cuerpo.appendChild(h('p', { class: 'esc-reto', html: L.markup(e.auto || '¿Cuánto has pillado?') }));
+      var sc = h('div', { class: 'onda-scale' });
+      ['😵', '🙁', '🙂', '😄', '🤩'].forEach(function (em, k) {
+        var b = h('button', { type: 'button', text: em });
+        b.addEventListener('click', function () {
+          sc.querySelectorAll('button').forEach(function (x) { x.classList.remove('on'); });
+          b.classList.add('on');
+          S.listening.selfRating = k + 1;
+          S.listening.passes[0] = true;
+          L.addXp(20); L.persistProgress(); L.clap([0, 0.12], 0.12);
+        });
+        sc.appendChild(b);
+      });
+      cuerpo.appendChild(sc);
+      var sig = h('button', { class: 'btn-noche', type: 'button', text: e.siguiente || 'Seguir' });
+      sig.addEventListener('click', function () { S.stage.i++; L.persistProgress(); pintar(); });
+      cuerpo.appendChild(sig);
+    }
+
+    /* ---------------- Amanecer ---------------- */
+    function final() {
+      ambiente(1);
+      hud.style.opacity = '0';
+      panel.classList.add('centro');
+      panel.innerHTML = '';
+      var onda = S.stage.onda;
+      var txt = (lesson.finales && (lesson.finales[onda] || lesson.finales[Math.min(5, Math.max(0, onda))])) || '';
+      var card = h('div', { class: 'portada final' }, [
+        h('div', { class: 'p-kicker', text: '05:40' }),
+        h('h1', { class: 'p-title', text: lesson.stageEnd || 'Amanece' }),
+        h('p', { class: 'p-sub', text: txt }),
+        h('div', { class: 'onda big' })
+      ]);
+      var o = card.querySelector('.onda');
+      for (var i = 0; i < 5; i++) o.appendChild(h('i', { class: i < onda ? 'on' : '' }));
+      var go = h('button', { class: 'btn-noche', type: 'button', text: 'Ver cómo ha ido' });
+      go.addEventListener('click', function () { L.pluck(261.63, 1.6); L.stageDone(lesson); });
+      card.appendChild(go);
+      panel.appendChild(card);
+      L.clap([0, 0.14, 0.26, 0.46], 0.13);
+    }
+
+    (S.stage.i > 0 ? pintar : portada)();
+    return root;
+  };
+
+})(window.LEKTION);
+</script>
+<script>/* assets/js/stage-enquete.js */
+/* Bühne "L'enquête" – Escape Room in einer Pariser Wohnung.
+   Fünf Gegenstände, fünf Rätsel, fünf Zeitfragmente. Wer die Bewegungen
+   in die richtige Reihenfolge bringt, kommt durch die Tür.
+   Alles CSS und SVG: Zinkdächer, Regen, Fischgrätparkett, Stuck. */
+(function (L) {
+  'use strict';
+  var h = L.h, esc = L.esc;
+
+  var ICONES = {
+    pendule: '<circle cx="24" cy="24" r="16"/><path d="M24,14 L24,24 L31,28"/>',
+    bureau: '<path d="M8,20 L40,20 L40,38 L8,38 Z"/><path d="M8,20 L24,10 L40,20"/><circle cx="24" cy="29" r="2.2"/>',
+    telephone: '<path d="M14,12 h20 a3,3 0 0 1 3,3 v18 a3,3 0 0 1 -3,3 h-20 a3,3 0 0 1 -3,-3 v-18 a3,3 0 0 1 3,-3 z"/><path d="M17,19 h14 M17,25 h14 M17,31 h8"/>',
+    valise: '<path d="M9,17 h30 v20 h-30 z"/><path d="M18,17 v-4 h12 v4"/><path d="M9,26 h30"/>',
+    tableau: '<path d="M11,10 h26 v28 h-26 z"/><path d="M15,31 l7,-10 l5,7 l4,-5 l6,8 z"/><circle cx="19" cy="17" r="2.4"/>'
+  };
+
+  function fenetre() {
+    return '<svg class="vitre" viewBox="0 0 300 460" preserveAspectRatio="none" aria-hidden="true">' +
+      '<defs><linearGradient id="cielP" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0%" stop-color="#4b5f7d"/><stop offset="58%" stop-color="#6d82a0"/>' +
+      '<stop offset="100%" stop-color="#93a4bb"/></linearGradient></defs>' +
+      '<rect width="300" height="460" fill="url(#cielP)"/>' +
+      '<g class="toits">' +
+      '<path d="M0,460 L0,352 L46,352 L46,330 L58,330 L58,352 L96,352 L96,300 L150,272 L204,300 L204,352 ' +
+      'L236,352 L236,336 L248,336 L248,352 L300,352 L300,460 Z"/>' +
+      '<path d="M120,272 L120,246 L132,246 L132,272 M170,268 L170,240 L182,240 L182,268"/>' +
+      '<rect x="128" y="312" width="18" height="24" rx="2" class="lucarne"/>' +
+      '<rect x="158" y="312" width="18" height="24" rx="2" class="lucarne"/>' +
+      '<path d="M262,352 L262,286 M256,294 L268,294 M258,304 L266,304"/>' +
+      '</g></svg>';
+  }
+
+  function parquet() {
+    return '<svg class="parquet-svg" viewBox="0 0 1200 260" preserveAspectRatio="none" aria-hidden="true">' +
+      '<defs><pattern id="fish" width="60" height="60" patternUnits="userSpaceOnUse">' +
+      '<rect width="60" height="60" fill="#3b2a20"/>' +
+      '<path d="M0,0 L30,30 L30,60 L0,30 Z" fill="#4a3527"/>' +
+      '<path d="M30,0 L60,30 L60,60 L30,30 Z" fill="#43301f"/>' +
+      '<path d="M0,0 L30,30 M30,0 L60,30 M0,30 L30,60 M30,30 L60,60" stroke="#2b1e16" stroke-width="1.2"/>' +
+      '</pattern></defs>' +
+      '<rect width="1200" height="260" fill="url(#fish)"/>' +
+      '<rect width="1200" height="260" fill="url(#solOmbre)"/>' +
+      '<defs><linearGradient id="solOmbre" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0%" stop-color="#0d1016" stop-opacity=".60"/>' +
+      '<stop offset="100%" stop-color="#0d1016" stop-opacity=".08"/></linearGradient></defs>' +
+      '</svg>';
+  }
+
+  L.stages.enquete = function (lesson) {
+    var S = L.session;
+    S.stage = S.stage || { resolus: {}, fragments: [], phase: 'intro' };
+    var objets = lesson.objets || [];
+
+    var root = h('div', { class: 'enquete' });
+    var piece = h('div', { class: 'piece' });
+    root.appendChild(piece);
+
+    /* Wand mit Stuck */
+    var mur = h('div', { class: 'mur' });
+    mur.appendChild(h('div', { class: 'moulure m1' }));
+    mur.appendChild(h('div', { class: 'moulure m2' }));
+    mur.appendChild(h('div', { class: 'corniche' }));
+    mur.appendChild(h('div', { class: 'plinthe' }));
+    piece.appendChild(mur);
+
+    /* Fenster mit Regen */
+    var fen = h('div', { class: 'fenetre', html: fenetre() });
+    fen.appendChild(h('div', { class: 'pluie' }));
+    fen.appendChild(h('div', { class: 'croisillon v' }));
+    fen.appendChild(h('div', { class: 'croisillon hh' }));
+    fen.appendChild(h('div', { class: 'reflet' }));
+    piece.appendChild(fen);
+    piece.appendChild(h('div', { class: 'lumiere' }));
+
+    /* Boden */
+    piece.appendChild(h('div', { class: 'parquet', html: parquet() }));
+
+    /* Tür */
+    var porte = h('div', { class: 'porte' }, [
+      h('div', { class: 'porte-p' }),
+      h('div', { class: 'porte-p bas' }),
+      h('div', { class: 'poignee' })
+    ]);
+    piece.appendChild(porte);
+
+    /* Gegenstände */
+    var objDom = {};
+    objets.forEach(function (o) {
+      var b = h('button', {
+        class: 'objet', type: 'button', 'aria-label': o.nom,
+        style: 'left:' + o.x + '%; top:' + o.y + '%'
+      }, [
+        h('span', { class: 'ob-cercle', html: '<svg viewBox="0 0 48 48">' + (ICONES[o.icone] || ICONES.valise) + '</svg>' }),
+        h('span', { class: 'ob-nom', text: o.nom })
+      ]);
+      b.addEventListener('click', function () { if (!S.stage.resolus[o.id]) ouvrir(o); });
+      objDom[o.id] = b;
+      piece.appendChild(b);
+    });
+
+    /* Kopf und Zeitleiste */
+    var bandeau = h('div', { class: 'bandeau' });
+    root.appendChild(bandeau);
+    var frise = h('div', { class: 'frise' });
+    root.appendChild(frise);
+
+    var dossier = h('div', { class: 'dossier-fond' });
+    root.appendChild(dossier);
+    var chuleta = L.chuleta(lesson, lesson.chuletaLabel || 'aide-mémoire');
+    root.appendChild(chuleta.fond);
+
+    function majBandeau() {
+      bandeau.innerHTML = '';
+      bandeau.appendChild(h('div', {}, [
+        h('div', { class: 'bd-t', text: lesson.stageKicker || 'Enquête' }),
+        h('div', { class: 'bd-l', text: lesson.lieu || '' })
+      ]));
+      var n = Object.keys(S.stage.resolus).length;
+      bandeau.appendChild(h('div', { class: 'bd-d' }, [
+        h('div', { class: 'bd-c' }, [
+          h('span', { text: n + '/' + objets.length }),
+          h('span', { class: 'bd-x', text: lesson.compteur || 'indices' })
+        ]),
+        chuleta.btn
+      ]));
+    }
+
+    function majFrise() {
+      frise.innerHTML = '';
+      objets.forEach(function (o) {
+        var f = S.stage.resolus[o.id] ? o.fragment : null;
+        frise.appendChild(h('div', { class: 'fr-case' + (f ? ' plein' : '') }, [
+          h('div', { class: 'fr-h', text: f ? f.heure : '??:??' }),
+          h('div', { class: 'fr-t', text: f ? f.texte : '—' })
+        ]));
+      });
+    }
+
+    function majObjets() {
+      objets.forEach(function (o) {
+        objDom[o.id].classList.toggle('fait', !!S.stage.resolus[o.id]);
+      });
+      if (Object.keys(S.stage.resolus).length === objets.length) porte.classList.add('prete');
+    }
+
+    /* ---------------- Dossier ---------------- */
+    function fermer() {
+      dossier.classList.remove('ouvert');
+      setTimeout(function () { dossier.innerHTML = ''; }, 320);
+    }
+
+    function ouvrir(o) {
+      L.thunk('open');
+      dossier.innerHTML = '';
+      var card = h('div', { class: 'dossier' });
+      card.appendChild(h('button', { class: 'ds-x', type: 'button', text: '✕', 'aria-label': 'fermer', onclick: fermer }));
+      card.appendChild(h('div', { class: 'ds-k', text: o.nom }));
+      card.appendChild(h('p', { class: 'ds-i', html: L.markup(o.indice) }));
+
+      var zone = h('div', { class: 'ds-zone' });
+      card.appendChild(zone);
+      dossier.appendChild(card);
+      dossier.classList.add('ouvert');
+
+      var e = o.enigme;
+      zone.appendChild(h('div', { class: 'ds-q', html: L.markup(e.question) }));
+      (e.type === 'ecrire' ? ecrire : e.type === 'formes' ? formes : choisir)(o, e, zone);
+    }
+
+    function resoudre(o, e, zone, ok, mien, bon) {
+      L.stageAnswer({
+        type: e.type || 'choisir', prompt: e.question, correct: ok,
+        yours: mien, right: bon, explain: e.explication || '',
+        skill: e.skill || 'produzieren', grammar: e.grammar || lesson.grammarId || null
+      });
+      if (ok) { L.accordion([261.63, 329.63, 392], 1.2); }
+      else { L.thunk('lock'); }
+
+      var box = h('div', { class: 'ds-r ' + (ok ? 'oui' : 'non') });
+      box.appendChild(h('div', { class: 'ds-rt', text: ok ? (e.reussite || 'Ça colle.') : (e.echec || 'Non.') }));
+      if (!ok && bon) box.appendChild(h('div', { class: 'ds-rc', html: '→ <b>' + esc(bon) + '</b>' }));
+      if (e.explication) box.appendChild(h('p', { class: 'ds-rx', html: L.markup(e.explication) }));
+      zone.appendChild(box);
+
+      /* Der Hinweis wird immer freigeschaltet – sonst steckt man fest. */
+      S.stage.resolus[o.id] = { ok: ok };
+      L.persistProgress();
+      majBandeau(); majFrise(); majObjets();
+
+      var frag = h('div', { class: 'ds-frag' }, [
+        h('div', { class: 'ds-fh', text: o.fragment.heure }),
+        h('div', { class: 'ds-ft', html: L.markup(o.fragment.texte) })
+      ]);
+      zone.appendChild(frag);
+
+      var suite = h('button', { class: 'btn-enq', type: 'button',
+        text: Object.keys(S.stage.resolus).length === objets.length ? (lesson.versPorte || 'Aller à la porte') : (e.suite || 'Noter et continuer') });
+      suite.addEventListener('click', function () {
+        fermer();
+        if (Object.keys(S.stage.resolus).length === objets.length) setTimeout(finale, 380);
+      });
+      zone.appendChild(suite);
+      setTimeout(function () { suite.focus(); }, 60);
+    }
+
+    function choisir(o, e, zone) {
+      var caja = h('div', { class: 'ds-opts' });
+      L.shuffle(e.options.map(function (_, k) { return k; })).forEach(function (k) {
+        var op = e.options[k];
+        var b = h('button', { class: 'ds-opt', type: 'button', html: L.markup(op.t) });
+        b.__ok = !!op.ok;
+        b.addEventListener('click', function () {
+          caja.querySelectorAll('.ds-opt').forEach(function (x) {
+            x.disabled = true;
+            x.classList.add(x.__ok ? 'bon' : (x === b ? 'faux' : 'pale'));
+          });
+          var bonne = e.options.filter(function (z) { return z.ok; })[0];
+          if (op.why) zone.appendChild(h('p', { class: 'ds-w', html: L.markup(op.why) }));
+          resoudre(o, e, zone, !!op.ok, op.t, op.ok ? '' : (bonne ? bonne.t : ''));
+        });
+        caja.appendChild(b);
+      });
+      zone.appendChild(caja);
+    }
+
+    function formes(o, e, zone) {
+      var trou = h('span', { class: 'trou', text: '·····' });
+      var ph = h('div', { class: 'ds-phrase' });
+      var parts = (e.phrase || '').split('___');
+      ph.appendChild(document.createTextNode(parts[0] || ''));
+      ph.appendChild(trou);
+      ph.appendChild(document.createTextNode(parts[1] || ''));
+      zone.appendChild(ph);
+      var caja = h('div', { class: 'ds-chips' });
+      L.shuffle(e.formes.slice()).forEach(function (f) {
+        var b = h('button', { class: 'ds-chip', type: 'button', text: f.t });
+        b.addEventListener('click', function () {
+          caja.querySelectorAll('.ds-chip').forEach(function (x) { x.disabled = true; });
+          trou.textContent = f.t;
+          trou.classList.add(f.ok ? 'bon' : 'faux');
+          var bonne = e.formes.filter(function (z) { return z.ok; })[0];
+          if (f.why) zone.appendChild(h('p', { class: 'ds-w', html: L.markup(f.why) }));
+          resoudre(o, e, zone, !!f.ok, f.t, f.ok ? '' : (bonne ? bonne.t : ''));
+        });
+        caja.appendChild(b);
+      });
+      zone.appendChild(caja);
+    }
+
+    function ecrire(o, e, zone) {
+      var champ = h('input', { class: 'ds-champ', type: 'text', placeholder: e.placeholder || 'Écris la phrase …',
+        autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false' });
+      var ok = h('button', { class: 'btn-enq mini', type: 'button', text: 'Vérifier' });
+      zone.appendChild(h('div', { class: 'ds-fila' }, [champ, ok]));
+      zone.appendChild(L.accentRow('fr', champ));
+      if (e.aide) {
+        var a = h('button', { class: 'ds-aide', type: 'button', text: 'Un indice ?' });
+        a.addEventListener('click', function () { a.replaceWith(h('p', { class: 'ds-w', html: '💡 ' + L.markup(e.aide) })); });
+        zone.appendChild(a);
+      }
+      function go() {
+        var mien = champ.value.trim();
+        if (!mien) { champ.focus(); return; }
+        var r = L.matches(mien, [].concat(e.reponse));
+        champ.disabled = true; ok.disabled = true;
+        if (!r.ok) {
+          zone.appendChild(h('div', { class: 'diff ds-w', html: L.diff(mien, [].concat(e.reponse)[0]).map(function (x) {
+            return '<span class="' + x[0] + '">' + esc(x[1]) + '</span>';
+          }).join('') }));
+        } else if (!r.exact) {
+          zone.appendChild(h('p', { class: 'ds-w', html: 'Juste, mais il manque les accents : <b>' + esc(r.target) + '</b>' }));
+        }
+        resoudre(o, e, zone, r.ok, mien, r.ok ? '' : [].concat(e.reponse)[0]);
+      }
+      ok.addEventListener('click', go);
+      champ.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') go(); });
+      setTimeout(function () { champ.focus(); }, 140);
+    }
+
+    /* ---------------- Finale: die Zeitleiste ordnen ---------------- */
+    function finale() {
+      var f = lesson.finale || {};
+      dossier.innerHTML = '';
+      var card = h('div', { class: 'dossier large' });
+      card.appendChild(h('div', { class: 'ds-k', text: f.titre || 'La porte' }));
+      card.appendChild(h('p', { class: 'ds-i', html: L.markup(f.consigne || '') }));
+      var zone = h('div', { class: 'ds-zone' });
+      card.appendChild(zone);
+      dossier.appendChild(card);
+      dossier.classList.add('ouvert');
+
+      /* Erst das Wort, das den ganzen Fall erklärt – dann die Chronologie. */
+      if (f.mot && !S.stage.motFait) {
+        zone.appendChild(h('div', { class: 'ds-q', html: L.markup(f.mot.question) }));
+        var cm = h('div', { class: 'ds-opts' });
+        L.shuffle(f.mot.options.map(function (_, k) { return k; })).forEach(function (k) {
+          var op = f.mot.options[k];
+          var b = h('button', { class: 'ds-opt', type: 'button', html: L.markup(op.t) });
+          b.__ok = !!op.ok;
+          b.addEventListener('click', function () {
+            cm.querySelectorAll('.ds-opt').forEach(function (x) {
+              x.disabled = true;
+              x.classList.add(x.__ok ? 'bon' : (x === b ? 'faux' : 'pale'));
+            });
+            var bonne = f.mot.options.filter(function (z) { return z.ok; })[0];
+            L.stageAnswer({
+              type: 'mot', prompt: f.mot.question, correct: !!op.ok,
+              yours: op.t, right: op.ok ? '' : (bonne ? bonne.t : ''),
+              explain: f.mot.explication || '', skill: 'wortschatz', grammar: null
+            });
+            op.ok ? L.accordion([293.66, 369.99], 0.7, 0.06) : L.thunk('lock');
+            if (op.why) zone.appendChild(h('p', { class: 'ds-w', html: L.markup(op.why) }));
+            if (f.mot.explication) zone.appendChild(h('p', { class: 'ds-w', html: L.markup(f.mot.explication) }));
+            S.stage.motFait = true; L.persistProgress();
+            var puis = h('button', { class: 'btn-enq', type: 'button', text: f.mot.suite || 'Ouvrir la serrure' });
+            puis.addEventListener('click', function () { finale(); });
+            zone.appendChild(puis);
+            setTimeout(function () { puis.focus(); }, 50);
+          });
+          cm.appendChild(b);
+        });
+        zone.appendChild(cm);
+        return;
+      }
+
+      var ordre = f.ordre || objets.map(function (o) { return o.id; });
+      var restants = L.shuffle(ordre.slice());
+      var pos = 0, fautes = 0;
+      var ligne = h('div', { class: 'timeline' });
+      var stock = h('div', { class: 'stock' });
+      zone.appendChild(ligne); zone.appendChild(stock);
+
+      function carte(id) {
+        var o = objets.filter(function (x) { return x.id === id; })[0];
+        return h('button', { class: 'tl-carte', type: 'button', 'data-id': id }, [
+          h('span', { class: 'tl-h', text: o.fragment.heure }),
+          h('span', { class: 'tl-t', text: o.fragment.texte })
+        ]);
+      }
+
+      restants.forEach(function (id) {
+        var c = carte(id);
+        c.addEventListener('click', function () {
+          if (c.disabled) return;
+          if (id === ordre[pos]) {
+            c.disabled = true; c.classList.add('pris');
+            var copie = carte(id); copie.disabled = true; copie.classList.add('place');
+            ligne.appendChild(copie);
+            pos++;
+            L.thunk('tick'); L.accordion([392, 493.88], 0.5, 0.05);
+            if (pos === ordre.length) fini(fautes);
+          } else {
+            fautes++;
+            c.classList.add('secoue');
+            L.thunk('lock');
+            setTimeout(function () { c.classList.remove('secoue'); }, 420);
+          }
+        });
+        stock.appendChild(c);
+      });
+
+      function fini(fautes) {
+        L.stageAnswer({
+          type: 'timeline', prompt: f.consigne || 'chronologie',
+          correct: fautes === 0, yours: fautes + ' erreur(s)', right: '0',
+          explain: f.explication || '', skill: 'verstehen', grammar: lesson.grammarId || null
+        });
+        porte.classList.add('ouverte');
+        root.classList.add('sortie');
+        L.accordion([261.63, 329.63, 392, 523.25], 2.2, 0.08);
+        var res = h('div', { class: 'ds-r oui' }, [
+          h('div', { class: 'ds-rt', text: fautes === 0 ? (f.parfait || 'Sans une seule erreur.') : (f.reussite || 'La porte s\'ouvre.') }),
+          f.explication ? h('p', { class: 'ds-rx', html: L.markup(f.explication) }) : null
+        ]);
+        zone.appendChild(res);
+        if (lesson.listening && lesson.listening.source) zone.appendChild(ecoute());
+        var sortir = h('button', { class: 'btn-enq', type: 'button', text: f.sortir || 'Sortir' });
+        sortir.addEventListener('click', function () { L.stageDone(lesson); });
+        zone.appendChild(sortir);
+      }
+    }
+
+    function ecoute() {
+      S.listening = S.listening || { notes: {}, passes: {}, selfRating: null };
+      var src = lesson.listening.source;
+      var box = h('div', { class: 'ds-radio' });
+      box.appendChild(h('div', { class: 'ds-k', style: 'margin-bottom:8px', text: lesson.listening.headline || src.name }));
+      if (lesson.listening.intro) box.appendChild(h('p', { class: 'ds-i', text: lesson.listening.intro }));
+      box.appendChild(L.player(src, 'fr', function (ep) {
+        S.listening.episode = { titel: ep.title, datum: ep.date, quelle: src.name, url: ep.url };
+        L.persistProgress();
+      }));
+      var sc = h('div', { class: 'onda-scale', style: 'margin-top:12px' });
+      ['😵', '🙁', '🙂', '😄', '🤩'].forEach(function (em, k) {
+        var b = h('button', { type: 'button', text: em });
+        b.addEventListener('click', function () {
+          sc.querySelectorAll('button').forEach(function (x) { x.classList.remove('on'); });
+          b.classList.add('on');
+          S.listening.selfRating = k + 1; S.listening.passes[0] = true;
+          L.addXp(20); L.persistProgress();
+        });
+        sc.appendChild(b);
+      });
+      box.appendChild(h('p', { class: 'ds-w', style: 'margin-top:10px', text: lesson.listening.auto || 'Tu en as compris combien ?' }));
+      box.appendChild(sc);
+      return box;
+    }
+
+    /* ---------------- Vorspann ---------------- */
+    function intro() {
+      dossier.innerHTML = '';
+      var card = h('div', { class: 'dossier centre' }, [
+        h('div', { class: 'ds-k', text: lesson.stageKicker || 'Enquête' }),
+        h('h1', { class: 'ds-titre', text: lesson.title }),
+        h('p', { class: 'ds-i', text: lesson.subtitle || '' }),
+        h('p', { class: 'ds-brief', html: L.markup(lesson.brief || '') })
+      ]);
+      var go = h('button', { class: 'btn-enq', type: 'button', text: lesson.stageStart || 'Commencer' });
+      go.addEventListener('click', function () {
+        S.stage.phase = 'jeu'; L.persistProgress();
+        fermer(); L.accordion([220, 277.18, 329.63], 1.6);
+      });
+      card.appendChild(go);
+      dossier.appendChild(card);
+      dossier.classList.add('ouvert');
+    }
+
+    majBandeau(); majFrise(); majObjets();
+    if (S.stage.phase === 'intro') intro();
+    else if (Object.keys(S.stage.resolus).length === objets.length) finale();
+    return root;
+  };
+
+})(window.LEKTION);
+</script>
 <script>/* assets/js/stations.js */
 /* Sprachen - die sechs Stationen einer Lerneinheit.
    Sobald eine Lektion offen ist, steht hier alles in der Zielsprache. */
@@ -2032,6 +3702,18 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
   L.stationLabel = function (id) { return T('st.' + id); };
 
   L.views = {};
+
+  /* Eigenständige Formate bringen ihre Darstellung selbst mit. */
+  L.views.stage = function (lesson) {
+    var render = L.stages && L.stages[lesson.stage];
+    if (!render) {
+      return h('div', { class: 'view wrap empty' }, [
+        h('div', { class: 'big', text: '🎭' }),
+        h('h2', { text: 'Unbekanntes Format: ' + lesson.stage })
+      ]);
+    }
+    return render(lesson);
+  };
 
   /* ---------------- Startseite (bleibt deutsch: hier wird erst gewählt) ---------------- */
   function flagSvg(code) {
@@ -2766,6 +4448,7 @@ textarea.field{ width:100%; resize:vertical; min-height:120px; line-height:1.6; 
      Wird auch in den Bericht geschrieben und landet so im Lernstand. */
   var SKILLS = ['verstehen', 'erkennen', 'produzieren', 'wortschatz'];
   function skillOf(task, res) {
+    if (res && res.skill) return res.skill;
     if (task && task.skill) return task.skill;
     return { evidence: 'verstehen', choice: 'erkennen', pairs: 'wortschatz',
              transform: 'produzieren', forge: 'produzieren', write: 'produzieren' }[res.type] || 'erkennen';
@@ -2973,15 +4656,41 @@ LEKTION.profile = {
   "github": "konvalinaalexander-max/sprachen",
   "tone": "26-jähriger Mann. Nah am Leben, roh, direkt, erwachsen. Kein Lehrbuch-Ton, keine geglätteten Situationen.",
   "nextFormat": {
-    "es": "ueberkonstruiert",
-    "fr": "ueberkonstruiert",
-    "_doc": "Wechselt nach jeder Einheit: normal -> ueberkonstruiert -> normal. Beide stehen jetzt auf ueberkonstruiert, weil die normalen Einheiten vom 13.09. fertig sind."
+    "es": "normal",
+    "fr": "normal",
+    "_doc": "Wechselt nach jeder Einheit. Die ueberkonstruierten Einheiten vom 14.09. sind fertig, also ist als naechstes wieder eine normale dran."
   }
 };
 </script>
 <script>/* lessons/manifest.js */
 /* Erzeugt von tools/build-manifest.mjs – nicht von Hand ändern. */
 LEKTION.manifest([
+  {
+    "id": "es-2026-09-14-la-noche",
+    "lang": "es",
+    "level": "B1",
+    "date": "2026-09-14",
+    "title": "La noche",
+    "subtitle": "Nueve horas en Madrid, de la puerta de tu casa al primer metro. Cada persona que te habla espera una respuesta, y casi todas piden subjuntivo.",
+    "minutes": 40,
+    "grammar": [
+      "es-subjuntivo-presente"
+    ],
+    "file": "lessons/es/2026-09-14-la-noche.js"
+  },
+  {
+    "id": "fr-2026-09-14-affaire-lepic",
+    "lang": "fr",
+    "level": "A2",
+    "date": "2026-09-14",
+    "title": "L'affaire du 12 rue Lepic",
+    "subtitle": "Camille Roussel a disparu hier soir. Son appartement est fermé de l'intérieur. Cinq objets, cinq heures, une porte.",
+    "minutes": 40,
+    "grammar": [
+      "fr-passe-compose-etre"
+    ],
+    "file": "lessons/fr/2026-09-14-affaire-lepic.js"
+  },
   {
     "id": "es-2026-09-13-moto",
     "lang": "es",
@@ -3170,7 +4879,7 @@ LEKTION.register({
       prompt: 'La moto no era nueva cuando la compró.',
       verdict: 'richtig',
       evidence: 'una Vespa de segunda mano que me había costado ochocientos euros',
-      explain: 'Está en el segundo párrafo: *una Vespa de segunda mano*. Y fíjate en _había costado_: es pluscuamperfecto, lo que pasó **antes** de la noche que se cuenta.'
+      explain: 'Está en el segundo párrafo: *una Vespa de segunda mano*. Y fíjate en _había costado_: es pluscuamperfecto, lo que pasó *antes* de la noche que se cuenta.'
     },
     {
       type: 'evidence', skill: 'verstehen',
@@ -3245,7 +4954,7 @@ LEKTION.register({
         { text: 'Se convertiría en una rutina repetida, no en una sola noche.',
           why: 'Justo. El imperfecto abre las acciones y las repite. Y entonces *aquella noche* ya no encajaría en la frase.' },
         { text: 'No cambiaría nada, solo suena más literario.',
-          why: 'Cambia bastante. El indefinido cierra los hechos; el imperfecto los deja abiertos. Aquí el texto habla de **una** noche concreta.' },
+          why: 'Cambia bastante. El indefinido cierra los hechos; el imperfecto los deja abiertos. Aquí el texto habla de *una* noche concreta.' },
         { text: 'Sería incorrecto: *conocer* no tiene imperfecto.',
           why: 'Sí lo tiene: _conocía_. Lo que pasa es que significa otra cosa, "ya la conocía de antes", y eso contradice la historia.' },
         { text: 'Se entendería como una suposición sobre el futuro.',
@@ -3316,6 +5025,272 @@ LEKTION.register({
   },
 
   outro: 'Una noche, dos pasados y trescientos euros tirados. Unas preguntas rápidas y has terminado.'
+});
+</script>
+<script>/* lessons/es/2026-09-14-la-noche.js */
+/* es-2026-09-14-la-noche · formato: simulador */
+LEKTION.register({
+  id: 'es-2026-09-14-la-noche',
+  lang: 'es',
+  level: 'B1',
+  date: '2026-09-14',
+  minutes: 40,
+  format: 'stage',
+  stage: 'noche',
+  grammarId: 'es-subjuntivo-presente',
+
+  title: 'La noche',
+  subtitle: 'Nueve horas en Madrid, de la puerta de tu casa al primer metro. Cada persona que te habla espera una respuesta, y casi todas piden subjuntivo.',
+  stageKicker: 'Simulador · una noche',
+  stageStart: 'Salir de casa',
+  stageEnd: 'Amanece',
+  stageIntro: 'Se juega con el móvil o con el ordenador. Puedes abrir la regla en cualquier momento, arriba a la derecha.',
+  chuletaLabel: 'la regla',
+  vocabTitle: 'palabras de la noche',
+
+  intro: {
+    hook: 'El subjuntivo no es un tiempo difícil. Es un modo, y sirve para una sola cosa: decir que algo todavía no es un hecho.',
+    grammar: [{
+      id: 'es-subjuntivo-presente',
+      name: 'Presente de subjuntivo',
+      why: 'Sin él no puedes pedir, desear, dudar ni opinar. O sea: no puedes hablar con nadie.',
+      explain: 'Se forma casi siempre igual, y es mecánico:\n\n1. Coge la forma de *yo* del presente: habl_o_, com_o_, teng_o_, salg_o_.\n2. Quítale la *-o*.\n3. Ponle las terminaciones *del otro grupo*: los verbos en -ar toman _-e_, los de -er/-ir toman _-a_.\n\nhablar → habl_e_ · comer → com_a_ · tener → teng_a_ · salir → salg_a_\n\nLo que cuesta no es la forma: es saber *cuándo*. Y la respuesta corta es: cuando la frase no afirma un hecho, sino que lo desea, lo duda, lo valora o lo persigue.',
+      table: {
+        head: ['Lo que haces', 'Disparador', 'Ejemplo'],
+        rows: [
+          ['Pedir o querer algo de otro', 'querer que, pedir que, necesitar que', 'Quiero que _vengas_.'],
+          ['Desear', 'ojalá, esperar que, que + deseo', 'Ojalá no _llueva_.'],
+          ['Dudar o negar', 'no creo que, dudar que, no es verdad que', 'No creo que _sea_ buena idea.'],
+          ['Valorar', 'es raro que, es normal que, me molesta que', 'Es raro que _pase_ a esta hora.'],
+          ['Perseguir un fin', 'para que, a fin de que', 'Me voy para que _puedas_ dormir.'],
+          ['Hablar del futuro', 'cuando, en cuanto, hasta que', 'Cuando _llegues_, me llamas.']
+        ]
+      },
+      examples: [
+        { src: 'Quiero que me _traigas_ tabaco.',
+          note: 'Dos personas distintas: yo quiero, tú traes. Ahí entra el subjuntivo.' },
+        { src: 'Quiero _traer_ tabaco.',
+          note: 'Una sola persona: infinitivo y ya está. Sin *que*, sin subjuntivo.' },
+        { src: 'Creo que _es_ buena idea. / No creo que _sea_ buena idea.',
+          note: 'En afirmativo hay certeza y va indicativo. En cuanto lo niegas, se cae la certeza y entra el subjuntivo.' },
+        { src: 'Cuando _salgamos_, te lo cuento.',
+          note: 'Todavía no ha pasado. *Cuando* con futuro siempre pide subjuntivo, aunque en español el verbo parezca presente.' },
+        { src: 'Irregulares que salen cada día: _sea, esté, vaya, haya, sepa, dé, tenga, venga, salga, pueda, quiera, diga_.',
+          note: 'Son doce y se repiten sin parar. Merece la pena saberlas de memoria.' }
+      ],
+      pitfalls: [
+        'Si el sujeto no cambia, no hay subjuntivo. *Quiero que yo vaya* no existe: es _quiero ir_. La pregunta previa siempre es: ¿quién hace qué?',
+        'El imperativo negativo *ya es* subjuntivo. _Sube_ pero _no subas_. _Ven_ pero _no vengas_. Si dices eso, ya lo estás usando.',
+        '*Cuando* con costumbre va en indicativo: _cuando salgo, llamo a Nacho_ (todos los días). Con futuro va en subjuntivo: _cuando salga, te llamo_ (esta noche). Misma palabra, dos modos.'
+      ]
+    }],
+    vocab: [
+      { term: 'el portal', def: 'La puerta grande por la que se entra a un edificio de viviendas.' },
+      { term: 'a reventar', def: 'Tan lleno que ya no cabe nadie más.' },
+      { term: 'la caña', def: 'Un vaso pequeño de cerveza. Lo que se pide por defecto en un bar.' },
+      { term: 'las bravas', def: 'Patatas fritas con una salsa picante. La tapa más común de Madrid.' },
+      { term: 'el bordillo', def: 'El borde de piedra entre la acera y la calle. Donde se sienta la gente.' },
+      { term: 'la azotea', def: 'El techo plano de un edificio, cuando se puede subir.' },
+      { term: 'plantarse', def: 'Presentarse en un sitio de golpe, sin avisar.' },
+      { term: 'que os cunda', def: 'Que lo aprovechéis, que os dure. Fórmula de despedida muy española.' },
+      { term: 'la lejía', def: 'El líquido fuerte con el que se limpia. Huele a piscina y a metro por la mañana.' },
+      { term: 'pillar', def: 'Entender o captar algo. También conseguirlo. Muy coloquial.' },
+      { term: 'la carpeta', def: 'Donde se llevan los papeles o los planos.' },
+      { term: 'dar de sí', def: 'Rendir, durar más de lo que parecía.' }
+    ]
+  },
+
+  escenas: [
+    {
+      hora: '20:40', lugar: 'Tu portal, Lavapiés',
+      narracion: 'Sales del portal y el móvil vibra antes de que llegues a la esquina. Es Marta, tu compañera de piso. Lleva tres días encerrada con un examen y la voz le sale plana.',
+      quien: 'Marta',
+      dice: '¿Vas a pasar por el chino? Necesito una cosa.',
+      reto: 'Contéstale usando *querer que*. Cuidado: detrás de _querer que_ el verbo cambia.',
+      tipo: 'elegir', skill: 'erkennen', grammar: 'es-subjuntivo-presente',
+      opciones: [
+        { t: 'Dime qué quieres que *traiga*.', ok: true,
+          why: 'Perfecto. *Querer que* con dos personas distintas pide subjuntivo. El presente normal sería _traigo_; aquí se convierte en _traiga_.' },
+        { t: 'Dime qué quieres que *traigo*.',
+          why: 'Es lo que dice todo el mundo al principio, y es justo el error central. *Querer que* obliga al subjuntivo: _traiga_.' },
+        { t: 'Dime qué quieres que *traer*.',
+          why: 'El infinitivo solo vale cuando no cambia la persona: _quiero traer_. En cuanto aparece *que* y otro sujeto, hace falta un verbo conjugado.' }
+      ],
+      gana: 'Te manda un audio de nueve segundos. No lo escuchas.',
+      pierde: 'Marta tarda un rato en contestar.',
+      explica: 'La regla de base: dos personas distintas + un verbo de voluntad (*querer, pedir, necesitar*) = subjuntivo. _Yo quiero_ / _tú traigas_. Si la persona es la misma, infinitivo: _quiero traer_.',
+      siguiente: 'Ir hacia la plaza'
+    },
+    {
+      hora: '21:20', lugar: 'Plaza de Olavide',
+      narracion: 'Nacho ya está allí, sentado en el bordillo con dos latas calientes. Te ve llegar y se levanta como si tuviera un plan que ha pensado mucho.',
+      quien: 'Nacho',
+      dice: 'Nos plantamos en casa de Álvaro, cogemos su coche y nos vamos a Segovia. Ahora.',
+      reto: 'Son las nueve y media, Álvaro no sabe nada y nadie tiene carné. Dile lo que piensas.',
+      tipo: 'formas', skill: 'erkennen', grammar: 'es-subjuntivo-presente',
+      frase: 'No creo que ___ buena idea.',
+      formas: [
+        { t: 'sea', ok: true, why: '*No creer que* tumba la certeza y arrastra el subjuntivo: _sea_.' },
+        { t: 'es', why: '*Creo que es* sí funciona. Pero al negar — *no creo que* — se cae la certeza y entra el subjuntivo: _sea_.' },
+        { t: 'será', why: 'El futuro suena a predicción, no a duda. Detrás de *no creo que* el español pide subjuntivo presente.' },
+        { t: 'fuera', why: 'Ese es el imperfecto de subjuntivo, para lo irreal o lo pasado. Aquí hablas de ahora mismo: _sea_.' }
+      ],
+      gana: 'Nacho se encoge de hombros. Ya se le había ocurrido otra cosa.',
+      pierde: 'Nacho lo toma como un sí.',
+      explica: 'Creer, pensar y parecer en afirmativo llevan indicativo (_creo que es_). En negativo se dan la vuelta y piden subjuntivo (_no creo que sea_). Es de las pocas reglas del español que se puede memorizar tal cual.',
+      siguiente: 'Entrar en el bar'
+    },
+    {
+      hora: '22:05', lugar: 'Bar de la calle Espíritu Santo',
+      narracion: 'El bar está a reventar. Pedís dos cañas y una ración de bravas. Pasan doce minutos. Nacho mira la barra como si la mirada fuera a traer la comida antes.',
+      reto: 'Dile a Nacho que tienes la esperanza de que la comida llegue pronto. Escribe la frase entera, empezando por *Espero que*.',
+      tipo: 'escribir', skill: 'produzieren', grammar: 'es-subjuntivo-presente',
+      respuesta: ['Espero que la comida llegue pronto', 'Espero que llegue pronto la comida', 'Espero que lleguen pronto las bravas'],
+      placeholder: 'Espero que …',
+      pista: '_llegar_ es regular: yo lleg-*o* → quítale la -o → ponle la terminación del otro grupo (-e, porque es un verbo en -ar).',
+      gana: 'Llegan justo cuando terminas la frase. Casualidad.',
+      pierde: 'Las bravas tardan otros diez minutos.',
+      explica: '*Esperar que* es deseo, así que subjuntivo: _llegue_. La formación es mecánica: coges la forma de *yo* del presente (lleg*o*), le quitas la -o y le pones las terminaciones del grupo contrario. Los verbos en -ar toman -e; los de -er/-ir toman -a.',
+      siguiente: 'Bajar al metro'
+    },
+    {
+      hora: '23:15', lugar: 'Metro, línea 5',
+      narracion: 'En el andén, una chica con una carpeta enorme te pregunta la hora y después se queda mirando el panel de los minutos.',
+      quien: 'Ella',
+      dice: 'Es raro que el último tren pase a esta hora un jueves, ¿no?',
+      reto: 'No te está dando un dato. ¿Qué te está diciendo en realidad?',
+      tipo: 'elegir', skill: 'verstehen', grammar: 'es-subjuntivo-presente',
+      opciones: [
+        { t: 'Que le sorprende el horario. No lo afirma, lo valora.', ok: true,
+          why: 'Exacto. *Es raro que* introduce una valoración personal, no un hecho. Por eso el verbo va en subjuntivo: _pase_.' },
+        { t: 'Que está segura de que el tren no pasa a esa hora.',
+          why: 'Si estuviera segura diría *el último tren no pasa a esta hora*, en indicativo. El subjuntivo _pase_ te avisa de que está opinando, no informando.' },
+        { t: 'Que quiere que te cambies de andén.',
+          why: 'No hay ninguna petición en la frase. Las peticiones llevan otros verbos: *te pido que, quiero que*.' }
+      ],
+      gana: 'Asientes. Ella sonríe y se mete en el tren contrario.',
+      pierde: 'Dices algo raro. Ella vuelve a mirar el panel.',
+      explica: 'Las expresiones de valoración — *es raro que, es normal que, está bien que, me molesta que* — no informan de un hecho: lo juzgan. Por eso arrastran subjuntivo. Compara: *es verdad que pasa* (dato, indicativo) frente a *es raro que pase* (juicio, subjuntivo).',
+      siguiente: 'Seguir a Nacho'
+    },
+    {
+      hora: '00:40', lugar: 'Un cuarto sin ascensor, Malasaña',
+      narracion: 'Acabáis en casa de alguien a quien Nacho llama «un colega». Veinte personas, una mesa con hielo derretido y un vecino que ya ha subido una vez a decir algo.',
+      quien: 'El vecino',
+      dice: 'Es la tercera vez esta semana. La tercera.',
+      reto: 'Nacho va directo al altavoz. Párale con *Te pido que no*.',
+      tipo: 'formas', skill: 'erkennen', grammar: 'es-subjuntivo-presente',
+      frase: 'Te pido que no ___ el volumen.',
+      formas: [
+        { t: 'subas', ok: true, why: '*Pedir que* es voluntad pura: subjuntivo. Y el negativo no cambia nada, sigue siendo _subas_.' },
+        { t: 'subes', why: 'Ese es el presente de indicativo. Detrás de *te pido que* hace falta el subjuntivo: _subas_.' },
+        { t: 'sube', why: '_sube_ es imperativo, y el imperativo no va detrás de *que*. Además, en negativo el imperativo usa formas de subjuntivo: _no subas_.' },
+        { t: 'subir', why: 'El infinitivo iría sin *que* y con el mismo sujeto: _quiero subir_. Aquí hay dos personas.' }
+      ],
+      gana: 'Nacho deja la mano en el aire. El vecino baja.',
+      pierde: 'La música sube. El vecino vuelve con otra cara.',
+      explica: 'Fíjate en un detalle que casi nadie ve: el imperativo negativo *es* subjuntivo. _Sube_ pero _no subas_. _Ven_ pero _no vengas_. O sea que llevas años usándolo sin saberlo.',
+      siguiente: 'Buscar aire'
+    },
+    {
+      hora: '01:50', lugar: 'La azotea',
+      narracion: 'Alguien encuentra la salida al tejado. Desde arriba, Madrid es una cosa naranja que no se acaba nunca. Nacho se calla por primera vez en toda la noche.',
+      quien: 'Nacho',
+      dice: '¿Tú te vas a quedar aquí? Digo, en Madrid.',
+      reto: 'Contesta con un deseo. Empieza por *Ojalá* y usa el verbo *poder*.',
+      tipo: 'escribir', skill: 'produzieren', grammar: 'es-subjuntivo-presente',
+      respuesta: ['Ojalá pueda quedarme', 'Ojalá me pueda quedar', 'Ojalá pueda quedarme aquí'],
+      placeholder: 'Ojalá …',
+      pista: '*Ojalá* siempre lleva subjuntivo. De _poder_ sale _pueda_.',
+      gana: 'Nacho no dice nada. Se queda mirando la misma dirección que tú.',
+      pierde: 'Nacho enciende un cigarro y cambia de tema.',
+      explica: '*Ojalá* viene del árabe *law šā’ allāh*, «si Dios quiere», y es la única palabra del español que obliga al subjuntivo sin necesitar *que*. _Ojalá venga. Ojalá pueda. Ojalá no llueva._',
+      siguiente: 'Bajar a la calle'
+    },
+    {
+      hora: '03:10', lugar: 'Churrería, Puerta del Sol',
+      narracion: 'Chocolate con churros a las tres de la mañana, de pie, en un local con azulejos amarillos desde antes de que nacieras. A vuestro lado, un señor con chaqueta de obra desayuna en silencio.',
+      quien: 'El señor',
+      dice: 'Vosotros venís de la noche y yo voy hacia ella. Que os cunda.',
+      reto: '¿Qué os acaba de desear?',
+      tipo: 'elegir', skill: 'wortschatz', grammar: 'es-subjuntivo-presente',
+      opciones: [
+        { t: 'Que aprovechéis bien lo que queda de noche.', ok: true,
+          why: '*Que os cunda* significa que os dure, que os rinda. Y fíjate en la forma: empieza por *que* y va en subjuntivo, porque es un deseo.' },
+        { t: 'Que tengáis cuidado al volver a casa.',
+          why: '*Cundir* no tiene que ver con el peligro: significa rendir o dar de sí. Una comida cunde, un día cunde.' },
+        { t: 'Que le dejéis sitio en la barra.',
+          why: 'No está pidiendo nada. *Que os cunda* es una fórmula de despedida, como *que vaya bien* o *que descanses*.' }
+      ],
+      gana: 'Le dices que igualmente. Él levanta la taza dos centímetros.',
+      pierde: 'Contestas cualquier cosa. Él vuelve a su churro.',
+      explica: 'Los deseos sueltos en español empiezan por *que* y llevan subjuntivo, siempre: _que te vaya bien_, _que descanses_, _que aproveche_, _que os cunda_. Es un *espero que* al que se le ha caído el principio.',
+      siguiente: 'Volver andando'
+    },
+    {
+      hora: '04:00', lugar: 'Calle Atocha, andando',
+      escucha: true,
+      narracion: 'Volvéis a pie porque ya no merece la pena coger nada. Nacho se pone un podcast en el móvil, a un volumen malísimo, y lo escucháis los dos sin hablar.',
+      auto: 'A estas horas y en español de verdad: ¿cuánto has pillado?',
+      placeholder: 'Va sobre …',
+      siguiente: 'Seguir andando'
+    },
+    {
+      hora: '05:10', lugar: 'Boca de metro, Antón Martín',
+      narracion: 'Las cinco y diez. La entrada del metro huele a lejía. Nacho se sienta en el suelo del andén y saca el móvil para escribirle a alguien a quien le debe una disculpa.',
+      reto: 'Explícale por qué te vas ya a casa. Empieza por *Me voy para que* y usa el verbo *poder*.',
+      tipo: 'escribir', skill: 'produzieren', grammar: 'es-subjuntivo-presente',
+      respuesta: ['Me voy para que puedas dormir', 'Me voy para que puedas dormir un poco', 'Me voy para que tú puedas dormir'],
+      placeholder: 'Me voy para que …',
+      pista: '*Para que* introduce una finalidad que afecta a otra persona. De _poder_ sale _puedas_.',
+      gana: 'Nacho levanta la mano sin mirar. Es su forma de dar las gracias.',
+      pierde: 'Nacho ni se entera. Se queda en el andén.',
+      explica: '*Para que* lleva subjuntivo siempre, sin excepción, porque la finalidad todavía no ha ocurrido. Y otra vez la regla de los dos sujetos: si fueras tú quien va a dormir, dirías *me voy para dormir*, con infinitivo y sin *que*.',
+      siguiente: 'Subir a la calle'
+    }
+  ],
+
+  finales: [
+    'Has dicho lo que no tocaba casi siempre. No pasa nada: el subjuntivo se aprende quemándolo, y esta noche lo has quemado entero.',
+    'Ha sido una noche torcida. Pero ya sabes dónde está el problema, y eso vale más que acertar por casualidad.',
+    'Ni bien ni mal. Has entendido a la gente, y eso es lo primero. Producir viene después.',
+    'Buena noche. Has pedido, has dudado y has deseado sin sonar a libro de texto.',
+    'Muy buena noche. El subjuntivo te ha salido sin pensarlo en casi todo.',
+    'Noche redonda. Has hablado como alguien que vive aquí, no como alguien que estudia aquí.'
+  ],
+
+  listening: {
+    headline: 'Lo que suena en el móvil de Nacho',
+    source: {
+      name: 'Español con Juan',
+      icon: '🎙️', kind: 'Podcast semanal', level: 'B1–B2',
+      what: 'Juan habla solo, en español, sobre cosas normales. Ni muy rápido ni muy lento.',
+      itunesId: 976549237, country: 'us', minMinutes: 8, maxMinutes: 35,
+      homepage: 'https://1001reasonstolearnspanish.com/podcasts/',
+      transcriptUrl: 'https://1001reasonstolearnspanish.com/podcasts/',
+      pick: 'Ya está cargado el episodio más reciente. Dale al play mientras «andáis».'
+    },
+    alternatives: [
+      { name: 'Charlas Hispanas', icon: '🗣️', kind: 'Podcast diario', level: 'B1',
+        what: 'Episodios cortos sobre vocabulario y cultura de América Latina.',
+        itunesId: 1496665566, country: 'us', minMinutes: 4, maxMinutes: 20,
+        homepage: 'https://charlashispanas.com/', pick: 'Cualquiera vale, son cortos.' },
+      { name: 'Radio Ambulante', icon: '📻', kind: 'Periodismo narrativo', level: 'C1',
+        what: 'Historias reales de toda América Latina. Difícil, pero tira de ti.',
+        itunesId: 527614348, country: 'us', minMinutes: 15, maxMinutes: 45,
+        homepage: 'https://radioambulante.org/', pick: 'Para cuando quieras pelearte con el idioma.' }
+    ],
+    pretask: [
+      { term: 'según', def: 'de acuerdo con lo que dice alguien' },
+      { term: 'sin embargo', def: 'pero, a pesar de eso' },
+      { term: 'darse cuenta de', def: 'notar algo que antes no veías' },
+      { term: 'a lo largo de', def: 'durante todo un periodo' },
+      { term: 'en cuanto a', def: 'hablando del tema de…' },
+      { term: 'por lo visto', def: 'parece ser que' }
+    ]
+  },
+
+  outro: 'Nueve horas, ocho conversaciones y un modo verbal entero. Mira cómo ha ido.'
 });
 </script>
 <script>/* lessons/fr/2026-09-13-soiree-ratee.js */
@@ -3636,6 +5611,238 @@ LEKTION.register({
   outro: "Une soirée ratée, quarante-deux euros, et vingt phrases au passé composé. Encore quelques questions et c'est fini."
 });
 </script>
+<script>/* lessons/fr/2026-09-14-affaire-lepic.js */
+/* fr-2026-09-14-affaire-lepic · format: escape room */
+LEKTION.register({
+  id: 'fr-2026-09-14-affaire-lepic',
+  lang: 'fr',
+  level: 'A2',
+  date: '2026-09-14',
+  minutes: 40,
+  format: 'stage',
+  stage: 'enquete',
+  grammarId: 'fr-passe-compose-etre',
+
+  title: "L'affaire du 12 rue Lepic",
+  subtitle: "Camille Roussel a disparu hier soir. Son appartement est fermé de l'intérieur. Cinq objets, cinq heures, une porte.",
+  stageKicker: 'Enquête',
+  lieu: '12 rue Lepic · Paris 18e',
+  compteur: 'indices',
+  stageStart: "Commencer l'enquête",
+  chuletaLabel: 'aide-mémoire',
+  vocabTitle: 'les mots du dossier',
+  versPorte: 'Aller à la porte',
+  brief: "Tu es enfermé dans son appartement. La porte ne s'ouvre que si tu remets la soirée dans l'ordre.\n\nChaque objet cache une heure et un mouvement : quelqu'un est arrivé, quelqu'un est reparti, quelqu'un est descendu. Et tous ces verbes-là ont une chose en commun.\n\nTouche un objet pour l'examiner. L'aide-mémoire est en haut à droite si tu bloques.",
+
+  intro: {
+    hook: "Presque tous les verbes français font leur passé avec *avoir*. Mais une petite liste prend *être* — et ce sont exactement les verbes dont tu as besoin pour raconter qui est allé où.",
+    grammar: [{
+      id: 'fr-passe-compose-etre',
+      name: 'Le passé composé avec être',
+      why: "Sans ces verbes, tu ne peux raconter aucun déplacement. Or une soirée, c'est une suite de déplacements.",
+      explain: "Environ quinze verbes forment leur passé composé avec *être* au lieu d'*avoir*. Ce sont presque tous des verbes de mouvement ou de changement d'état.\n\naller · venir · arriver · partir · entrer · sortir · monter · descendre · rester · tomber · naître · mourir · passer · retourner · rentrer\n\nEt avec *être*, il se passe quelque chose que l'on ne voit jamais avec *avoir* : *le participe s’accorde avec le sujet*, exactement comme un adjectif.",
+      table: {
+        head: ['sujet', 'avec être', 'accord'],
+        rows: [
+          ['il', 'il est all_é_', '– rien'],
+          ['elle', 'elle est all_ée_', '+e'],
+          ['ils', 'ils sont all_és_', '+s'],
+          ['elles', 'elles sont all_ées_', '+es'],
+          ['Camille (une femme)', 'elle est desc_endue_', '+e'],
+          ['Marc et Paul', 'ils sont part_is_', '+s']
+        ]
+      },
+      examples: [
+        { src: "Marc _est arrivé_ à 20h15.",
+          note: "arriver → être. Marc est masculin, donc pas de -e." },
+        { src: "Camille _est descendue_ avec la valise.",
+          note: "descendre → être, et Camille est féminin : *descendue*." },
+        { src: "Elle _a mangé_ avant de partir.",
+          note: "manger → avoir. Aucun accord, jamais : *elle a mangé*, pas _mangée_." },
+        { src: "Les préfixes ne changent rien : partir → _repartir_, venir → _revenir_, entrer → _rentrer_.",
+          note: "Tous gardent être." },
+        { src: "Elle _est sortie_. / Elle _a sorti_ les poubelles.",
+          note: "Le cas piège : avec un complément d'objet, six de ces verbes passent à avoir — monter, descendre, sortir, passer, rentrer, retourner." }
+      ],
+      pitfalls: [
+        "L'erreur numéro un : *j'ai allé*. Ça n'existe pas. C'est *je suis allé*.",
+        "L'erreur numéro deux : oublier le -e au féminin. *Elle est parti* est faux ; c'est *elle est partie*. À l'oral on ne l'entend pas, à l'écrit ça se voit tout de suite.",
+        "Ne confonds pas *il est arrivé* (passé composé, il raconte) avec *il était arrivé* (plus-que-parfait, quelque chose s'était passé avant). Les deux existent, mais ils ne racontent pas au même moment."
+      ]
+    }],
+    vocab: [
+      { term: 'la pendule', def: "une horloge posée sur un meuble ou accrochée au mur" },
+      { term: 'le secrétaire', def: "un petit bureau fermé, avec des tiroirs" },
+      { term: 'le tiroir', def: "la partie d'un meuble qu'on tire pour l'ouvrir" },
+      { term: 'le répondeur', def: "la machine qui enregistre les messages du téléphone" },
+      { term: 'la concierge', def: "la personne qui s'occupe de l'entrée de l'immeuble" },
+      { term: "l'ascenseur", def: "la petite cabine qui monte et descend dans l'immeuble" },
+      { term: 'le cadre', def: "le bord en bois autour d'un tableau" },
+      { term: 'scotché', def: "collé avec du ruban adhésif" },
+      { term: 'un aller simple', def: "un billet pour partir sans revenir" },
+      { term: 'fêlé', def: "cassé sans être en morceaux ; il y a une ligne dans le verre" },
+      { term: 'la vitre', def: "le verre plat d'une fenêtre ou d'une pendule" },
+      { term: 'le rapport', def: "le texte où un enquêteur écrit ce qu'il a trouvé" }
+    ]
+  },
+
+  objets: [
+    {
+      id: 'pendule', nom: 'La pendule', icone: 'pendule', x: 38, y: 25,
+      indice: "Elle est par terre, la vitre fêlée. Les aiguilles se sont arrêtées à *19h40*. Quelqu'un l'a fait tomber en passant, et personne ne l'a relevée.",
+      enigme: {
+        type: 'choisir', skill: 'erkennen',
+        question: "Écris la première ligne de ton rapport. Quelle phrase est juste ?",
+        options: [
+          { t: "La pendule *est* tombée à 19h40.", ok: true,
+            why: "*tomber* fait partie de la liste : il prend être. Et le participe s'accorde — *la pendule* est féminin, donc *tombée*." },
+          { t: "La pendule *a* tombé à 19h40.",
+            why: "*tomber* ne prend jamais avoir. Il est dans la liste des quinze : aller, venir, arriver, partir, entrer, sortir, monter, descendre, rester, tomber, naître, mourir, passer, retourner, rentrer." },
+          { t: "La pendule *est* tombé à 19h40.",
+            why: "Bon auxiliaire, mauvais accord. Avec être, le participe suit le sujet : *la pendule* est féminin singulier, donc *tombée* avec un -e." }
+        ],
+        explication: "Avec *être*, le participe passé s'accorde comme un adjectif : il est tombé, elle est tombée, ils sont tombés, elles sont tombées. Avec *avoir*, jamais : elle a mangé, et c'est tout.",
+        reussite: "Première ligne écrite.", echec: "Pas encore.",
+        suite: 'Noter et continuer'
+      },
+      fragment: { heure: '19h40', texte: 'La pendule est tombée.' }
+    },
+    {
+      id: 'secretaire', nom: 'Le secrétaire', icone: 'bureau', x: 45, y: 57,
+      indice: "Dans le tiroir du haut, une lettre commencée et jamais finie :\n\n« Marc, quand tu es arrivé hier soir à *20h15*, j'avais déjà décidé. Je ne t'en veux pas. »",
+      enigme: {
+        type: 'formes', skill: 'verstehen',
+        question: "D'après la lettre, complète la ligne suivante de ton rapport.",
+        phrase: "Marc ___ arrivé à 20h15.",
+        formes: [
+          { t: 'est', ok: true, why: "*arriver* prend être. Marc est masculin, donc pas de -e : *est arrivé*." },
+          { t: 'a', why: "Non : *arriver* est dans la liste des verbes avec être. *Il a arrivé* n'existe pas." },
+          { t: 'était', why: "*était arrivé* existe, mais c'est le plus-que-parfait : « il était déjà arrivé avant autre chose ». Ici tu racontes simplement le fait : *il est arrivé*." },
+          { t: 'sont', why: "Marc est une seule personne. *sont* est pour ils ou elles." }
+        ],
+        explication: "Retiens les deux niveaux : *il est arrivé* raconte l'événement ; *il était arrivé* le place avant un autre événement passé. Camille utilise le deuxième dans sa lettre — *j'avais déjà décidé* — parce que sa décision venait avant la visite de Marc.",
+        reussite: "20h15, noté.", echec: "Relis la liste.",
+        suite: 'Noter et continuer'
+      },
+      fragment: { heure: '20h15', texte: 'Marc est arrivé.' }
+    },
+    {
+      id: 'telephone', nom: 'Le téléphone', icone: 'telephone', x: 57, y: 34,
+      indice: "Le répondeur clignote. Un seul message, enregistré à *21h04*. La voix de Marc, fatiguée :\n\n« Bon. Je suis reparti. Tu avais raison, je crois. Rappelle-moi quand même. »",
+      enigme: {
+        type: 'ecrire', skill: 'produzieren',
+        question: "Écris ce que tu notes pour 21h00. Utilise *Marc* et le verbe *repartir*.",
+        reponse: ["Marc est reparti", "Marc est reparti à 21h00", "Marc est reparti à 21 heures"],
+        placeholder: "Marc …",
+        aide: "*repartir* suit *partir*. Et Marc est masculin.",
+        explication: "Les préfixes ne changent pas l'auxiliaire : partir → *repartir*, venir → *revenir*, entrer → *rentrer*, monter → *remonter*. Tous restent avec être. Le seul vrai changement, c'est le sens.",
+        reussite: "21h00, noté.", echec: "Presque.",
+        suite: 'Noter et continuer'
+      },
+      fragment: { heure: '21h00', texte: 'Marc est reparti.' }
+    },
+    {
+      id: 'valise', nom: 'La valise', icone: 'valise', x: 28, y: 66,
+      indice: "Une valise à moitié faite, posée près de la porte. Dedans : deux pulls, un passeport, un chargeur. Rien de sentimental.\n\nLa concierge dit qu'elle a entendu l'ascenseur vers *22h30*.",
+      enigme: {
+        type: 'choisir', skill: 'erkennen',
+        question: "La concierge raconte. Quelle phrase est correcte ?",
+        options: [
+          { t: "Camille *est descendue* avec la valise.", ok: true,
+            why: "*descendre* avec être, parce qu'il n'y a pas de complément d'objet direct. Et l'accord au féminin : *descendue*." },
+          { t: "Camille *a descendu* avec la valise.",
+            why: "Ici, *descendre* n'a pas de complément d'objet : il prend être. (Avec un objet, ça changerait : *elle a descendu la valise* signifie qu'elle a porté la valise en bas.)" },
+          { t: "Camille *est descendu* avec la valise.",
+            why: "Bon auxiliaire, accord oublié. Camille est une femme : *descendue*, avec un -e." },
+          { t: "Camille *est descendus* avec la valise.",
+            why: "Le -s marque le pluriel, et Camille est une seule personne." }
+        ],
+        explication: "Six verbes de la liste changent d'auxiliaire quand ils ont un complément d'objet direct : *monter, descendre, sortir, passer, rentrer, retourner*. Compare : *elle est sortie* (elle-même) et *elle a sorti les poubelles* (elle a sorti quelque chose).",
+        reussite: "22h30, noté.", echec: "Regarde l'accord.",
+        suite: 'Noter et continuer'
+      },
+      fragment: { heure: '22h30', texte: 'Camille est descendue avec la valise.' }
+    },
+    {
+      id: 'tableau', nom: 'Le tableau', icone: 'tableau', x: 20, y: 33,
+      indice: "Un port au coucher du soleil, peinture sans valeur. Mais au dos du cadre, scotché : un billet de train.\n\nParis – Marseille. Départ *23h12*. Une seule personne. Aller simple.",
+      enigme: {
+        type: 'ecrire', skill: 'produzieren',
+        question: "Écris la dernière ligne de ton rapport. Utilise *Camille*, le verbe *monter* et *dans le train*.",
+        reponse: ["Camille est montée dans le train", "Camille est montée dans le train de Marseille", "Camille est montée dans le train à 23h12"],
+        placeholder: "Camille …",
+        aide: "Elle monte elle-même, donc être. Et elle est une femme.",
+        explication: "*monter* prend être quand on monte soi-même : *elle est montée*. S'il y avait un objet — *elle a monté la valise* — ce serait avoir, et sans accord. Le verbe est le même ; c'est la phrase autour qui décide.",
+        reussite: "Le dossier est complet.", echec: "Encore un essai.",
+        suite: 'Noter et continuer'
+      },
+      fragment: { heure: '23h12', texte: 'Camille est montée dans le train.' }
+    }
+  ],
+
+  finale: {
+    titre: 'La porte',
+    consigne: "Avant la serrure, une dernière chose. Puis cinq moments, une seule chronologie : clique-les dans l'ordre, du plus tôt au plus tard.",
+    mot: {
+      question: "Sur le billet, deux mots décident de toute l'affaire : *un aller simple*. Qu'est-ce que ça veut dire ?",
+      options: [
+        { t: "Un billet pour partir, sans billet de retour.", ok: true,
+          why: "Voilà pourquoi ce n'est pas une disparition. Un aller-retour, elle revenait. Un aller simple, non." },
+        { t: "Un billet bon marché, en deuxième classe.",
+          why: "Le prix n'a rien à voir. *Simple* s'oppose ici à *aller-retour*, pas à *cher*." },
+        { t: "Un billet pour une seule personne.",
+          why: "Ça, c'est écrit à côté : « une seule personne ». *Aller simple* parle du trajet, pas du nombre de voyageurs." },
+        { t: "Un billet valable un seul jour.",
+          why: "Non. Un aller simple peut être utilisé plus tard ; ce qui compte, c'est qu'il n'y a pas de retour." }
+      ],
+      explication: "*Un aller simple* face à *un aller-retour*. Deux mots, et l'enquête change de nature : Camille n'a pas disparu, elle est partie.",
+      suite: 'Ouvrir la serrure'
+    },
+    ordre: ['pendule', 'secretaire', 'telephone', 'valise', 'tableau'],
+    parfait: "Sans une seule hésitation. La porte s'ouvre.",
+    reussite: "La serrure cède. La porte s'ouvre sur le palier.",
+    explication: "Personne n'a disparu. Camille est partie, et elle l'avait décidé avant même que Marc arrive : c'est ce que dit son plus-que-parfait dans la lettre. Toute l'enquête tenait dans un auxiliaire.",
+    sortir: 'Sortir'
+  },
+
+  listening: {
+    headline: "Sur le palier, la radio du voisin",
+    intro: "La porte est ouverte. Chez le voisin du dessus, quelqu'un écoute les informations. Reste deux minutes à écouter avant de descendre.",
+    auto: "Tu en as compris combien ?",
+    source: {
+      name: 'Journal en français facile (RFI)',
+      icon: '📻', kind: 'Informations, chaque jour de la semaine', level: 'A2–B1',
+      what: "L'actualité du monde en dix minutes, dans un français clair et lent.",
+      itunesId: 1573764973, country: 'us', minMinutes: 5, maxMinutes: 20,
+      homepage: 'https://francaisfacile.rfi.fr/',
+      transcriptUrl: 'https://francaisfacile.rfi.fr/',
+      pick: "L'émission la plus récente est déjà chargée. Cinq minutes suffisent."
+    },
+    alternatives: [
+      { name: 'One Thing In A French Day', icon: '🥖', kind: 'Journal personnel', level: 'A2–B1',
+        what: "Trois minutes de la vie de Laetitia à Paris. Très court, entièrement en français.",
+        itunesId: 210206924, country: 'us', minMinutes: 2, maxMinutes: 12,
+        homepage: 'https://onethinginafrenchday.podbean.com/',
+        pick: "Un épisode dure moins longtemps qu'un café." },
+      { name: 'Français Authentique', icon: '🎧', kind: 'Podcast hebdomadaire', level: 'A2–B1',
+        what: "Johan explique une expression, lentement, sans passer par une autre langue.",
+        itunesId: 500549470, country: 'us', minMinutes: 5, maxMinutes: 25,
+        homepage: 'https://www.francaisauthentique.com/',
+        pick: "Quand tu veux comprendre une expression jusqu'au bout." }
+    ],
+    pretask: [
+      { term: 'selon', def: "d'après ce que dit quelqu'un" },
+      { term: 'une enquête', def: "le travail de la police pour comprendre ce qui est arrivé" },
+      { term: 'à la suite de', def: "après quelque chose, à cause de cela" },
+      { term: "il s'agit de", def: "le sujet est…" },
+      { term: 'des milliers de', def: "un très grand nombre de" },
+      { term: 'le gouvernement', def: "les personnes qui dirigent un pays" }
+    ]
+  },
+
+  outro: "Cinq objets, cinq déplacements, un seul auxiliaire. Voilà ce que ça donne."
+});
+</script>
 <script>/* assets/js/app.js */
 /* Sprachen - Router, Rahmen, Menü. */
 (function (L) {
@@ -3686,10 +5893,13 @@ LEKTION.register({
         L.session = (saved && saved.results) ? saved : newSession(lesson);
         L.session.startedAt = L.session.startedAt || Date.now();
       }
-      var station = m[2] || L.session.station || 'intro';
-      if (!L.views[station]) station = 'intro';
+      var erste = lesson.format === 'stage' ? 'stage' : 'intro';
+      var station = m[2] || L.session.station || erste;
+      if (!L.views[station]) station = erste;
+      if (lesson.format === 'stage' && station !== 'stage' && station !== 'wrap') station = 'stage';
       L.session.station = station;
       current = { id: id, station: station };
+      document.body.dataset.view = station === 'stage' ? 'stage' : 'lesson';
       L.persistProgress();
       draw(L.views[station](lesson), lesson, station);
     }).catch(function (err) {
@@ -3726,7 +5936,7 @@ LEKTION.register({
 
   function drawRail(lesson, station) {
     railEl.innerHTML = '';
-    if (!lesson) { railEl.style.display = 'none'; return; }
+    if (!lesson || lesson.format === 'stage') { railEl.style.display = 'none'; return; }
     railEl.style.display = '';
     var inner = h('div', { class: 'rail-inner' });
     var cur = L.STATIONS.map(function (s) { return s.id; }).indexOf(station);
@@ -3745,7 +5955,7 @@ LEKTION.register({
 
   function drawFoot(lesson, station) {
     footEl.innerHTML = '';
-    if (!lesson) { footEl.style.display = 'none'; return; }
+    if (!lesson || lesson.format === 'stage') { footEl.style.display = 'none'; return; }
     var idx = L.STATIONS.map(function (s) { return s.id; }).indexOf(station);
     var next = L.STATIONS[idx + 1];
 
@@ -3799,7 +6009,9 @@ LEKTION.register({
       items.push(['🏠', L.t('menu.leave'), function () { close(); L.go('#/'); }]);
       items.push(['↺', L.t('menu.restart'), function () {
         delete L.state.progress[L.session.lessonId];
-        L.session = null; L.save(); close(); route();
+        L.session = null; L.save(); close();
+        location.hash = '#/lektion/' + current.id;
+        route();
       }, 'danger']);
     }
     items.push([L.state.settings.sound ? '🔊' : '🔇',

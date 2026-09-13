@@ -25,12 +25,29 @@ Keine Belehrung am Schluss.
 Immer abwechselnd:
 - **normal** – so wie in dieser Datei beschrieben. Wortschatz und Grammatik sauber
   beibringen, sechs Stationen, ordentlich aufgebaut.
-- **überkonstruiert** – ein eigenes Format. Escape Room, Simulator mit 3D-Ansicht
-  (CSS-3D oder ein Canvas-Renderer, kein echtes Spiel), Ermittlungsfall,
-  Dialogsimulation mit Verzweigungen, Zeitdruck, Punktestand, Karte, Inventar.
-  Die Stationen dürfen dabei komplett anders heissen und anders funktionieren.
-  Hier wird absichtlich übertrieben. Vorher im Netz nach Ideen suchen, nicht
-  zweimal dasselbe Format bauen.
+- **überkonstruiert** – eine eigene Bühne. `format: 'stage'` plus ein `stage`-Name;
+  der Renderer liegt in `assets/js/stage-<name>.js`, die Optik in
+  `assets/css/stage-<name>.css`. Vorhanden sind `noche` (Simulator einer Nacht,
+  Himmel wandert mit der Uhrzeit) und `enquete` (Escape Room mit Zeitleiste).
+  Für die nächste Runde etwas Neues bauen, nicht diese zwei wiederverwenden:
+  Karte mit Reiseroute, Küche mit Rezept unter Zeitdruck, Radiostudio,
+  Verhör mit Verzweigungen, Metro-Netzplan als Navigation.
+
+  **Regeln für jede Bühne:**
+  - `intro.grammar` und `intro.vocab` bleiben Pflicht – sie werden zum Spickzettel,
+    den `L.chuleta()` oben rechts einblendet. Eine Bühne ersetzt die Erklärung nicht.
+  - Jeder bewertete Moment ruft `L.stageAnswer({correct, yours, right, explain,
+    skill, grammar})`. Nur so entstehen Diagnose, Bericht und Lernstand.
+  - Am Ende `L.stageDone(lesson)` – das führt auf die Bilanzseite.
+  - Die Hörquelle wird in die Bühne eingebaut (`L.player(src, lang, cb)`), damit
+    die Stimmung nicht bricht.
+  - Grafik ohne eine einzige Bilddatei: CSS-Verläufe, Inline-SVG, `L.ramp()` für
+    Farbwechsel. Klang mit `L.pluck` (gezupfte Saite), `L.clap` (Palmas),
+    `L.accordion`, `L.thunk`.
+  - **Eigene Klassennamen prüfen.** `.sol` heisst auf Spanisch Sonne und auf
+    Französisch Boden – das hat schon einmal die Sonne an den linken Rand geworfen.
+  - Leisten über der Spielfläche brauchen `pointer-events:none`, sonst fangen sie
+    Klicks ab, die den Gegenständen gelten.
 Welches dran ist, steht in `learner/profile.json` unter `nextFormat`. Nach jeder
 Einheit umschalten.
 

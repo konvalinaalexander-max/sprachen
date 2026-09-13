@@ -43,8 +43,8 @@ LEKTION.profile = {
   "github": "konvalinaalexander-max/sprachen",
   "tone": "26-jähriger Mann. Nah am Leben, roh, direkt, erwachsen. Kein Lehrbuch-Ton, keine geglätteten Situationen.",
   "nextFormat": {
-    "es": "ueberkonstruiert",
-    "fr": "ueberkonstruiert",
-    "_doc": "Wechselt nach jeder Einheit: normal -> ueberkonstruiert -> normal. Beide stehen jetzt auf ueberkonstruiert, weil die normalen Einheiten vom 13.09. fertig sind."
+    "es": "normal",
+    "fr": "normal",
+    "_doc": "Wechselt nach jeder Einheit. Die ueberkonstruierten Einheiten vom 14.09. sind fertig, also ist als naechstes wieder eine normale dran."
   }
 };

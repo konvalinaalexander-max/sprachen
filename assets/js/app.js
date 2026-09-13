@@ -47,10 +47,13 @@
         L.session = (saved && saved.results) ? saved : newSession(lesson);
         L.session.startedAt = L.session.startedAt || Date.now();
       }
-      var station = m[2] || L.session.station || 'intro';
-      if (!L.views[station]) station = 'intro';
+      var erste = lesson.format === 'stage' ? 'stage' : 'intro';
+      var station = m[2] || L.session.station || erste;
+      if (!L.views[station]) station = erste;
+      if (lesson.format === 'stage' && station !== 'stage' && station !== 'wrap') station = 'stage';
       L.session.station = station;
       current = { id: id, station: station };
+      document.body.dataset.view = station === 'stage' ? 'stage' : 'lesson';
       L.persistProgress();
       draw(L.views[station](lesson), lesson, station);
     }).catch(function (err) {
@@ -87,7 +90,7 @@
 
   function drawRail(lesson, station) {
     railEl.innerHTML = '';
-    if (!lesson) { railEl.style.display = 'none'; return; }
+    if (!lesson || lesson.format === 'stage') { railEl.style.display = 'none'; return; }
     railEl.style.display = '';
     var inner = h('div', { class: 'rail-inner' });
     var cur = L.STATIONS.map(function (s) { return s.id; }).indexOf(station);
@@ -106,7 +109,7 @@
 
   function drawFoot(lesson, station) {
     footEl.innerHTML = '';
-    if (!lesson) { footEl.style.display = 'none'; return; }
+    if (!lesson || lesson.format === 'stage') { footEl.style.display = 'none'; return; }
     var idx = L.STATIONS.map(function (s) { return s.id; }).indexOf(station);
     var next = L.STATIONS[idx + 1];
 
@@ -160,7 +163,9 @@
       items.push(['🏠', L.t('menu.leave'), function () { close(); L.go('#/'); }]);
       items.push(['↺', L.t('menu.restart'), function () {
         delete L.state.progress[L.session.lessonId];
-        L.session = null; L.save(); close(); route();
+        L.session = null; L.save(); close();
+        location.hash = '#/lektion/' + current.id;
+        route();
       }, 'danger']);
     }
     items.push([L.state.settings.sound ? '🔊' : '🔇',

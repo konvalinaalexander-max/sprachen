@@ -26,9 +26,11 @@ for (const l of lessons) {
   const E = (m) => errors.push(`${l._file}: ${m}`);
   const W = (m) => warns.push(`${l._file}: ${m}`);
 
-  for (const f of ['id', 'lang', 'level', 'date', 'title', 'intro', 'reading', 'tasks', 'listening']) {
-    if (!l[f]) E(`Feld "${f}" fehlt`);
-  }
+  const buehne = l.format === 'stage';
+  const pflicht = buehne
+    ? ['id', 'lang', 'level', 'date', 'title', 'intro', 'stage', 'listening']
+    : ['id', 'lang', 'level', 'date', 'title', 'intro', 'reading', 'tasks', 'listening'];
+  for (const f of pflicht) if (!l[f]) E(`Feld "${f}" fehlt`);
   if (!l.id) continue;
   if (ids.has(l.id)) E(`doppelte id "${l.id}"`);
   ids.add(l.id);
@@ -53,9 +55,10 @@ for (const l of lessons) {
   });
 
   /* Lesetext */
-  const paras = l.reading?.paragraphs || [];
-  if (!paras.length) E('reading.paragraphs ist leer');
+  const paras = buehne ? [] : (l.reading?.paragraphs || []);
   const fullText = paras.map((p) => p.text).join(' ');
+  if (!buehne) {
+  if (!paras.length) E('reading.paragraphs ist leer');
   const words = fullText.split(/\s+/).filter(Boolean).length;
   // Zwei A4-Seiten sind der Richtwert – er will gefordert werden.
   const limits = { A1: [250, 500], A2: [420, 750], B1: [600, 1000], B2: [700, 1200] };
@@ -72,8 +75,11 @@ for (const l of lessons) {
       E(`reading.glossary[${i}]: "${g.term}" kommt im Text gar nicht vor`);
   });
 
+  }
+
   /* Aufgaben */
-  const tasks = l.tasks || [];
+  const tasks = buehne ? [] : (l.tasks || []);
+  if (!buehne) {
   if (tasks.length < 5) W(`nur ${tasks.length} Aufgaben – 6 bis 9 halten die Einheit bei ~35 Minuten`);
   const kinds = new Set(tasks.map((t) => t.type));
   if (kinds.size < 3) W(`nur ${kinds.size} verschiedene Aufgabentypen – wird schnell öde`);
@@ -126,6 +132,64 @@ for (const l of lessons) {
     }
   });
 
+  }
+
+  /* Eigenständige Formate: Bühnen statt Lesetext und Aufgabenliste */
+  if (buehne) {
+    const STAGES = ['noche', 'enquete'];
+    const SK = ['verstehen', 'erkennen', 'produzieren', 'wortschatz'];
+    if (!STAGES.includes(l.stage)) E(`stage "${l.stage}" unbekannt – vorhanden: ${STAGES.join(', ')}`);
+    const stueck = l.escenas || l.objets || [];
+    if (stueck.length < 4) E('zu wenig Spielmaterial: mindestens vier escenas bzw. objets');
+    let gemessen = 0;
+    (l.escenas || []).forEach((e, i) => {
+      if (e.escucha) return;
+      if (!e.narracion) E(`escenas[${i}]: narracion fehlt`);
+      if (!e.explica) E(`escenas[${i}]: explica fehlt – ohne Erklärung kein Lerneffekt`);
+      if (!e.skill) W(`escenas[${i}]: kein skill`);
+      else if (!SK.includes(e.skill)) E(`escenas[${i}]: skill "${e.skill}" unbekannt`);
+      if (e.grammar && !knownGrammar.has(e.grammar)) E(`escenas[${i}]: grammar "${e.grammar}" steht nicht im Lehrplan`);
+      if (e.tipo === 'formas') {
+        if (!(e.formas || []).some((o) => o.ok)) E(`escenas[${i}]: keine richtige Form markiert`);
+        if (!(e.frase || '').includes('___')) E(`escenas[${i}]: frase braucht eine Lücke ___`);
+      } else if (e.tipo === 'escribir') {
+        if (!e.respuesta) E(`escenas[${i}]: respuesta fehlt`);
+      } else if (!(e.opciones || []).some((o) => o.ok)) {
+        E(`escenas[${i}]: keine richtige Option markiert`);
+      }
+      gemessen++;
+    });
+    (l.objets || []).forEach((o, i) => {
+      if (!o.id) E(`objets[${i}]: id fehlt`);
+      if (!o.indice) E(`objets[${i}]: indice fehlt`);
+      if (!o.fragment || !o.fragment.heure || !o.fragment.texte) E(`objets[${i}]: fragment braucht heure und texte`);
+      const e = o.enigme || {};
+      if (!e.question) E(`objets[${i}]: enigme.question fehlt`);
+      if (!e.explication) E(`objets[${i}]: enigme.explication fehlt`);
+      if (!e.skill) W(`objets[${i}]: kein skill`);
+      else if (!SK.includes(e.skill)) E(`objets[${i}]: skill "${e.skill}" unbekannt`);
+      if (e.type === 'ecrire') {
+        if (!e.reponse) E(`objets[${i}]: enigme.reponse fehlt`);
+      } else if (e.type === 'formes') {
+        if (!(e.formes || []).some((x) => x.ok)) E(`objets[${i}]: keine richtige Form markiert`);
+        if (!(e.phrase || '').includes('___')) E(`objets[${i}]: phrase braucht eine Lücke ___`);
+      } else if (!(e.options || []).some((x) => x.ok)) {
+        E(`objets[${i}]: keine richtige Option markiert`);
+      }
+      gemessen++;
+    });
+    if (l.objets) {
+      const ordre = (l.finale && l.finale.ordre) || [];
+      if (ordre.length !== l.objets.length) E('finale.ordre muss genau so viele Einträge haben wie objets');
+      for (const id of ordre) if (!l.objets.some((o) => o.id === id)) E(`finale.ordre: "${id}" gibt es nicht`);
+      if (!(l.finale && l.finale.consigne)) E('finale.consigne fehlt');
+    }
+    if (l.grammarId && !knownGrammar.has(l.grammarId)) E(`grammarId "${l.grammarId}" steht nicht im Lehrplan`);
+    if (gemessen < 5) W(`nur ${gemessen} bewertete Momente – die Diagnose wird dünn`);
+    const skills = new Set(stueck.map((x) => x.skill || (x.enigme && x.enigme.skill)).filter(Boolean));
+    if (skills.size < 3) W(`nur ${skills.size} verschiedene Fertigkeiten abgedeckt`);
+  }
+
   /* Hören */
   const checkSource = (src, where) => {
     if (!src.name) E(`${where}: name fehlt`);
@@ -147,6 +211,13 @@ for (const l of lessons) {
   (l.listening?.alternatives || []).forEach((a, i) => checkSource(a, `listening.alternatives[${i}]`));
   if ((l.listening?.alternatives || []).length < 2)
     warns.push(`${l._file}: weniger als zwei Ausweichquellen`);
+}
+
+/* Doppelte Sternchen sind fast immer ein Tippfehler: die Auszeichnung ist *einfach*. */
+for (const l of lessons) {
+  const raw = JSON.stringify(l);
+  const n = (raw.match(/\*\*[^*]+\*\*/g) || []).length;
+  if (n) warns.push(`${l._file}: ${n}× doppelte Sternchen – die Auszeichnung schreibt sich *so*`);
 }
 
 /* Kein deutsches Wort in den Sprachblöcken – das war eine ausdrückliche Ansage. */

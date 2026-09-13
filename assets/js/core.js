@@ -181,6 +181,7 @@
      wo Lektionstexte gerendert werden – Erklärungen, Notizen, Rückmeldungen. */
   LEKTION.markup = function (s) {
     return LEKTION.esc(s)
+      .replace(/\*\*([^*]+)\*\*/g, '<b style="color:var(--ink)">$1</b>')   // **auch so** verzeihen
       .replace(/\*([^*]+)\*/g, '<b style="color:var(--ink)">$1</b>')
       .replace(/_([^_]+)_/g, '<span class="hl-word">$1</span>');
   };
