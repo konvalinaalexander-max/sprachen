@@ -6,15 +6,15 @@ LEKTION.register({
   date: '2026-09-14',
   minutes: 40,
   format: 'stage',
-  stage: 'noche',
+  stage: 'barrio',        // 3D-Welt; fällt ohne WebGL auf 'noche' (2D) zurück
   grammarId: 'es-subjuntivo-presente',
 
   title: 'La noche',
   subtitle: 'Nueve horas en Madrid, de la puerta de tu casa al primer metro. Cada persona que te habla espera una respuesta, y casi todas piden subjuntivo.',
-  stageKicker: 'Simulador · una noche',
+  stageKicker: 'Simulador · una noche en 3D',
   stageStart: 'Salir de casa',
   stageEnd: 'Amanece',
-  stageIntro: 'Se juega con el móvil o con el ordenador. Puedes abrir la regla en cualquier momento, arriba a la derecha.',
+  stageIntro: 'Arrastra con el dedo o el ratón para mirar alrededor. La regla está siempre arriba a la derecha.',
   chuletaLabel: 'la regla',
   vocabTitle: 'palabras de la noche',
 
@@ -72,7 +72,7 @@ LEKTION.register({
 
   escenas: [
     {
-      hora: '20:40', lugar: 'Tu portal, Lavapiés',
+      punto: 'portal', hora: '20:40', lugar: 'Tu portal, Lavapiés',
       narracion: 'Sales del portal y el móvil vibra antes de que llegues a la esquina. Es Marta, tu compañera de piso. Lleva tres días encerrada con un examen y la voz le sale plana.',
       quien: 'Marta',
       dice: '¿Vas a pasar por el chino? Necesito una cosa.',
@@ -92,7 +92,7 @@ LEKTION.register({
       siguiente: 'Ir hacia la plaza'
     },
     {
-      hora: '21:20', lugar: 'Plaza de Olavide',
+      punto: 'plaza', hora: '21:20', lugar: 'Plaza de Olavide',
       narracion: 'Nacho ya está allí, sentado en el bordillo con dos latas calientes. Te ve llegar y se levanta como si tuviera un plan que ha pensado mucho.',
       quien: 'Nacho',
       dice: 'Nos plantamos en casa de Álvaro, cogemos su coche y nos vamos a Segovia. Ahora.',
@@ -111,7 +111,7 @@ LEKTION.register({
       siguiente: 'Entrar en el bar'
     },
     {
-      hora: '22:05', lugar: 'Bar de la calle Espíritu Santo',
+      punto: 'bar', hora: '22:05', lugar: 'Bar de la calle Espíritu Santo',
       narracion: 'El bar está a reventar. Pedís dos cañas y una ración de bravas. Pasan doce minutos. Nacho mira la barra como si la mirada fuera a traer la comida antes.',
       reto: 'Dile a Nacho que tienes la esperanza de que la comida llegue pronto. Escribe la frase entera, empezando por *Espero que*.',
       tipo: 'escribir', skill: 'produzieren', grammar: 'es-subjuntivo-presente',
@@ -124,7 +124,7 @@ LEKTION.register({
       siguiente: 'Bajar al metro'
     },
     {
-      hora: '23:15', lugar: 'Metro, línea 5',
+      punto: 'metro', hora: '23:15', lugar: 'Metro, línea 5',
       narracion: 'En el andén, una chica con una carpeta enorme te pregunta la hora y después se queda mirando el panel de los minutos.',
       quien: 'Ella',
       dice: 'Es raro que el último tren pase a esta hora un jueves, ¿no?',
@@ -144,7 +144,7 @@ LEKTION.register({
       siguiente: 'Seguir a Nacho'
     },
     {
-      hora: '00:40', lugar: 'Un cuarto sin ascensor, Malasaña',
+      punto: 'piso', hora: '00:40', lugar: 'Un cuarto sin ascensor, Malasaña',
       narracion: 'Acabáis en casa de alguien a quien Nacho llama «un colega». Veinte personas, una mesa con hielo derretido y un vecino que ya ha subido una vez a decir algo.',
       quien: 'El vecino',
       dice: 'Es la tercera vez esta semana. La tercera.',
@@ -163,7 +163,7 @@ LEKTION.register({
       siguiente: 'Buscar aire'
     },
     {
-      hora: '01:50', lugar: 'La azotea',
+      punto: 'azotea', hora: '01:50', lugar: 'La azotea',
       narracion: 'Alguien encuentra la salida al tejado. Desde arriba, Madrid es una cosa naranja que no se acaba nunca. Nacho se calla por primera vez en toda la noche.',
       quien: 'Nacho',
       dice: '¿Tú te vas a quedar aquí? Digo, en Madrid.',
@@ -178,7 +178,7 @@ LEKTION.register({
       siguiente: 'Bajar a la calle'
     },
     {
-      hora: '03:10', lugar: 'Churrería, Puerta del Sol',
+      punto: 'churreria', hora: '03:10', lugar: 'Churrería, Puerta del Sol',
       narracion: 'Chocolate con churros a las tres de la mañana, de pie, en un local con azulejos amarillos desde antes de que nacieras. A vuestro lado, un señor con chaqueta de obra desayuna en silencio.',
       quien: 'El señor',
       dice: 'Vosotros venís de la noche y yo voy hacia ella. Que os cunda.',
@@ -198,7 +198,7 @@ LEKTION.register({
       siguiente: 'Volver andando'
     },
     {
-      hora: '04:00', lugar: 'Calle Atocha, andando',
+      punto: 'calle', hora: '04:00', lugar: 'Calle Atocha, andando',
       escucha: true,
       narracion: 'Volvéis a pie porque ya no merece la pena coger nada. Nacho se pone un podcast en el móvil, a un volumen malísimo, y lo escucháis los dos sin hablar.',
       auto: 'A estas horas y en español de verdad: ¿cuánto has pillado?',
@@ -206,7 +206,7 @@ LEKTION.register({
       siguiente: 'Seguir andando'
     },
     {
-      hora: '05:10', lugar: 'Boca de metro, Antón Martín',
+      punto: 'metro2', hora: '05:10', lugar: 'Boca de metro, Antón Martín',
       narracion: 'Las cinco y diez. La entrada del metro huele a lejía. Nacho se sienta en el suelo del andén y saca el móvil para escribirle a alguien a quien le debe una disculpa.',
       reto: 'Explícale por qué te vas ya a casa. Empieza por *Me voy para que* y usa el verbo *poder*.',
       tipo: 'escribir', skill: 'produzieren', grammar: 'es-subjuntivo-presente',

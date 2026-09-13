@@ -6,7 +6,7 @@ LEKTION.register({
   date: '2026-09-14',
   minutes: 40,
   format: 'stage',
-  stage: 'enquete',
+  stage: 'lepic',         // 3D-Welt; fällt ohne WebGL auf 'enquete' (2D) zurück
   grammarId: 'fr-passe-compose-etre',
 
   title: "L'affaire du 12 rue Lepic",
@@ -18,7 +18,7 @@ LEKTION.register({
   chuletaLabel: 'aide-mémoire',
   vocabTitle: 'les mots du dossier',
   versPorte: 'Aller à la porte',
-  brief: "Tu es enfermé dans son appartement. La porte ne s'ouvre que si tu remets la soirée dans l'ordre.\n\nChaque objet cache une heure et un mouvement : quelqu'un est arrivé, quelqu'un est reparti, quelqu'un est descendu. Et tous ces verbes-là ont une chose en commun.\n\nTouche un objet pour l'examiner. L'aide-mémoire est en haut à droite si tu bloques.",
+  brief: "Tu es enfermé dans son appartement, au troisième étage, la pluie contre la vitre. La porte ne s'ouvre que si tu remets la soirée dans l'ordre.\n\nChaque objet cache une heure et un mouvement : quelqu'un est arrivé, quelqu'un est reparti, quelqu'un est descendu. Et tous ces verbes-là ont une chose en commun.\n\nTouche un objet pour l'examiner. L'aide-mémoire est en haut à droite si tu bloques.",
 
   intro: {
     hook: "Presque tous les verbes français font leur passé avec *avoir*. Mais une petite liste prend *être* — et ce sont exactement les verbes dont tu as besoin pour raconter qui est allé où.",

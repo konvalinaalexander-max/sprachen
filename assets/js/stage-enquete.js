@@ -46,57 +46,18 @@
       '</svg>';
   }
 
-  L.stages.enquete = function (lesson) {
+  /* ---------------------------------------------------------------
+     Motor: Kopfleiste, Zeitleiste, Dossier, Rätsel, Finale.
+     hooks.mountObjects(objets, ouvrir) zeichnet die Gegenstände (DOM oder 3D)
+     hooks.onOpen(o) · onSolved(o, ok) · onProgress(resolus) · onReady() · onDoor()
+     --------------------------------------------------------------- */
+  L.enqueteUI = function (lesson, root, hooks) {
     var S = L.session;
     S.stage = S.stage || { resolus: {}, fragments: [], phase: 'intro' };
     var objets = lesson.objets || [];
+    hooks = hooks || {};
 
-    var root = h('div', { class: 'enquete' });
-    var piece = h('div', { class: 'piece' });
-    root.appendChild(piece);
-
-    /* Wand mit Stuck */
-    var mur = h('div', { class: 'mur' });
-    mur.appendChild(h('div', { class: 'moulure m1' }));
-    mur.appendChild(h('div', { class: 'moulure m2' }));
-    mur.appendChild(h('div', { class: 'corniche' }));
-    mur.appendChild(h('div', { class: 'plinthe' }));
-    piece.appendChild(mur);
-
-    /* Fenster mit Regen */
-    var fen = h('div', { class: 'fenetre', html: fenetre() });
-    fen.appendChild(h('div', { class: 'pluie' }));
-    fen.appendChild(h('div', { class: 'croisillon v' }));
-    fen.appendChild(h('div', { class: 'croisillon hh' }));
-    fen.appendChild(h('div', { class: 'reflet' }));
-    piece.appendChild(fen);
-    piece.appendChild(h('div', { class: 'lumiere' }));
-
-    /* Boden */
-    piece.appendChild(h('div', { class: 'parquet', html: parquet() }));
-
-    /* Tür */
-    var porte = h('div', { class: 'porte' }, [
-      h('div', { class: 'porte-p' }),
-      h('div', { class: 'porte-p bas' }),
-      h('div', { class: 'poignee' })
-    ]);
-    piece.appendChild(porte);
-
-    /* Gegenstände */
-    var objDom = {};
-    objets.forEach(function (o) {
-      var b = h('button', {
-        class: 'objet', type: 'button', 'aria-label': o.nom,
-        style: 'left:' + o.x + '%; top:' + o.y + '%'
-      }, [
-        h('span', { class: 'ob-cercle', html: '<svg viewBox="0 0 48 48">' + (ICONES[o.icone] || ICONES.valise) + '</svg>' }),
-        h('span', { class: 'ob-nom', text: o.nom })
-      ]);
-      b.addEventListener('click', function () { if (!S.stage.resolus[o.id]) ouvrir(o); });
-      objDom[o.id] = b;
-      piece.appendChild(b);
-    });
+    if (hooks.mountObjects) hooks.mountObjects(objets, function (o) { if (!S.stage.resolus[o.id]) ouvrir(o); });
 
     /* Kopf und Zeitleiste */
     var bandeau = h('div', { class: 'bandeau' });
@@ -137,20 +98,20 @@
     }
 
     function majObjets() {
-      objets.forEach(function (o) {
-        objDom[o.id].classList.toggle('fait', !!S.stage.resolus[o.id]);
-      });
-      if (Object.keys(S.stage.resolus).length === objets.length) porte.classList.add('prete');
+      if (hooks.onProgress) hooks.onProgress(S.stage.resolus);
+      if (Object.keys(S.stage.resolus).length === objets.length && hooks.onReady) hooks.onReady();
     }
 
     /* ---------------- Dossier ---------------- */
     function fermer() {
+      if (hooks.onClose) hooks.onClose();
       dossier.classList.remove('ouvert');
       setTimeout(function () { dossier.innerHTML = ''; }, 320);
     }
 
     function ouvrir(o) {
       L.thunk('open');
+      if (hooks.onOpen) hooks.onOpen(o);
       dossier.innerHTML = '';
       var card = h('div', { class: 'dossier' });
       card.appendChild(h('button', { class: 'ds-x', type: 'button', text: '✕', 'aria-label': 'fermer', onclick: fermer }));
@@ -184,6 +145,7 @@
 
       /* Der Hinweis wird immer freigeschaltet – sonst steckt man fest. */
       S.stage.resolus[o.id] = { ok: ok };
+      if (hooks.onSolved) hooks.onSolved(o, ok);
       L.persistProgress();
       majBandeau(); majFrise(); majObjets();
 
@@ -365,8 +327,8 @@
           correct: fautes === 0, yours: fautes + ' erreur(s)', right: '0',
           explain: f.explication || '', skill: 'verstehen', grammar: lesson.grammarId || null
         });
-        porte.classList.add('ouverte');
         root.classList.add('sortie');
+        if (hooks.onDoor) hooks.onDoor();
         L.accordion([261.63, 329.63, 392, 523.25], 2.2, 0.08);
         var res = h('div', { class: 'ds-r oui' }, [
           h('div', { class: 'ds-rt', text: fautes === 0 ? (f.parfait || 'Sans une seule erreur.') : (f.reussite || 'La porte s\'ouvre.') }),
@@ -428,6 +390,70 @@
     majBandeau(); majFrise(); majObjets();
     if (S.stage.phase === 'intro') intro();
     else if (Object.keys(S.stage.resolus).length === objets.length) finale();
+    return { ouvrir: ouvrir, finale: finale, dossier: dossier };
+  };
+
+  /* ---------------------------------------------------------------
+     2D-Bühne: Wand, Fenster, Parkett, Tür, Gegenstände als DOM
+     --------------------------------------------------------------- */
+  L.stages.enquete = function (lesson) {
+    var root = h('div', { class: 'enquete' });
+    var piece = h('div', { class: 'piece' });
+    root.appendChild(piece);
+    /* Wand mit Stuck */
+    var mur = h('div', { class: 'mur' });
+    mur.appendChild(h('div', { class: 'moulure m1' }));
+    mur.appendChild(h('div', { class: 'moulure m2' }));
+    mur.appendChild(h('div', { class: 'corniche' }));
+    mur.appendChild(h('div', { class: 'plinthe' }));
+    piece.appendChild(mur);
+
+    /* Fenster mit Regen */
+    var fen = h('div', { class: 'fenetre', html: fenetre() });
+    fen.appendChild(h('div', { class: 'pluie' }));
+    fen.appendChild(h('div', { class: 'croisillon v' }));
+    fen.appendChild(h('div', { class: 'croisillon hh' }));
+    fen.appendChild(h('div', { class: 'reflet' }));
+    piece.appendChild(fen);
+    piece.appendChild(h('div', { class: 'lumiere' }));
+
+    /* Boden */
+    piece.appendChild(h('div', { class: 'parquet', html: parquet() }));
+
+    /* Tür */
+    var porte = h('div', { class: 'porte' }, [
+      h('div', { class: 'porte-p' }),
+      h('div', { class: 'porte-p bas' }),
+      h('div', { class: 'poignee' })
+    ]);
+    piece.appendChild(porte);
+
+    /* Gegenstände */
+    var objDom = {};
+    function mountObjects(objets, ouvrir) {
+    objets.forEach(function (o) {
+      var b = h('button', {
+        class: 'objet', type: 'button', 'aria-label': o.nom,
+        style: 'left:' + o.x + '%; top:' + o.y + '%'
+      }, [
+        h('span', { class: 'ob-cercle', html: '<svg viewBox="0 0 48 48">' + (ICONES[o.icone] || ICONES.valise) + '</svg>' }),
+        h('span', { class: 'ob-nom', text: o.nom })
+      ]);
+      b.addEventListener('click', function () { ouvrir(o); });
+      objDom[o.id] = b;
+      piece.appendChild(b);
+    });
+    }
+
+
+    L.enqueteUI(lesson, root, {
+      mountObjects: mountObjects,
+      onProgress: function (resolus) {
+        Object.keys(objDom).forEach(function (id) { objDom[id].classList.toggle('fait', !!resolus[id]); });
+      },
+      onReady: function () { porte.classList.add('prete'); },
+      onDoor: function () { porte.classList.add('ouverte'); }
+    });
     return root;
   };
 

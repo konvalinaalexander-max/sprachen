@@ -27,8 +27,10 @@ Immer abwechselnd:
   beibringen, sechs Stationen, ordentlich aufgebaut.
 - **überkonstruiert** – eine eigene Bühne. `format: 'stage'` plus ein `stage`-Name;
   der Renderer liegt in `assets/js/stage-<name>.js`, die Optik in
-  `assets/css/stage-<name>.css`. Vorhanden sind `noche` (Simulator einer Nacht,
-  Himmel wandert mit der Uhrzeit) und `enquete` (Escape Room mit Zeitleiste).
+  `assets/css/stage-<name>.css`. Vorhanden sind `barrio` (Madrid in 3D, neun
+  Szenen durch eine Nacht) und `lepic` (Paris in 3D: Regenstrasse, dann die
+  Wohnung als Escape Room). Beide fallen ohne WebGL auf ihre 2D-Fassungen
+  `noche` und `enquete` zurück – die bleiben im Repo und müssen weiter laufen.
   Für die nächste Runde etwas Neues bauen, nicht diese zwei wiederverwenden:
   Karte mit Reiseroute, Küche mit Rezept unter Zeitdruck, Radiostudio,
   Verhör mit Verzweigungen, Metro-Netzplan als Navigation.
@@ -41,9 +43,23 @@ Immer abwechselnd:
   - Am Ende `L.stageDone(lesson)` – das führt auf die Bilanzseite.
   - Die Hörquelle wird in die Bühne eingebaut (`L.player(src, lang, cb)`), damit
     die Stimmung nicht bricht.
-  - Grafik ohne eine einzige Bilddatei: CSS-Verläufe, Inline-SVG, `L.ramp()` für
-    Farbwechsel. Klang mit `L.pluck` (gezupfte Saite), `L.clap` (Palmas),
-    `L.accordion`, `L.thunk`.
+  - Grafik ohne eine einzige Bilddatei. 3D über Three.js (`vendor/three.iife.js`,
+    als klassisches Script gebündelt, `window.THREE`) und die eigene Engine
+    `assets/js/world.js`: `L.World(host, {palette, fog, shadows})` liefert
+    Himmelskuppel mit Tageszeit (`setTime`), Sonne/Mond/Sterne, `rain()`,
+    `flyTo()`, Umsehen per Ziehen, `pickables` + `onPick`. `L.Build` hat Kisten,
+    Zylinder, `canvasTex()` für gemalte Texturen (Schilder, Parkett, Fenster,
+    Bilder) und `seeded()` für eine Stadt, die bei jedem Öffnen gleich aussieht.
+    Klang mit `L.pluck`, `L.clap`, `L.accordion`, `L.thunk`, `L.ambience`.
+  - **`scene.add(x)` gibt die Szene zurück, `group.add(x)` die Gruppe.**
+    `scene.add(mesh).rotation.z = …` dreht die ganze Welt. Das hat Madrid einmal
+    auf die Seite gelegt und in Paris das Telefon an die Decke gehängt.
+    Immer: `var m = …; m.rotation.z = …; scene.add(m);`
+  - Dialog- und Rätselmotor sind von der Kulisse getrennt: `L.nocheDialogo(lesson,
+    root, hooks)` und `L.enqueteUI(lesson, root, hooks)`. Eine neue Welt baut nur
+    die Kulisse und hängt sich an die Haken (`onScene`, `onOpen`, `onDoor` …).
+  - Tests laufen headless mit SwiftShader (`--use-gl=swiftshader`) bei ~4 fps:
+    Flüge und Zeit-Tweens dort mit `W.finishFly()` / `W.snapTime()` abkürzen.
   - **Eigene Klassennamen prüfen.** `.sol` heisst auf Spanisch Sonne und auf
     Französisch Boden – das hat schon einmal die Sonne an den linken Rand geworfen.
   - Leisten über der Spielfläche brauchen `pointer-events:none`, sonst fangen sie

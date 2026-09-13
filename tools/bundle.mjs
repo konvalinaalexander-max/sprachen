@@ -17,9 +17,13 @@ const scripts = [
   'assets/js/i18n.js',
   'assets/js/audio.js',
   'assets/js/tasks.js',
+  'vendor/three.iife.js',
+  'assets/js/world.js',
   'assets/js/stage.js',
   'assets/js/stage-noche.js',
   'assets/js/stage-enquete.js',
+  'assets/js/stage-barrio.js',
+  'assets/js/stage-lepic.js',
   'assets/js/stations.js',
   'learner/profile.js',
   'lessons/manifest.js'
@@ -34,7 +38,8 @@ html = html.replace(/[ \t]*<link rel="manifest"[^>]*>\n?/, '');
 html = html.replace(/[ \t]*<link rel="icon"[^>]*>\n?/, `<link rel="icon" href="${iconUri}" type="image/svg+xml">\n`);
 html = html.replace(/[ \t]*<link rel="apple-touch-icon"[^>]*>\n?/, '');
 html = html.replace(/[ \t]*<link rel="stylesheet" href="assets\/css\/[^"]+">\n?/g, '');
-html = html.replace('</head>', '<style>\n' + css + '\n</style>\n</head>');
+// Ersatz als Funktion: sonst deutet replace() $&, $' und $1 im eingefügten Code als Muster
+html = html.replace('</head>', () => '<style>\n' + css + '\n</style>\n</head>');
 
 const inlined = scripts.map((f) => {
   const body = readFileSync(p(f), 'utf8');
@@ -43,10 +48,10 @@ const inlined = scripts.map((f) => {
 
 // Alle einzelnen <script src="…"> durch den einen Block ersetzen
 html = html.replace(/<script src="[^"]+"><\/script>\s*/g, '');
-html = html.replace('</body>',
+html = html.replace('</body>', () =>
   '<script>window.LEKTION = { standalone: true };</script>\n' + inlined + '\n</body>');
 
-html = html.replace('<title>Sprachen</title>',
+html = html.replace('<title>Sprachen</title>', () =>
   '<title>Sprachen</title>\n<!-- Eine Datei, alles drin. Erzeugt von tools/bundle.mjs – Änderungen hier gehen beim nächsten Bauen verloren. -->');
 
 writeFileSync(p('sprachen.html'), html);

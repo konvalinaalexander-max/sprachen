@@ -28,14 +28,19 @@ sauber bei, in sechs Stationen. Die nächste ist eine **Bühne**: ein eigenes
 Format mit eigener Grafik und eigener Logik.
 
 Bisher gebaut:
-- **La noche** (Spanisch) – ein Abend in Madrid, Stunde für Stunde. Der Himmel
-  wandert vom Sonnenuntergang bis zum Morgengrauen mit, die Fenster gehen an,
-  und jede Person, die dich anspricht, will eine Antwort im Subjuntivo.
-- **L'affaire du 12 rue Lepic** (Französisch) – ein Escape Room in einer
-  Haussmann-Wohnung. Fünf Gegenstände, fünf Rätsel, eine Zeitleiste. Die Tür
-  öffnet sich nur, wenn die Chronologie stimmt.
+- **La noche** (Spanisch) – ein prozedurales Madrid in 3D: 48 Häuserblöcke um
+  eine Plaza, Kirche mit Kuppel, Bar mit Markise, Churrería, Metro-Raute, Azotea.
+  Die Kamera fliegt von Szene zu Szene durch neun Stunden; der Himmel dreht mit,
+  zehntausend Fenster gehen nach und nach an, und jede Person, die dich
+  anspricht, will eine Antwort im Subjuntivo.
+- **L'affaire du 12 rue Lepic** (Französisch) – Paris bei Nacht im Regen,
+  Haussmann-Fassaden mit Balkonreihen und Zinkdächern, dann durchs Fenster in
+  die Wohnung im dritten Stock: Fischgrätparkett, Stuck, Bücherwand, ein
+  gemaltes Bild. Fünf Gegenstände zum Anklicken, fünf Rätsel, eine Zeitleiste.
+  Die Tür öffnet sich nur, wenn die Chronologie stimmt.
 
-Beide ohne eine einzige Bilddatei: alles CSS und SVG, der Klang synthetisiert.
+Beide Welten sind komplett gerechnet – keine Bilddatei, keine Textur von aussen.
+3D über Three.js, mit in der Datei. Ohne WebGL gibt es beide auch als 2D-Fassung.
 
 ## Eine normale Einheit
 
@@ -100,7 +105,9 @@ assets/js/core.js       Registry, Zustand, Klang, Textvergleich
 assets/js/i18n.js       Oberflächentexte auf Deutsch, Spanisch, Französisch
 assets/js/audio.js      Folgen auflösen und abspielen
 assets/js/stage.js      Bühnen-Grundlagen: Klang, Farbverläufe, Spickzettel
-assets/js/stage-*.js    je eine Bühne
+assets/js/world.js      3D-Engine über Three.js: Himmel, Tageszeit, Regen, Kamera
+assets/js/stage-*.js    je eine Bühne (barrio/lepic in 3D, noche/enquete in 2D)
+vendor/three.iife.js    Three.js als klassisches Script
 assets/css/stage-*.css  je eine Optik
 assets/js/tasks.js      die sechs Aufgabentypen
 assets/js/stations.js   die sechs Stationen

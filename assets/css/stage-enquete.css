@@ -313,3 +313,9 @@
   .ob-cercle svg{ width:23px; height:23px; }
   .fr-case{ min-width:92px; }
 }
+
+/* 3D-Fassung: keine gemalte Wand, die Welt selbst ist die Kulisse */
+.enquete.world3d{ background:#05070c; }
+.enquete.world3d .bandeau{ text-shadow:0 2px 16px rgba(0,0,0,.7); }
+.enquete.world3d .frise{ background:linear-gradient(to top, rgba(4,6,10,.92), transparent); }
+.enquete.world3d .dossier-fond{ background:rgba(4,6,10,.55); backdrop-filter:blur(4px); }

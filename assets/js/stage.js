@@ -165,6 +165,44 @@
     }
   });
 
+  /* Umgebungsgeräusch: ein leiser Teppich, der die Welt trägt.
+     'madrid' = warmes Stadtrauschen, 'paris' = Regen. Synthetisiert, endlos. */
+  var amb = null;
+  L.ambience = {
+    start: safe(function (kind) {
+      L.ambience.stop();
+      var c = ac(); if (!c) return;
+      var n = c.sampleRate * 4, buf = c.createBuffer(1, n, c.sampleRate), d = buf.getChannelData(0);
+      var last = 0;
+      for (var i = 0; i < n; i++) {
+        var w = Math.random() * 2 - 1;
+        last = kind === 'paris' ? w : (last + 0.02 * w) / 1.02;     // Regen weiss, Stadt braun
+        d[i] = kind === 'paris' ? w : last * 3.5;
+      }
+      var src = c.createBufferSource(); src.buffer = buf; src.loop = true;
+      var f1 = c.createBiquadFilter();
+      f1.type = kind === 'paris' ? 'bandpass' : 'lowpass';
+      f1.frequency.value = kind === 'paris' ? 2400 : 380; f1.Q.value = kind === 'paris' ? 0.5 : 0.7;
+      var f2 = c.createBiquadFilter(); f2.type = 'highpass'; f2.frequency.value = kind === 'paris' ? 700 : 40;
+      var g = c.createGain(); g.gain.value = 0;
+      g.gain.linearRampToValueAtTime(kind === 'paris' ? 0.045 : 0.05, c.currentTime + 2.5);
+      var lfo = c.createOscillator(), lg = c.createGain();
+      lfo.frequency.value = kind === 'paris' ? 0.13 : 0.07; lg.gain.value = kind === 'paris' ? 0.012 : 0.015;
+      lfo.connect(lg); lg.connect(g.gain); lfo.start();
+      src.connect(f1); f1.connect(f2); f2.connect(g); g.connect(c.destination);
+      src.start();
+      amb = { src: src, gain: g, lfo: lfo, ctx: c };
+    }),
+    stop: safe(function () {
+      if (!amb) return;
+      var a = amb; amb = null;
+      a.gain.gain.cancelScheduledValues(a.ctx.currentTime);
+      a.gain.gain.setValueAtTime(a.gain.gain.value, a.ctx.currentTime);
+      a.gain.gain.linearRampToValueAtTime(0, a.ctx.currentTime + 0.8);
+      setTimeout(function () { try { a.src.stop(); a.lfo.stop(); } catch (e) {} }, 900);
+    })
+  };
+
   /* Spickzettel: die Grammatik der Einheit, jederzeit aufklappbar.
      Ohne das müsste man raten – eine Bühne ersetzt die Erklärung nicht. */
   L.chuleta = function (lesson, label) {

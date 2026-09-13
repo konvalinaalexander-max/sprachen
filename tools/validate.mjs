@@ -136,7 +136,7 @@ for (const l of lessons) {
 
   /* Eigenständige Formate: Bühnen statt Lesetext und Aufgabenliste */
   if (buehne) {
-    const STAGES = ['noche', 'enquete'];
+    const STAGES = ['noche', 'enquete', 'barrio', 'lepic'];
     const SK = ['verstehen', 'erkennen', 'produzieren', 'wortschatz'];
     if (!STAGES.includes(l.stage)) E(`stage "${l.stage}" unbekannt – vorhanden: ${STAGES.join(', ')}`);
     const stueck = l.escenas || l.objets || [];

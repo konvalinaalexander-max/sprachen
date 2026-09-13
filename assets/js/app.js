@@ -24,6 +24,7 @@
   function route() {
     var hash = location.hash || '#/';
     var m = hash.match(/^#\/lektion\/([^/]+)(?:\/([^/]+))?/);
+    teardown();
     if (!m) {
       current = { id: null, station: null };
       L.session = null;
@@ -63,6 +64,7 @@
   L.render = function () {
     var entry = L.catalog.filter(function (e) { return e.id === current.id; })[0];
     if (!entry) return route();
+    teardown();
     var lesson = L.lessons[entry.id];
     draw(L.views[current.station](lesson), lesson, current.station);
   };
@@ -79,6 +81,13 @@
   }
 
   /* ---------------- Zeichnen ---------------- */
+  /* Vor jedem Ansichtswechsel: laufende 3D-Welt und Klangteppich abräumen.
+     Muss VOR dem Bauen der neuen Ansicht passieren, nicht danach. */
+  function teardown() {
+    if (L.activeWorld) { try { L.activeWorld.dispose(); } catch (e) {} L.activeWorld = null; }
+    if (L.ambience) L.ambience.stop();
+  }
+
   function draw(view, lesson, station) {
     root.innerHTML = '';
     root.appendChild(view);
