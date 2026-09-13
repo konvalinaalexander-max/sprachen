@@ -372,7 +372,11 @@ mark, .hl-word{ background:linear-gradient(transparent 58%, var(--glow) 58%); co
 }
 .word:hover{ background:rgba(255,255,255,.13); transform:translateY(-2px); }
 .word:active{ transform:scale(.94); }
-.word.used{ opacity:0; pointer-events:none; transform:scale(.6); }
+.word.used{
+  color:transparent; background:rgba(255,255,255,.02);
+  border-color:rgba(255,255,255,.07); border-style:dashed;
+  pointer-events:none; transform:none;
+}
 .word.in-slot{ background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,.07)); }
 
 /* Verwandler (Texteingabe) */

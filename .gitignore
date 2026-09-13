@@ -4,3 +4,4 @@ node_modules/
 tmp/
 inbox/*.json
 !inbox/.gitkeep
+.shots/
