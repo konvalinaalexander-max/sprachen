@@ -6,8 +6,12 @@ Mal gesessen hat und was nicht.
 
 ## Loslegen
 
-`index.html` im Browser öffnen. Das war's – kein Server, keine Installation.
-Zwei Flaggen, eine auswählen, durch sechs Stationen laufen.
+**`sprachen.html` doppelklicken.** Eine einzige Datei, alles darin – Oberfläche,
+Lektionen, Vokabeln. Kein Server, keine Installation, kein Internet. Die schickt
+Claude nach jeder neuen Lektion in den Chat; speicher sie, wo du willst.
+
+Wer lieber im Ordner arbeitet: `index.html` tut dasselbe, braucht aber den Rest
+des Verzeichnisses daneben.
 
 Wer es als App auf dem Handy will: Ordner irgendwo mit HTTPS ausliefern
 (GitHub Pages genügt), Seite aufrufen, „zum Startbildschirm hinzufügen“.
@@ -57,7 +61,8 @@ npm run plan            # Lernstand und Vorschlag für heute
 npm run plan -- es      # nur Spanisch
 npm run validate        # Lektionen prüfen
 npm run build           # Manifest, Profil-Spiegel und Offline-Vorrat erneuern
-npm run check           # beides, vor jedem Commit
+npm run bundle          # sprachen.html neu pressen
+npm run check           # alles drei, vor jedem Commit
 npm run report -- <datei>   # Bericht aus der App einlesen
 node tools/new-lesson.mjs fr <kurzname>   # Gerüst anlegen
 ```
@@ -65,7 +70,8 @@ node tools/new-lesson.mjs fr <kurzname>   # Gerüst anlegen
 ## Wo was liegt
 
 ```
-index.html              Gerüst der App
+sprachen.html           die Einzeldatei zum Weitergeben (erzeugt)
+index.html              Gerüst der App im Ordnerbetrieb
 assets/js/core.js       Registry, Zustand, Klang, Textvergleich
 assets/js/tasks.js      die sechs Aufgabentypen
 assets/js/stations.js   die sechs Stationen
@@ -80,5 +86,5 @@ docs/METHODIK.md        warum die Einheit so gebaut ist
 CLAUDE.md               Betriebshandbuch für Claude
 ```
 
-Erzeugte Dateien – nicht von Hand ändern: `lessons/manifest.js`,
+Erzeugte Dateien – nicht von Hand ändern: `sprachen.html`, `lessons/manifest.js`,
 `learner/profile.js`, der `PRECACHE`-Block in `sw.js`.

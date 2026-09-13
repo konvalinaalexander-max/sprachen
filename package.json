@@ -9,7 +9,8 @@
     "validate": "node tools/validate.mjs",
     "build": "node tools/build-manifest.mjs",
     "report": "node tools/report.mjs",
-    "check": "node tools/validate.mjs && node tools/build-manifest.mjs --check",
-    "serve": "node tools/serve.mjs"
+    "check": "node tools/validate.mjs && node tools/build-manifest.mjs && node tools/bundle.mjs",
+    "serve": "node tools/serve.mjs",
+    "bundle": "node tools/bundle.mjs"
   }
 }

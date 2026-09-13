@@ -24,11 +24,17 @@ ausser er verlangt beides.
 ```bash
 node tools/new-lesson.mjs es mercado     # 2. Gerüst
 # 3. füllen (siehe unten)
-npm run check                            # 4. prüfen + Manifest/Service Worker bauen
+npm run check                            # 4. prüfen + Manifest + sprachen.html bauen
 git add -A && git commit && git push
 ```
 
-Dann im Chat: kurz sagen, was ihn erwartet (Thema, Grammatik, Hörquelle) – nicht die
+**Zum Schluss immer `sprachen.html` mit SendUserFile in den Chat legen.** Das ist
+die Datei, mit der er arbeitet – eine einzige HTML-Datei, Doppelklick genügt.
+Er will sie jedes Mal hier haben, nicht aus dem Repository holen müssen.
+`npm run check` baut sie mit; eine Lektion ohne frisch gebündelte Datei ist nicht
+ausgeliefert.
+
+Dazu im Chat: kurz sagen, was ihn erwartet (Thema, Grammatik, Hörquelle) – nicht die
 ganze Lektion nacherzählen. Die Überraschung ist Teil des Spass.
 
 ## Wenn er einen Bericht schickt
@@ -111,5 +117,10 @@ auch per Doppelklick aus dem Dateisystem läuft. Lektionen sind `.js`-Dateien, d
 `lessons/manifest.js`, spiegelt `learner/profile.json` nach `learner/profile.js`
 und pflegt die Vorladeliste in `sw.js`. Fortschritt liegt im `localStorage` des
 Browsers – deshalb der Bericht zum Kopieren als Brücke zurück ins Repository.
+
+`tools/bundle.mjs` presst am Ende alles – Stylesheet, alle Skripte, alle Lektionen,
+das Symbol – in die eine Datei `sprachen.html`. Die läuft allein in einem leeren
+Ordner, ohne eine einzige externe Anfrage. Im Bündel ist `LEKTION.standalone` gesetzt;
+daran hängt, was ohne den Rest des Ordners nicht funktionieren würde.
 
 `npm run check` vor jedem Commit. Kein Commit mit rotem Prüfer.

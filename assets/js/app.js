@@ -170,7 +170,9 @@
     items.push([L.state.settings.sound ? '🔊' : '🔇', L.state.settings.sound ? 'Töne ausschalten' : 'Töne einschalten', function () {
       L.state.settings.sound = !L.state.settings.sound; L.save(); close(); L.toast(L.state.settings.sound ? 'Töne an' : 'Töne aus');
     }]);
-    items.push(['📖', 'Quellen & Methode', function () { close(); window.open('docs/QUELLEN.md', '_blank'); }]);
+    if (!L.standalone) {
+      items.push(['📖', 'Quellen & Methode', function () { close(); window.open('docs/QUELLEN.md', '_blank'); }]);
+    }
     items.push(['🧹', 'Allen Fortschritt löschen', function () {
       if (confirm('Wirklich alles zurücksetzen? XP, Serie und alle Zwischenstände sind dann weg.')) {
         L.resetAll(); L.session = null; close(); L.go('#/'); L.toast('Alles zurückgesetzt.');
