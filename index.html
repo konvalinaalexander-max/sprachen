@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sprachen</title>
+<meta name="description" content="Offline-Lernraum für Spanisch und Französisch. Jede Einheit von Claude frisch gebaut.">
+<meta name="theme-color" content="#0b0d12">
+<link rel="manifest" href="app.webmanifest">
+<link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icons/icon.svg">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body data-lang="es" data-view="home">
+
+<div class="aura" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="app">
+  <header class="topbar">
+    <button class="brand" id="brand" type="button">
+      <span class="mark" aria-hidden="true">¶</span>
+      <span>Sprachen</span>
+    </button>
+    <span class="spacer"></span>
+    <span class="pill" id="streak-badge" style="display:none"></span>
+    <span class="pill" id="xp-badge"><b>0</b> XP</span>
+    <button class="icon-btn" id="menu-btn" type="button" aria-label="Menü">☰</button>
+  </header>
+
+  <div class="rail" id="rail"></div>
+
+  <main>
+    <div id="view"></div>
+  </main>
+</div>
+
+<div class="footbar" id="footbar" style="display:none"></div>
+<div class="combo" id="combo" aria-hidden="true"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Menü">
+  <div class="sheet-inner"></div>
+</div>
+
+<noscript>
+  <div style="padding:40px;text-align:center">
+    <h2>JavaScript ist aus</h2>
+    <p>Diese Lernoberfläche braucht JavaScript – sie lädt aber nichts aus dem Netz nach.</p>
+  </div>
+</noscript>
+
+<script src="assets/js/core.js"></script>
+<script src="assets/js/tasks.js"></script>
+<script src="assets/js/stations.js"></script>
+<script src="learner/profile.js"></script>
+<script src="lessons/manifest.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

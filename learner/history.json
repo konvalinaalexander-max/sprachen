@@ -1,0 +1,4 @@
+{
+  "_doc": "Eine Zeile pro abgeschlossener Lerneinheit. Gefuellt aus dem Session-Report der App via `npm run report`.",
+  "sessions": []
+}

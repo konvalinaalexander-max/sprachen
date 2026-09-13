@@ -1,0 +1,15 @@
+{
+  "name": "sprachen",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Offline-faehige Sprachlern-App (Spanisch B1, Franzoesisch A1-A2), kuratiert von Claude.",
+  "type": "module",
+  "scripts": {
+    "plan": "node tools/plan.mjs",
+    "validate": "node tools/validate.mjs",
+    "build": "node tools/build-manifest.mjs",
+    "report": "node tools/report.mjs",
+    "check": "node tools/validate.mjs && node tools/build-manifest.mjs --check",
+    "serve": "node tools/serve.mjs"
+  }
+}
