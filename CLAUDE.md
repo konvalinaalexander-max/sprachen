@@ -21,51 +21,36 @@ Keine geglätteten Lehrbuchsituationen, keine Hotelbuchungen, keine Kinder auf d
 Spielplatz. Eine Person, ein Konflikt, ein Detail, das wehtut oder komisch ist.
 Keine Belehrung am Schluss.
 
-**3. Jede zweite Einheit ist ein Ausbruch.**
-Immer abwechselnd:
-- **normal** – so wie in dieser Datei beschrieben. Wortschatz und Grammatik sauber
-  beibringen, sechs Stationen, ordentlich aufgebaut.
-- **überkonstruiert** – eine eigene Bühne. `format: 'stage'` plus ein `stage`-Name;
-  der Renderer liegt in `assets/js/stage-<name>.js`, die Optik in
-  `assets/css/stage-<name>.css`. Vorhanden sind `barrio` (Madrid in 3D, neun
-  Szenen durch eine Nacht) und `lepic` (Paris in 3D: Regenstrasse, dann die
-  Wohnung als Escape Room). Beide fallen ohne WebGL auf ihre 2D-Fassungen
-  `noche` und `enquete` zurück – die bleiben im Repo und müssen weiter laufen.
-  Für die nächste Runde etwas Neues bauen, nicht diese zwei wiederverwenden:
-  Karte mit Reiseroute, Küche mit Rezept unter Zeitdruck, Radiostudio,
-  Verhör mit Verzweigungen, Metro-Netzplan als Navigation.
+**3. Keine Einheit sieht aus wie die davor.**
+Der Aufbau bleibt: sechs Stationen, Lesetext, Aufgabenliste. Was sich jedes Mal
+ändert, sind die Modalitäten. Überkonstruierte 3D-Bühnen sind abgeschafft – sie
+haben in der Praxis nicht funktioniert. Was bleibt, ist Abwechslung in drei
+Schaltern:
 
-  **Regeln für jede Bühne:**
-  - `intro.grammar` und `intro.vocab` bleiben Pflicht – sie werden zum Spickzettel,
-    den `L.chuleta()` oben rechts einblendet. Eine Bühne ersetzt die Erklärung nicht.
-  - Jeder bewertete Moment ruft `L.stageAnswer({correct, yours, right, explain,
-    skill, grammar})`. Nur so entstehen Diagnose, Bericht und Lernstand.
-  - Am Ende `L.stageDone(lesson)` – das führt auf die Bilanzseite.
-  - Die Hörquelle wird in die Bühne eingebaut (`L.player(src, lang, cb)`), damit
-    die Stimmung nicht bricht.
-  - Grafik ohne eine einzige Bilddatei. 3D über Three.js (`vendor/three.iife.js`,
-    als klassisches Script gebündelt, `window.THREE`) und die eigene Engine
-    `assets/js/world.js`: `L.World(host, {palette, fog, shadows})` liefert
-    Himmelskuppel mit Tageszeit (`setTime`), Sonne/Mond/Sterne, `rain()`,
-    `flyTo()`, Umsehen per Ziehen, `pickables` + `onPick`. `L.Build` hat Kisten,
-    Zylinder, `canvasTex()` für gemalte Texturen (Schilder, Parkett, Fenster,
-    Bilder) und `seeded()` für eine Stadt, die bei jedem Öffnen gleich aussieht.
-    Klang mit `L.pluck`, `L.clap`, `L.accordion`, `L.thunk`, `L.ambience`.
-  - **`scene.add(x)` gibt die Szene zurück, `group.add(x)` die Gruppe.**
-    `scene.add(mesh).rotation.z = …` dreht die ganze Welt. Das hat Madrid einmal
-    auf die Seite gelegt und in Paris das Telefon an die Decke gehängt.
-    Immer: `var m = …; m.rotation.z = …; scene.add(m);`
-  - Dialog- und Rätselmotor sind von der Kulisse getrennt: `L.nocheDialogo(lesson,
-    root, hooks)` und `L.enqueteUI(lesson, root, hooks)`. Eine neue Welt baut nur
-    die Kulisse und hängt sich an die Haken (`onScene`, `onOpen`, `onDoor` …).
-  - Tests laufen headless mit SwiftShader (`--use-gl=swiftshader`) bei ~4 fps:
-    Flüge und Zeit-Tweens dort mit `W.finishFly()` / `W.snapTime()` abkürzen.
-  - **Eigene Klassennamen prüfen.** `.sol` heisst auf Spanisch Sonne und auf
-    Französisch Boden – das hat schon einmal die Sonne an den linken Rand geworfen.
-  - Leisten über der Spielfläche brauchen `pointer-events:none`, sonst fangen sie
-    Klicks ab, die den Gegenständen gelten.
-Welches dran ist, steht in `learner/profile.json` unter `nextFormat`. Nach jeder
-Einheit umschalten.
+- **Wortschatz** – `intro.vocabMode`
+  - `raten` (Vorgabe): Wort sichtbar, Bedeutung verdeckt. Er rät und deckt auf.
+  - `definicion`: umgedreht. Die Definition steht da, das Wort ist verdeckt –
+    deutlich härter, gut wenn `skills.json` beim Wortschatz hohe Werte zeigt.
+  - `campos`: nach Wortfeldern gruppiert. Jedes Wort braucht dann ein `campo`,
+    drei bis vier Felder mit sprechenden Namen.
+- **Lesetext** – `reading.style`
+  - `zeitung` (Vorgabe): Artikel mit Dachzeile.
+  - `chat`: Nachrichtenverlauf. Braucht `reading.yo` (wer von beiden er ist) und
+    an jedem Absatz ein `von`, optional `hora`. Die Absätze sind einzelne
+    Nachrichten; `simple` nur bei den längeren.
+  - `carta`: Brief oder Mail. Braucht `reading.meta` als Liste von `[Feld, Wert]`
+    für den Briefkopf, optional `reading.firma` für die Unterschrift.
+- **Aufgaben** – neun Typen: `choice`, `evidence`, `forge`, `transform`, `pairs`,
+  `write`, `order` (Zeitstrahl: Schritte in die richtige Reihenfolge klicken),
+  `spot` (ein falsches Wort im Satz finden) und `dialog` (Gesprächsblasen, eigene
+  Repliken wählen; jede Lücke braucht `options` mit genau einem `ok: true`).
+  Mindestens fünf verschiedene pro Einheit, und nie zweimal hintereinander
+  dieselbe Auswahl.
+
+`npm run plan` zeigt unter **„Zuletzt gebaut (variieren!)“**, welcher Modus,
+welcher Stil und welche Aufgabentypen zuletzt dran waren, und was noch frei ist.
+Daran halten. Das ist die ganze Regel – kein Umschalter mehr, keine zweite
+Betriebsart.
 
 **4. Die Hörquelle wird abgespielt, nicht verlinkt.** Er will nicht auf einer
 Website landen, auf der er ein Abo abschliessen soll. Deshalb trägt jede Quelle

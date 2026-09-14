@@ -15,18 +15,6 @@
 
   L.views = {};
 
-  /* Eigenständige Formate bringen ihre Darstellung selbst mit. */
-  L.views.stage = function (lesson) {
-    var render = L.stages && L.stages[lesson.stage];
-    if (!render) {
-      return h('div', { class: 'view wrap empty' }, [
-        h('div', { class: 'big', text: '🎭' }),
-        h('h2', { text: 'Unbekanntes Format: ' + lesson.stage })
-      ]);
-    }
-    return render(lesson);
-  };
-
   /* ---------------- Startseite (bleibt deutsch: hier wird erst gewählt) ---------------- */
   function flagSvg(code) {
     if (code === 'fr') {
@@ -118,7 +106,7 @@
     v.appendChild(h('div', {}, [
       h('div', { class: 'eyebrow', text: lesson.level + ' · ' + L.fmtDate(lesson.date, lesson.lang) }),
       h('h1', { text: lesson.title }),
-      h('p', { class: 'lead', style: 'margin-top:14px', text: lesson.subtitle || '' })
+      h('p', { class: 'lead', style: 'margin-top:14px', html: markup(lesson.subtitle || '') })
     ]));
 
     if (lesson.intro && lesson.intro.hook) {
@@ -174,25 +162,31 @@
     return v;
   };
 
-  /* ---------------- Station 2: Wörter ---------------- */
+  /* ---------------- Station 2: Wörter ----------------
+     Drei Arten, dieselben Wörter zu zeigen. Welche, sagt die Lektion
+     über intro.vocabMode – so fühlt sich nicht jede Einheit gleich an. */
   L.views.vocab = function (lesson) {
     var v = h('div', { class: 'view wrap stack-lg' });
     var words = (lesson.intro && lesson.intro.vocab) || [];
+    var modus = (lesson.intro && lesson.intro.vocabMode) || 'raten';
     var opened = 0;
 
     v.appendChild(h('div', {}, [
       h('div', { class: 'eyebrow', text: T('vocab.eyebrow', { n: words.length }) }),
       h('h2', { text: T('vocab.title') }),
-      h('p', { class: 'lead', style: 'margin-top:12px', text: T('vocab.lead') })
+      h('p', { class: 'lead', style: 'margin-top:12px',
+        text: T(modus === 'definicion' ? 'v.mode.def' : modus === 'campos' ? 'v.mode.feld' : 'v.mode.raten') })
     ]));
 
-    var grid = h('div', { class: 'vocab-grid' });
-    words.forEach(function (w) {
-      var card = h('button', { class: 'vcard', type: 'button' }, [
+    function karte(w) {
+      var umgedreht = modus === 'definicion';
+      var vorn = umgedreht ? w.def : w.term;
+      var hinten = umgedreht ? w.term : w.def;
+      var card = h('button', { class: 'vcard' + (umgedreht ? ' rueck' : ''), type: 'button' }, [
         h('span', { class: 'hint', text: T('vocab.tap') }),
-        h('div', { class: 'term', text: w.term }),
-        w.pos ? h('div', { class: 'pos', text: w.pos }) : null,
-        h('div', { class: 'de', html: markup(w.def) }),
+        h('div', { class: umgedreht ? 'term klein' : 'term', html: markup(vorn) }),
+        (!umgedreht && w.pos) ? h('div', { class: 'pos', text: w.pos }) : null,
+        h('div', { class: 'de' + (umgedreht ? ' gross' : ''), html: markup(hinten) }),
         w.example ? h('div', { class: 'ex', html: markup(w.example) }) : null
       ]);
       card.addEventListener('click', function () {
@@ -202,9 +196,25 @@
           if (opened === words.length) { L.combo(T('vocab.all')); L.sparks(card, 16); }
         }
       });
-      grid.appendChild(card);
-    });
-    v.appendChild(grid);
+      return card;
+    }
+
+    if (modus === 'campos') {
+      var felder = {};
+      words.forEach(function (w) { (felder[w.campo || '·'] = felder[w.campo || '·'] || []).push(w); });
+      Object.keys(felder).forEach(function (name) {
+        var grid = h('div', { class: 'vocab-grid' });
+        felder[name].forEach(function (w) { grid.appendChild(karte(w)); });
+        v.appendChild(h('div', { class: 'campo' }, [
+          h('div', { class: 'campo-t', text: name }),
+          grid
+        ]));
+      });
+    } else {
+      var grid2 = h('div', { class: 'vocab-grid' });
+      words.forEach(function (w) { grid2.appendChild(karte(w)); });
+      v.appendChild(grid2);
+    }
     return v;
   };
 
@@ -274,13 +284,50 @@
     tools.appendChild(tSmall); tools.appendChild(tBig);
     paper.appendChild(tools);
 
-    paper.appendChild(h('h2', { text: r.title }));
-    paper.appendChild(h('div', { class: 'byline', text: [r.kicker, r.source && r.source.note].filter(Boolean).join(' · ') }));
+    var stil = r.style || 'zeitung';
+    paper.classList.add('stil-' + stil);
 
-    (r.paragraphs || []).forEach(function (p) {
-      paper.appendChild(h('p', { html: glossed(p.text, r.glossary) }));
-      if (p.simple) paper.appendChild(h('div', { class: 'trans', text: p.simple }));
-    });
+    if (stil === 'chat') {
+      paper.appendChild(h('div', { class: 'chat-kopf' }, [
+        h('h2', { text: r.title }),
+        h('div', { class: 'byline', text: [r.kicker, r.source && r.source.note].filter(Boolean).join(' · ') })
+      ]));
+      var chat = h('div', { class: 'chat' });
+      var vorher = null;
+      (r.paragraphs || []).forEach(function (p) {
+        var mein = p.von && r.yo && p.von === r.yo;
+        var neuerSprecher = p.von !== vorher;
+        vorher = p.von;
+        var z = h('div', { class: 'chat-z' + (mein ? ' mein' : '') + (neuerSprecher ? '' : ' folge') });
+        if (!mein && p.von && neuerSprecher) z.appendChild(h('div', { class: 'chat-von', text: p.von }));
+        z.appendChild(h('div', { class: 'chat-blase', html: glossed(p.text, r.glossary) }));
+        if (p.hora) z.appendChild(h('div', { class: 'chat-zeit', text: p.hora }));
+        if (p.simple) z.appendChild(h('div', { class: 'trans', text: p.simple }));
+        chat.appendChild(z);
+      });
+      paper.appendChild(chat);
+    } else if (stil === 'carta') {
+      paper.appendChild(h('div', { class: 'carta-kopf' },
+        (r.meta || []).map(function (m) {
+          return h('div', { class: 'carta-zeile' }, [
+            h('span', { class: 'carta-k', text: m[0] }),
+            h('span', { class: 'carta-v', text: m[1] })
+          ]);
+        })));
+      paper.appendChild(h('h2', { text: r.title }));
+      (r.paragraphs || []).forEach(function (p) {
+        paper.appendChild(h('p', { html: glossed(p.text, r.glossary) }));
+        if (p.simple) paper.appendChild(h('div', { class: 'trans', text: p.simple }));
+      });
+      if (r.firma) paper.appendChild(h('div', { class: 'carta-firma', text: r.firma }));
+    } else {
+      paper.appendChild(h('h2', { text: r.title }));
+      paper.appendChild(h('div', { class: 'byline', text: [r.kicker, r.source && r.source.note].filter(Boolean).join(' · ') }));
+      (r.paragraphs || []).forEach(function (p) {
+        paper.appendChild(h('p', { html: glossed(p.text, r.glossary) }));
+        if (p.simple) paper.appendChild(h('div', { class: 'trans', text: p.simple }));
+      });
+    }
 
     paper.addEventListener('click', function (e) {
       var g = e.target.closest && e.target.closest('.gl');
@@ -662,7 +709,7 @@
       h('div', { class: 'eyebrow', style: 'justify-content:center', text: T('e.done') }),
       L.ring(pct),
       h('h1', { style: 'margin-top:12px', text: praise(pct) }),
-      h('p', { class: 'lead', style: 'margin-top:10px', text: lesson.outro || T('e.outro') })
+      h('p', { class: 'lead', style: 'margin-top:10px', html: markup(lesson.outro || T('e.outro')) })
     ]));
 
     v.appendChild(h('div', { class: 'stat-grid' }, [

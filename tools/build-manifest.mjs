@@ -44,12 +44,9 @@ put('learner/profile.js',
 
 /* --- Vorladeliste des Service Workers --- */
 const shell = ['./', './index.html', './app.webmanifest',
-  './assets/css/app.css', './assets/css/stage-noche.css', './assets/css/stage-enquete.css',
-  './assets/icons/icon.svg',
+  './assets/css/app.css', './assets/icons/icon.svg',
   './assets/js/core.js', './assets/js/i18n.js', './assets/js/audio.js', './assets/js/tasks.js',
-  './vendor/three.iife.js', './assets/js/world.js',
-  './assets/js/stage.js', './assets/js/stage-noche.js', './assets/js/stage-enquete.js',
-  './assets/js/stage-barrio.js', './assets/js/stage-lepic.js', './assets/js/stations.js', './assets/js/app.js',
+  './assets/js/stations.js', './assets/js/app.js',
   './learner/profile.js', './lessons/manifest.js'];
 const list = shell.concat(lessons.map((l) => './' + l._file));
 const sw = readFileSync(p('sw.js'), 'utf8');

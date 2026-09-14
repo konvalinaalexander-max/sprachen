@@ -1,32 +1,32 @@
 /* Erzeugt von tools/build-manifest.mjs – nicht von Hand ändern. */
 LEKTION.manifest([
   {
-    "id": "es-2026-09-14-la-noche",
+    "id": "es-2026-09-14-el-sobre",
     "lang": "es",
     "level": "B1",
     "date": "2026-09-14",
-    "title": "La noche",
-    "subtitle": "Nueve horas en Madrid, de la puerta de tu casa al primer metro. Cada persona que te habla espera una respuesta, y casi todas piden subjuntivo.",
-    "minutes": 40,
+    "title": "El sobre",
+    "subtitle": "Ochenta euros por vaciar un piso, y una caja de zapatos que lo estropea todo. Con las dos preposiciones que más se confunden.",
+    "minutes": 42,
     "grammar": [
-      "es-subjuntivo-presente"
+      "es-por-para"
     ],
-    "file": "lessons/es/2026-09-14-la-noche.js",
-    "rev": "1dbc91ee63"
+    "file": "lessons/es/2026-09-14-el-sobre.js",
+    "rev": "c9912cda32"
   },
   {
-    "id": "fr-2026-09-14-affaire-lepic",
+    "id": "fr-2026-09-14-la-cage-descalier",
     "lang": "fr",
     "level": "A2",
     "date": "2026-09-14",
-    "title": "L'affaire du 12 rue Lepic",
-    "subtitle": "Camille Roussel a disparu hier soir. Son appartement est fermé de l'intérieur. Cinq objets, cinq heures, une porte.",
-    "minutes": 40,
+    "title": "Qu'est-ce qui s'est passé hier",
+    "subtitle": "Un samedi à treize heures, un escalier qui n'est pas le tien, et un ami qui a tout vu. Le passé composé avec être, du début à la fin.",
+    "minutes": 44,
     "grammar": [
       "fr-passe-compose-etre"
     ],
-    "file": "lessons/fr/2026-09-14-affaire-lepic.js",
-    "rev": "71340d3bd6"
+    "file": "lessons/fr/2026-09-14-la-cage-descalier.js",
+    "rev": "87dd090fe9"
   },
   {
     "id": "es-2026-09-13-moto",

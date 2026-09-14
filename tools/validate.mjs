@@ -3,7 +3,7 @@
    Findet u.a. Belegzitate, die gar nicht im Text stehen – der häufigste Autorenfehler. */
 import { loadLessons, readJson, col, rule, LANGS } from './lib.mjs';
 
-const TYPES = ['choice', 'evidence', 'forge', 'transform', 'pairs', 'write'];
+const TYPES = ['choice', 'evidence', 'forge', 'transform', 'pairs', 'write', 'order', 'spot', 'dialog'];
 const errors = [];
 const warns = [];
 
@@ -26,11 +26,10 @@ for (const l of lessons) {
   const E = (m) => errors.push(`${l._file}: ${m}`);
   const W = (m) => warns.push(`${l._file}: ${m}`);
 
-  const buehne = l.format === 'stage';
-  const pflicht = buehne
-    ? ['id', 'lang', 'level', 'date', 'title', 'intro', 'stage', 'listening']
-    : ['id', 'lang', 'level', 'date', 'title', 'intro', 'reading', 'tasks', 'listening'];
+  const pflicht = ['id', 'lang', 'level', 'date', 'title', 'intro', 'reading', 'tasks', 'listening'];
   for (const f of pflicht) if (!l[f]) E(`Feld "${f}" fehlt`);
+  if (l.format === 'stage' || l.stage)
+    E('das Bühnenformat ist abgeschafft – jede Einheit hat Lesetext und Aufgabenliste');
   if (!l.id) continue;
   if (ids.has(l.id)) E(`doppelte id "${l.id}"`);
   ids.add(l.id);
@@ -47,6 +46,21 @@ for (const l of lessons) {
     if (!g.name) E(`intro.grammar[${i}]: name fehlt`);
     if (!g.examples?.length) W(`intro.grammar[${i}] (${g.id}): keine Beispiele`);
   });
+  const MODI = ['raten', 'definicion', 'campos'];
+  if (l.intro?.vocabMode && !MODI.includes(l.intro.vocabMode))
+    E(`intro.vocabMode "${l.intro.vocabMode}" unbekannt – erlaubt: ${MODI.join(', ')}`);
+  const STILE = ['zeitung', 'chat', 'carta'];
+  if (l.reading?.style && !STILE.includes(l.reading.style))
+    E(`reading.style "${l.reading.style}" unbekannt – erlaubt: ${STILE.join(', ')}`);
+  if (l.intro?.vocabMode === 'campos' && (l.intro.vocab || []).some((v) => !v.campo))
+    E('vocabMode "campos": jedes Wort braucht ein campo');
+  if (l.reading?.style === 'chat') {
+    if (!l.reading.yo) E('reading.style "chat": yo fehlt (wer von beiden er selbst ist)');
+    if ((l.reading.paragraphs || []).some((p) => !p.von)) E('reading.style "chat": jeder Absatz braucht von');
+  }
+  if (l.reading?.style === 'carta' && !(l.reading.meta || []).length)
+    W('reading.style "carta" ohne meta – der Briefkopf bleibt leer');
+
   const vocab = l.intro?.vocab || [];
   if (vocab.length < 6) W(`nur ${vocab.length} Vokabeln – 8 bis 14 sind der Richtwert`);
   vocab.forEach((v, i) => {
@@ -55,9 +69,11 @@ for (const l of lessons) {
   });
 
   /* Lesetext */
-  const paras = buehne ? [] : (l.reading?.paragraphs || []);
+  const paras = l.reading?.paragraphs || [];
   const fullText = paras.map((p) => p.text).join(' ');
-  if (!buehne) {
+  /* genauso zerlegt wie in der App (stations.js: splitSentences) */
+  const satzweise = paras.flatMap((p) =>
+    (String(p.text).match(/[^.!?…]+[.!?…]+["»]?|[^.!?…]+$/g) || [p.text]).map((x) => x.trim()).filter(Boolean));
   if (!paras.length) E('reading.paragraphs ist leer');
   const words = fullText.split(/\s+/).filter(Boolean).length;
   // Zwei A4-Seiten sind der Richtwert – er will gefordert werden.
@@ -67,7 +83,9 @@ for (const l of lessons) {
   if (words > lim[1]) W(`Lesetext hat ${words} Wörter – für ${l.level} eher lang (${lim[0]}–${lim[1]})`);
   paras.forEach((p, i) => {
     if (p.de) E(`reading.paragraphs[${i}]: Feld "de" ist abgeschafft – einfachere Fassung gehört nach "simple"`);
-    if (!p.simple) W(`reading.paragraphs[${i}]: keine einfachere Fassung ("simple") hinterlegt`);
+    /* Im Chat sind die Absätze einzelne Nachrichten – die sind schon kurz genug */
+    if (!p.simple && l.reading?.style !== 'chat' && p.text.split(/\s+/).length > 12)
+      W(`reading.paragraphs[${i}]: keine einfachere Fassung ("simple") hinterlegt`);
   });
   (l.reading?.glossary || []).forEach((g, i) => {
     if (!g.def) E(`reading.glossary[${i}]: "def" fehlt (einsprachige Erklärung)`);
@@ -75,11 +93,8 @@ for (const l of lessons) {
       E(`reading.glossary[${i}]: "${g.term}" kommt im Text gar nicht vor`);
   });
 
-  }
-
   /* Aufgaben */
-  const tasks = buehne ? [] : (l.tasks || []);
-  if (!buehne) {
+  const tasks = l.tasks || [];
   if (tasks.length < 5) W(`nur ${tasks.length} Aufgaben – 6 bis 9 halten die Einheit bei ~35 Minuten`);
   const kinds = new Set(tasks.map((t) => t.type));
   if (kinds.size < 3) W(`nur ${kinds.size} verschiedene Aufgabentypen – wird schnell öde`);
@@ -111,6 +126,9 @@ for (const l of lessons) {
         if (!t.evidence) T('evidence (Zitat aus dem Text) fehlt');
         else if (!fullText.includes(t.evidence))
           T(`Belegzitat "${t.evidence.slice(0, 42)}…" steht so nicht im Lesetext`);
+        /* Angeklickt wird ein einzelner Satz – ein Zitat über zwei Sätze ist nie treffbar. */
+        else if (!satzweise.some((sz) => sz.includes(t.evidence)))
+          T(`Belegzitat "${t.evidence.slice(0, 42)}…" geht über mehr als einen Satz – anklickbar ist immer nur ein Satz`);
       }
       if (!t.explain) T('explain fehlt');
     }
@@ -130,65 +148,25 @@ for (const l of lessons) {
     if (t.type === 'write') {
       if (!t.model) T('model (Musterlösung) fehlt');
     }
-  });
-
-  }
-
-  /* Eigenständige Formate: Bühnen statt Lesetext und Aufgabenliste */
-  if (buehne) {
-    const STAGES = ['noche', 'enquete', 'barrio', 'lepic'];
-    const SK = ['verstehen', 'erkennen', 'produzieren', 'wortschatz'];
-    if (!STAGES.includes(l.stage)) E(`stage "${l.stage}" unbekannt – vorhanden: ${STAGES.join(', ')}`);
-    const stueck = l.escenas || l.objets || [];
-    if (stueck.length < 4) E('zu wenig Spielmaterial: mindestens vier escenas bzw. objets');
-    let gemessen = 0;
-    (l.escenas || []).forEach((e, i) => {
-      if (e.escucha) return;
-      if (!e.narracion) E(`escenas[${i}]: narracion fehlt`);
-      if (!e.explica) E(`escenas[${i}]: explica fehlt – ohne Erklärung kein Lerneffekt`);
-      if (!e.skill) W(`escenas[${i}]: kein skill`);
-      else if (!SK.includes(e.skill)) E(`escenas[${i}]: skill "${e.skill}" unbekannt`);
-      if (e.grammar && !knownGrammar.has(e.grammar)) E(`escenas[${i}]: grammar "${e.grammar}" steht nicht im Lehrplan`);
-      if (e.tipo === 'formas') {
-        if (!(e.formas || []).some((o) => o.ok)) E(`escenas[${i}]: keine richtige Form markiert`);
-        if (!(e.frase || '').includes('___')) E(`escenas[${i}]: frase braucht eine Lücke ___`);
-      } else if (e.tipo === 'escribir') {
-        if (!e.respuesta) E(`escenas[${i}]: respuesta fehlt`);
-      } else if (!(e.opciones || []).some((o) => o.ok)) {
-        E(`escenas[${i}]: keine richtige Option markiert`);
-      }
-      gemessen++;
-    });
-    (l.objets || []).forEach((o, i) => {
-      if (!o.id) E(`objets[${i}]: id fehlt`);
-      if (!o.indice) E(`objets[${i}]: indice fehlt`);
-      if (!o.fragment || !o.fragment.heure || !o.fragment.texte) E(`objets[${i}]: fragment braucht heure und texte`);
-      const e = o.enigme || {};
-      if (!e.question) E(`objets[${i}]: enigme.question fehlt`);
-      if (!e.explication) E(`objets[${i}]: enigme.explication fehlt`);
-      if (!e.skill) W(`objets[${i}]: kein skill`);
-      else if (!SK.includes(e.skill)) E(`objets[${i}]: skill "${e.skill}" unbekannt`);
-      if (e.type === 'ecrire') {
-        if (!e.reponse) E(`objets[${i}]: enigme.reponse fehlt`);
-      } else if (e.type === 'formes') {
-        if (!(e.formes || []).some((x) => x.ok)) E(`objets[${i}]: keine richtige Form markiert`);
-        if (!(e.phrase || '').includes('___')) E(`objets[${i}]: phrase braucht eine Lücke ___`);
-      } else if (!(e.options || []).some((x) => x.ok)) {
-        E(`objets[${i}]: keine richtige Option markiert`);
-      }
-      gemessen++;
-    });
-    if (l.objets) {
-      const ordre = (l.finale && l.finale.ordre) || [];
-      if (ordre.length !== l.objets.length) E('finale.ordre muss genau so viele Einträge haben wie objets');
-      for (const id of ordre) if (!l.objets.some((o) => o.id === id)) E(`finale.ordre: "${id}" gibt es nicht`);
-      if (!(l.finale && l.finale.consigne)) E('finale.consigne fehlt');
+    if (t.type === 'order') {
+      if (!Array.isArray(t.items) || t.items.length < 3) T('mindestens drei items, in der richtigen Reihenfolge');
+      if (!t.explain) T('explain fehlt');
     }
-    if (l.grammarId && !knownGrammar.has(l.grammarId)) E(`grammarId "${l.grammarId}" steht nicht im Lehrplan`);
-    if (gemessen < 5) W(`nur ${gemessen} bewertete Momente – die Diagnose wird dünn`);
-    const skills = new Set(stueck.map((x) => x.skill || (x.enigme && x.enigme.skill)).filter(Boolean));
-    if (skills.size < 3) W(`nur ${skills.size} verschiedene Fertigkeiten abgedeckt`);
-  }
+    if (t.type === 'spot') {
+      if (!t.sentence) T('sentence fehlt');
+      if (!t.wrong) T('wrong fehlt (das falsche Wort)');
+      if (!t.right) T('right fehlt (was dort stehen müsste)');
+      if (t.sentence && t.wrong && !t.sentence.split(/\s+/).some((w) => w.replace(/[.,;:!?¿¡"«»]/g, '') === t.wrong))
+        T(`"${t.wrong}" steht so nicht als eigenes Wort im Satz`);
+      if (!t.explain) T('explain fehlt');
+    }
+    if (t.type === 'dialog') {
+      const gaps = (t.lines || []).filter((l) => l.options);
+      if (!gaps.length) T('kein einziges options-Feld – dann ist es kein Gespräch');
+      gaps.forEach((l, k) => { if (!l.options.some((o) => o.ok)) T(`lines-Lücke ${k}: keine richtige Replik markiert`); });
+      if (!t.explain) T('explain fehlt');
+    }
+  });
 
   /* Hören */
   const checkSource = (src, where) => {
@@ -211,6 +189,18 @@ for (const l of lessons) {
   (l.listening?.alternatives || []).forEach((a, i) => checkSource(a, `listening.alternatives[${i}]`));
   if ((l.listening?.alternatives || []).length < 2)
     warns.push(`${l._file}: weniger als zwei Ausweichquellen`);
+}
+
+/* Manche Felder werden als reiner Text gezeichnet – Auszeichnung bliebe dort sichtbar stehen. */
+const ROH = /(^|[^*\w])[*_][^*_\n]{2,}[*_]([^*\w]|$)/;
+for (const l of lessons) {
+  const melde = (wo, v) => { if (typeof v === 'string' && ROH.test(v)) warns.push(`${l._file}: ${wo} wird als reiner Text gezeichnet – *Auszeichnung* bleibt sichtbar stehen`); };
+  melde('reading.title', l.reading?.title);
+  melde('listening.intro', l.listening?.intro);
+  (l.reading?.paragraphs || []).forEach((p, i) => melde(`reading.paragraphs[${i}].simple`, p.simple));
+  (l.intro?.vocab || []).forEach((v, i) => melde(`intro.vocab[${i}].pos`, v.pos));
+  const quellen = [l.listening?.source, ...(l.listening?.alternatives || [])].filter(Boolean);
+  quellen.forEach((q, i) => { melde(`listening[${i}].pick`, q.pick); melde(`listening[${i}].what`, q.what); });
 }
 
 /* Doppelte Sternchen sind fast immer ein Tippfehler: die Auszeichnung ist *einfach*. */

@@ -21,35 +21,29 @@ Ab dann läuft alles offline, inklusive aller Lektionen.
 npm run serve        # lokaler Server auf http://localhost:4321
 ```
 
-## Zwei Sorten Einheit
+## Jede Einheit ein bisschen anders
 
-Es wechselt sich ab. Eine **normale** Einheit bringt Wortschatz und Grammatik
-sauber bei, in sechs Stationen. Die nächste ist eine **Bühne**: ein eigenes
-Format mit eigener Grafik und eigener Logik.
+Der Aufbau bleibt gleich – sechs Stationen, Lesetext, Aufgabenliste. Was sich von
+Mal zu Mal ändert, sind die Modalitäten, damit es nicht zur Routine wird:
 
-Bisher gebaut:
-- **La noche** (Spanisch) – ein prozedurales Madrid in 3D: 48 Häuserblöcke um
-  eine Plaza, Kirche mit Kuppel, Bar mit Markise, Churrería, Metro-Raute, Azotea.
-  Die Kamera fliegt von Szene zu Szene durch neun Stunden; der Himmel dreht mit,
-  zehntausend Fenster gehen nach und nach an, und jede Person, die dich
-  anspricht, will eine Antwort im Subjuntivo.
-- **L'affaire du 12 rue Lepic** (Französisch) – Paris bei Nacht im Regen,
-  Haussmann-Fassaden mit Balkonreihen und Zinkdächern, dann durchs Fenster in
-  die Wohnung im dritten Stock: Fischgrätparkett, Stuck, Bücherwand, ein
-  gemaltes Bild. Fünf Gegenstände zum Anklicken, fünf Rätsel, eine Zeitleiste.
-  Die Tür öffnet sich nur, wenn die Chronologie stimmt.
+- **Wortschatz** in drei Modi: Karten zum Aufdecken (`raten`), umgekehrt mit der
+  Definition vorn und dem Wort verdeckt (`definicion`), oder nach Wortfeldern
+  sortiert (`campos`).
+- **Lesetext** in drei Aufmachungen: Zeitungsartikel (`zeitung`), Nachrichten-
+  verlauf (`chat`) oder Brief (`carta`).
+- **Aufgaben** aus neun Typen: Ankreuzen, Textdetektiv, Satzschmiede, Verwandler,
+  Paarjagd, Freischreiben, Zeitstrahl, Fehlersuche und Gespräch.
 
-Beide Welten sind komplett gerechnet – keine Bilddatei, keine Textur von aussen.
-3D über Three.js, mit in der Datei. Ohne WebGL gibt es beide auch als 2D-Fassung.
+`npm run plan` merkt sich, was zuletzt dran war, und sagt, was noch frei ist.
 
-## Eine normale Einheit
+## Der Ablauf einer Einheit
 
 | | | |
 |---|---|---|
 | **Einstieg** | Grammatik, zugeschnitten auf den Text, der gleich kommt | 7 Min |
 | **Wörter** | Vokabeln zum Aufdecken statt Liste | 4 Min |
 | **Lesen** | zwei A4-Seiten, Glossar im Antippen, einfachere Fassung auf Knopfdruck | 10 Min |
-| **Training** | Textdetektiv, Blitzrunde, Satzschmiede, Verwandler, Paarjagd, Freischreiben | 12 Min |
+| **Training** | Textdetektiv, Blitzrunde, Satzschmiede, Verwandler, Paarjagd, Zeitstrahl, Fehlersuche, Gespräch, Freischreiben | 12 Min |
 | **Hören** | echter Podcast, direkt im Player, drei Durchgänge | 10 Min |
 | **Feedback** | Umfrage, Fehlerprotokoll, Bericht für Claude | 3 Min |
 
@@ -104,12 +98,7 @@ index.html              Gerüst der App im Ordnerbetrieb
 assets/js/core.js       Registry, Zustand, Klang, Textvergleich
 assets/js/i18n.js       Oberflächentexte auf Deutsch, Spanisch, Französisch
 assets/js/audio.js      Folgen auflösen und abspielen
-assets/js/stage.js      Bühnen-Grundlagen: Klang, Farbverläufe, Spickzettel
-assets/js/world.js      3D-Engine über Three.js: Himmel, Tageszeit, Regen, Kamera
-assets/js/stage-*.js    je eine Bühne (barrio/lepic in 3D, noche/enquete in 2D)
-vendor/three.iife.js    Three.js als klassisches Script
-assets/css/stage-*.css  je eine Optik
-assets/js/tasks.js      die sechs Aufgabentypen
+assets/js/tasks.js      die neun Aufgabentypen
 assets/js/stations.js   die sechs Stationen
 assets/js/app.js        Router und Rahmen
 lessons/es|fr/*.js      je eine Lektion, ruft LEKTION.register()

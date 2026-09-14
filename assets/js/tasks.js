@@ -415,4 +415,160 @@
     return root;
   };
 
+  /* =============== 7. Zeitstrahl: Reihenfolge herstellen =============== */
+  L.engines.order = function (task, ctx) {
+    var root = h('div', { class: 'stack' });
+    root.appendChild(h('p', { class: 'muted', text: T('o.hint') }));
+    var linie = h('div', { class: 'ord-linie' });
+    var vorrat = h('div', { class: 'ord-vorrat' });
+    root.appendChild(linie); root.appendChild(vorrat);
+
+    var pos = 0, fehler = 0, n = task.items.length;
+    L.shuffle(task.items.map(function (t, i) { return { t: t, i: i }; })).forEach(function (it) {
+      var b = h('button', { class: 'ord-karte', type: 'button' }, [
+        h('span', { class: 'ord-t', html: markup(it.t) })
+      ]);
+      b.addEventListener('click', function () {
+        if (b.disabled) return;
+        if (it.i === pos) {
+          b.disabled = true; b.classList.add('weg');
+          var gesetzt = h('div', { class: 'ord-platz' }, [
+            h('span', { class: 'ord-n', text: String(pos + 1) }),
+            h('span', { class: 'ord-t', html: markup(it.t) })
+          ]);
+          linie.appendChild(gesetzt);
+          pos++; L.fx.right(pos);
+          if (pos === n) fertig();
+        } else {
+          fehler++; L.fx.wrong();
+          b.classList.add('wackel');
+          setTimeout(function () { b.classList.remove('wackel'); }, 420);
+        }
+      });
+      vorrat.appendChild(b);
+    });
+
+    function fertig() {
+      var sauber = fehler === 0;
+      var body = sauber ? markup(task.explain || '')
+        : T('p.tries', { n: fehler }) + ' ' + markup(task.explain || '');
+      root.appendChild(verdict(sauber, sauber ? T('o.clean') : T('o.done'), body));
+      ctx.answered({
+        correct: sauber, partial: Math.max(0, 1 - fehler / (n * 1.5)),
+        yours: fehler + ' ✗', right: n + ' ✓', explain: task.explain || ''
+      });
+    }
+    return root;
+  };
+
+  /* =============== 8. Fehlersuche: das eine falsche Wort =============== */
+  L.engines.spot = function (task, ctx) {
+    var root = h('div', { class: 'stack' });
+    root.appendChild(h('p', { class: 'muted', text: T('s.hint') }));
+    var satz = h('div', { class: 'spot-satz' });
+    var teile = task.sentence.split(/(\s+)/);
+    var treffer = false;
+    teile.forEach(function (w) {
+      if (/^\s+$/.test(w)) { satz.appendChild(document.createTextNode(w)); return; }
+      var blank = L.norm(w) === L.norm(task.wrong);
+      var ist = blank && !treffer;
+      if (ist) treffer = true;
+      var b = h('button', { class: 'spot-w', type: 'button', text: w });
+      b.addEventListener('click', function () {
+        if (satz.dataset.zu) return;
+        satz.dataset.zu = '1';
+        satz.querySelectorAll('.spot-w').forEach(function (x) { x.disabled = true; });
+        b.classList.add(ist ? 'richtig' : 'falsch');
+        if (!ist) {
+          satz.querySelectorAll('.spot-w').forEach(function (x, k) { if (x.__ist) x.classList.add('richtig'); });
+        }
+        ist ? L.fx.right(1) : L.fx.wrong();
+        var body = '<b>' + T('s.should') + '</b> ' + esc(task.right) + '<br>' + markup(task.explain || '');
+        root.appendChild(verdict(ist, ist ? T('s.found') : T('s.missed'), body));
+        ctx.answered({
+          correct: ist, yours: w, right: task.wrong + ' → ' + task.right,
+          explain: task.explain || ''
+        });
+      });
+      b.__ist = ist;
+      satz.appendChild(b);
+    });
+    root.appendChild(satz);
+    return root;
+  };
+
+  /* =============== 9. Gespräch: Repliken wählen =============== */
+  L.engines.dialog = function (task, ctx) {
+    var root = h('div', { class: 'stack' });
+    root.appendChild(h('p', { class: 'muted', text: T('dl.hint') }));
+    var chat = h('div', { class: 'dlg' });
+    root.appendChild(chat);
+
+    var luecken = task.lines.filter(function (l) { return l.options; });
+    var offen = 0, fehler = 0;
+
+    function zeichne() {
+      chat.innerHTML = '';
+      var gezeigt = 0;
+      for (var i = 0; i < task.lines.length; i++) {
+        var l = task.lines[i];
+        if (l.options) {
+          if (gezeigt < offen) {
+            var gew = l.__gewaehlt;
+            chat.appendChild(h('div', { class: 'dlg-z mein' }, [
+              h('div', { class: 'dlg-von', text: l.von || T('dl.turn') }),
+              h('div', { class: 'dlg-blase ' + (l.__ok ? 'gut' : 'schlecht'), html: markup(gew) })
+            ]));
+            gezeigt++;
+            continue;
+          }
+          chat.appendChild(auswahl(l));
+          return;
+        }
+        chat.appendChild(h('div', { class: 'dlg-z' }, [
+          h('div', { class: 'dlg-von', text: l.von || '' }),
+          h('div', { class: 'dlg-blase', html: markup(l.text) })
+        ]));
+      }
+      fertig();
+    }
+
+    function auswahl(l) {
+      var box = h('div', { class: 'dlg-wahl' });
+      box.appendChild(h('div', { class: 'dlg-von', text: l.von || T('dl.turn') }));
+      var opts = h('div', { class: 'opts' });
+      L.shuffle(l.options.map(function (_, k) { return k; })).forEach(function (k) {
+        var o = l.options[k];
+        var b = h('button', { class: 'opt', type: 'button' }, [
+          h('span', { class: 'key', text: '»' }),
+          h('span', { html: markup(o.t) })
+        ]);
+        b.addEventListener('click', function () {
+          opts.querySelectorAll('.opt').forEach(function (x) { x.disabled = true; });
+          l.__gewaehlt = o.t; l.__ok = !!o.ok;
+          if (!o.ok) fehler++;
+          o.ok ? L.fx.right(offen + 1) : L.fx.wrong();
+          if (o.why) box.appendChild(h('p', { class: 'porque muted', html: markup(o.why) }));
+          setTimeout(function () { offen++; zeichne(); }, o.why ? 1500 : 550);
+        });
+        opts.appendChild(b);
+      });
+      box.appendChild(opts);
+      return box;
+    }
+
+    function fertig() {
+      var sauber = fehler === 0;
+      root.appendChild(verdict(sauber, sauber ? T('p.clean') : T('p.done'),
+        (sauber ? '' : T('p.tries', { n: fehler }) + ' ') + markup(task.explain || '')));
+      ctx.answered({
+        correct: sauber, partial: 1 - fehler / Math.max(1, luecken.length),
+        yours: (luecken.length - fehler) + '/' + luecken.length,
+        right: luecken.length + '/' + luecken.length, explain: task.explain || ''
+      });
+    }
+    zeichne();
+    return root;
+  };
+
 })(window.LEKTION);

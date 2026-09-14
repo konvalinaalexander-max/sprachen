@@ -42,9 +42,28 @@
   },
   "github": "konvalinaalexander-max/sprachen",
   "tone": "26-jähriger Mann. Nah am Leben, roh, direkt, erwachsen. Kein Lehrbuch-Ton, keine geglätteten Situationen.",
-  "nextFormat": {
-    "es": "normal",
-    "fr": "normal",
-    "_doc": "Wechselt nach jeder Einheit. Die ueberkonstruierten Einheiten vom 14.09. sind fertig, also ist als naechstes wieder eine normale dran."
+  "variation": {
+    "_doc": "Jede Einheit muss sich von der letzten unterscheiden. `npm run plan` zeigt unter „Zuletzt gebaut“, welcher Wortschatzmodus, welcher Lesetext-Stil und welche Aufgabentypen zuletzt dran waren.",
+    "vocabModes": [
+      "raten",
+      "definicion",
+      "campos"
+    ],
+    "readingStyles": [
+      "zeitung",
+      "chat",
+      "carta"
+    ],
+    "taskTypes": [
+      "choice",
+      "evidence",
+      "forge",
+      "transform",
+      "pairs",
+      "write",
+      "order",
+      "spot",
+      "dialog"
+    ]
   }
 }

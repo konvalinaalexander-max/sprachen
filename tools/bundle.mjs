@@ -7,8 +7,7 @@ import { loadLessons, p, col, rule } from './lib.mjs';
 
 const esc = (js) => String(js).replace(/<\/script/gi, '<\\/script');
 
-const css = ['assets/css/app.css', 'assets/css/stage-noche.css', 'assets/css/stage-enquete.css']
-  .map((f) => readFileSync(p(f), 'utf8')).join('\n');
+const css = readFileSync(p('assets/css/app.css'), 'utf8');
 const icon = readFileSync(p('assets/icons/icon.svg'), 'utf8');
 const iconUri = 'data:image/svg+xml;base64,' + Buffer.from(icon, 'utf8').toString('base64');
 
@@ -17,13 +16,6 @@ const scripts = [
   'assets/js/i18n.js',
   'assets/js/audio.js',
   'assets/js/tasks.js',
-  'vendor/three.iife.js',
-  'assets/js/world.js',
-  'assets/js/stage.js',
-  'assets/js/stage-noche.js',
-  'assets/js/stage-enquete.js',
-  'assets/js/stage-barrio.js',
-  'assets/js/stage-lepic.js',
   'assets/js/stations.js',
   'learner/profile.js',
   'lessons/manifest.js'

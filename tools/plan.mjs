@@ -116,6 +116,23 @@ for (const lang of langs) {
     console.log(`  ${col.dim('Zuletzt gehört: ' + usedSources.join(' → ') + '  (etwas anderes wählen)')}`);
   }
 
+  // Modalitäten der letzten Einheit – jede neue muss sich davon unterscheiden
+  const lastLesson = lessons.filter((l) => l.lang === lang)
+    .sort((a, b) => (a.date < b.date ? 1 : -1))[0];
+  if (lastLesson) {
+    const typen = [...new Set((lastLesson.tasks || []).map((t) => t.type))];
+    console.log('');
+    console.log(col.b('  → Zuletzt gebaut (variieren!)'));
+    console.log(`     Wortschatz   ${col.dim(lastLesson.intro?.vocabMode || 'raten')}` +
+      col.dim('   (raten · definicion · campos)'));
+    console.log(`     Lesetext     ${col.dim(lastLesson.reading?.style || 'zeitung')}` +
+      col.dim('   (zeitung · chat · carta)'));
+    console.log(`     Aufgaben     ${col.dim(typen.join(', '))}`);
+    const ungenutzt = ['choice', 'evidence', 'forge', 'transform', 'pairs', 'write', 'order', 'spot', 'dialog']
+      .filter((t) => !typen.includes(t));
+    if (ungenutzt.length) console.log(`     ${col.dim('Noch frei: ' + ungenutzt.join(', '))}`);
+  }
+
   const overview = { neu: items.filter((i) => !i.lastSeen).length,
                      gefestigt: items.filter((i) => i.box >= 3).length,
                      wackelig: shaky.length, faellig: due.length };
